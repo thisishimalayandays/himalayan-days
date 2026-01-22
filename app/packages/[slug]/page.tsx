@@ -8,12 +8,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Check, X } from 'lucide-react';
 
-export async function generateStaticParams() {
-    const packages = await prisma.package.findMany({ select: { slug: true } });
-    return packages.map((pkg) => ({
-        slug: pkg.slug,
-    }));
-}
+// generateStaticParams removed to allow build on empty database
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const resolvedParams = await params;
