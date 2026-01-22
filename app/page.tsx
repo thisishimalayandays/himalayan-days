@@ -13,6 +13,8 @@ import { PopularDestinations } from '@/components/home/popular-destinations';
 import { getPackages } from '@/app/actions/packages';
 import { getDestinations } from '@/app/actions/destinations';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   const packages = await getPackages();
   const destinations = await getDestinations();

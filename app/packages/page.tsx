@@ -8,6 +8,8 @@ export const metadata: Metadata = {
     description: 'Explore our wide range of curated Kashmir holiday packages. Honeymoon, Family, Adventure, and Luxury tours designed for you.',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function PackagesPage() {
     const packages = await getPackages();
     return (
