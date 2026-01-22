@@ -14,13 +14,11 @@ export function Hero() {
             {/* Background Video */}
             <div className="absolute inset-0 z-0 select-none pointer-events-none overflow-hidden">
                 <div className="absolute inset-0 bg-black/40 z-10" /> {/* Overlay */}
-                <video
-                    src="/Herosectionvideo.mp4"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    className="absolute inset-0 w-full h-full object-cover"
+                <iframe
+                    src="https://www.youtube.com/embed/S5tGX6o84us?autoplay=1&mute=1&controls=0&loop=1&playlist=S5tGX6o84us&showinfo=0&rel=0&iv_load_policy=3&disablekb=1&modestbranding=1"
+                    className="absolute top-1/2 left-1/2 w-[300%] h-[300%] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
                 />
             </div>
 
