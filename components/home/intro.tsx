@@ -34,10 +34,10 @@ export function Intro() {
                     <div className="relative rounded-2xl shadow-2xl w-full h-[500px] overflow-hidden bg-gray-100">
                         <video
                             src="/WelcomeScreen.mp4"
-                            autoPlay
-                            muted
-                            loop
-                            playsInline
+                            autoPlay={true}
+                            muted={true}
+                            loop={true}
+                            playsInline={true}
                             className="w-full h-full object-cover scale-110 will-change-transform"
                         />
                     </div>
