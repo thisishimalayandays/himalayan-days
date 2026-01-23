@@ -21,7 +21,7 @@ export async function sendInquiryNotification(data: EmailPayload) {
         // 1. Notify Admin (You)
         await resend.emails.send({
             from: 'onboarding@resend.dev', // Default sender for testing/unverified domains
-            to: 'suhailbinfarooq@gmail.com', // Replace with your actual email if different
+            to: 'thisishimalayandays@gmail.com', // Agency email
             subject: `New Inquiry: ${data.name} (${data.type})`,
             html: `
                 <h2>New Inquiry Received</h2>
