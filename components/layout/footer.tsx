@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Facebook, Instagram, Twitter, Mail, MapPin, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { NewsletterForm } from './newsletter-form';
 
 export function Footer() {
     return (
@@ -80,10 +81,7 @@ export function Footer() {
                 <div>
                     <h4 className="text-lg font-semibold text-white mb-6">Get Updates</h4>
                     <p className="text-sm mb-4 text-gray-400">Subscribe for exclusive offers and travel guides.</p>
-                    <form className="flex gap-2">
-                        <input type="email" placeholder="Your email" className="bg-gray-900 border-none rounded-md px-4 py-2 text-sm w-full focus:ring-1 focus:ring-primary outline-none" />
-                        <Button size="sm" className="bg-primary hover:bg-orange-600 shrink-0">Join</Button>
-                    </form>
+                    <NewsletterForm />
                     <div className="mt-8 space-y-3">
                         <div className="flex items-center gap-3 text-sm text-gray-400">
                             <Phone className="w-4 h-4 text-primary" /> +91-8825039323

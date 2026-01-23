@@ -39,7 +39,7 @@ export function Header() {
                             src="/Himalayan Days Logo.png"
                             alt="Himalayan Days"
                             fill
-                            className="object-contain"
+                            className="object-contain object-left"
                             priority
                         />
                     </div>

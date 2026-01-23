@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 import { PackagesContent } from './packages-content';
-import { getPackages } from '@/app/actions/packages';
+import { getPackagesList } from '@/app/actions/packages';
 
 export const metadata: Metadata = {
     title: 'Tour Packages',
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function PackagesPage() {
-    const packages = await getPackages();
+    const packages = await getPackagesList();
     return (
         <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>}>
             <PackagesContent packages={packages} />

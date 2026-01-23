@@ -10,7 +10,7 @@ const testimonials = [
         name: "Rahul & Priya",
         location: "Mumbai",
         rating: 5,
-        text: "Our honeymoon in Kashmir was magical! The houseboat stay arranging by Himalayan Days was the highlight. Everything was seamless.",
+        text: "Our honeymoon in Kashmir was magical! The houseboat stay arranged by Himalayan Days was the highlight. Everything was seamless.",
         image: "https://images.unsplash.com/photo-1621609764095-232d14cfa327?q=80&w=200&auto=format&fit=crop"
     },
     {
@@ -27,7 +27,7 @@ const testimonials = [
         location: "Dubai",
         rating: 5,
         text: "We booked the Family Fun package. The driver was very polite and the hotels were exactly as promised. Kids loved Pahalgam!",
-        image: "https://images.unsplash.com/photo-1511895426328-dc8714191300?q=80&w=200&auto=format&fit=crop"
+        image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
     },
     {
         id: 4,
@@ -43,7 +43,87 @@ const testimonials = [
         location: "Bangalore",
         rating: 5,
         text: "It was a dream come true to see the Tulips. Himalayan Days ensured we beat the rush and had a great time. Thank you!",
-        image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
+        image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&auto=format&fit=crop"
+    },
+    {
+        id: 6,
+        name: "David & Emma",
+        location: "New York, USA",
+        rating: 5,
+        text: "The skiing in Gulmarg rivals the Swiss Alps! Our guide Rashid was incredibly knowledgeable and kept us safe on the slopes.",
+        image: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?q=80&w=200&auto=format&fit=crop"
+    },
+    {
+        id: 7,
+        name: "Priya Sharma",
+        location: "Pune",
+        rating: 5,
+        text: "Waking up on Dal Lake was serene. The Shikara ride at sunset was the most romantic experience of our lives.",
+        image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop"
+    },
+    {
+        id: 8,
+        name: "The Mehta Family",
+        location: "Ahmedabad, Gujarat",
+        rating: 4,
+        text: "We were worried about finding good Jain food, but the agency took care of everything. Very comfortable tempo traveler for the whole family.",
+        image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=200&auto=format&fit=crop"
+    },
+    {
+        id: 9,
+        name: "James Carter",
+        location: "Sydney, Australia",
+        rating: 5,
+        text: "The hospitality in Kashmir is unmatched. From the airport pickup to the farewell dinner, we felt treated like royalty.",
+        image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"
+    },
+    {
+        id: 10,
+        name: "Fatima Al-Sayed",
+        location: "Dubai, UAE",
+        rating: 5,
+        text: "Perfect weather and beautiful scenery. Ideally planned itinerary that wasn't too rushed. Will definitely book again.",
+        image: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?q=80&w=200&auto=format&fit=crop"
+    },
+    {
+        id: 11,
+        name: "Dr. Iyer",
+        location: "Chennai",
+        rating: 5,
+        text: "A spiritual journey to Shankaracharya Temple and Kheer Bhawani. The driver was very respectful and patient.",
+        image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop"
+    },
+    {
+        id: 12,
+        name: "Sneha & Rohin",
+        location: "Chandigarh",
+        rating: 5,
+        text: "We came for our pre-wedding shoot. The locations suggested by the team were breathtaking. The photos turned out amazing!",
+        image: "https://images.unsplash.com/photo-1542596594-649edbc13630?q=80&w=200&auto=format&fit=crop"
+    },
+    {
+        id: 13,
+        name: "Mark Thompson",
+        location: "London, UK",
+        rating: 4,
+        text: "Safety was my primary concern, but I never felt uneasy. Kashmir is beautiful and very welcoming to tourists.",
+        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
+    },
+    {
+        id: 14,
+        name: "Aisha Khan",
+        location: "Mumbai",
+        rating: 5,
+        text: "Saw my first snowfall in Sonamarg! It was magical. The team provided good boots and jackets which helped a lot.",
+        image: "https://images.unsplash.com/photo-1525134479668-1bee4973950c?q=80&w=200&auto=format&fit=crop"
+    },
+    {
+        id: 15,
+        name: "Vikram Malhotra",
+        location: "Delhi",
+        rating: 5,
+        text: "Did a bike trip from Srinagar to Leh. Himalayan Days organized the permits and backup vehicle perfectly.",
+        image: "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?q=80&w=200&auto=format&fit=crop"
     }
 ];
 

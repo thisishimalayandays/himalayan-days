@@ -17,14 +17,14 @@ interface Package {
     duration: string;
     startingPrice: number;
     image: string;
-    gallery: string[];
+    gallery?: string[];
     category: string;
     location: string;
     features: string[];
-    overview: string;
-    itinerary: { day: number; title: string; desc: string }[];
-    inclusions: string[];
-    exclusions: string[];
+    overview?: string;
+    itinerary?: { day: number; title: string; desc: string }[];
+    inclusions?: string[];
+    exclusions?: string[];
 }
 
 const categories = ["All", "Family", "Honeymoon", "Adventure", "Luxury", "Bestseller"];

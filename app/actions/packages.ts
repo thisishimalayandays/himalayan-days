@@ -141,3 +141,26 @@ export async function getPackageBySlug(slug: string) {
         exclusions: JSON.parse(pkg.exclusions) as string[],
     };
 }
+
+export async function getPackagesList() {
+    const packages = await prisma.package.findMany({
+        select: {
+            id: true,
+            title: true,
+            slug: true,
+            startingPrice: true,
+            duration: true,
+            image: true,
+            category: true,
+            location: true,
+            features: true,
+            // Exclude heavy JSON fields: itinerary, gallery, inclusions, exclusions
+        },
+        orderBy: { createdAt: 'desc' }
+    });
+
+    return packages.map(pkg => ({
+        ...pkg,
+        features: JSON.parse(pkg.features) as string[],
+    }));
+}

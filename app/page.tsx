@@ -10,13 +10,13 @@ import { Testimonials } from '@/components/home/testimonials';
 
 import { WhyChooseUs } from '@/components/home/why-choose-us';
 import { PopularDestinations } from '@/components/home/popular-destinations';
-import { getPackages } from '@/app/actions/packages';
+import { getPackagesList } from '@/app/actions/packages';
 import { getDestinations } from '@/app/actions/destinations';
 
 export const dynamic = 'force-dynamic';
 
 export default async function Home() {
-  const packages = await getPackages();
+  const packages = await getPackagesList();
   const destinations = await getDestinations();
 
   return (

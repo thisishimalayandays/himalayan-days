@@ -78,13 +78,43 @@ async function main() {
             slug: "Yusmarg",
             rating: 4.7,
             reviews: 210
+        },
+        {
+            name: "Aru Valley",
+            image: "https://images.unsplash.com/photo-1620888961730-a151b75cb604?q=80&w=2070&auto=format&fit=crop",
+            description: "A pristine scenic village known for its lush meadows, hiking trails, and camping sites.",
+            slug: "Aru-Valley",
+            rating: 4.8,
+            reviews: 450
+        },
+        {
+            name: "Sinthan Top",
+            image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070&auto=format&fit=crop",
+            description: "A mountain pass connecting Breng Valley with Kishtwar, offering 360-degree views of snow-capped peaks.",
+            slug: "Sinthan-Top",
+            rating: 4.9,
+            reviews: 320
+        },
+        {
+            name: "Verinag",
+            image: "https://images.unsplash.com/photo-1595846519845-68e298c2edd8?q=80&w=2070&auto=format&fit=crop",
+            description: "Home to the famous Mughal Garden and the spring source of the Jhelum River.",
+            slug: "Verinag",
+            rating: 4.6,
+            reviews: 280
         }
     ];
 
     for (const dest of destinations) {
         const d = await prisma.destination.upsert({
             where: { slug: dest.slug },
-            update: {},
+            update: {
+                name: dest.name,
+                image: dest.image,
+                description: dest.description,
+                rating: dest.rating,
+                reviews: dest.reviews
+            },
             create: {
                 name: dest.name,
                 slug: dest.slug,
@@ -105,15 +135,15 @@ async function main() {
             title: "Magical Kashmir Honeymoon",
             duration: "5 Nights / 6 Days",
             startingPrice: 18999,
-            image: "/Magical%20Kashmir%20Honeymoon%20(1).png",
+            image: "/Magical%20Kashmir%20Honeymoon/Magical%20Kashmir%20Honeymoon%20(1).png",
             gallery: [
-                "/Magical%20Kashmir%20Honeymoon%20(1).png",
-                "/Magical%20Kashmir%20Honeymoon%20(2).png",
-                "/Magical%20Kashmir%20Honeymoon%20(3).png",
-                "/Magical%20Kashmir%20Honeymoon%20(4).jpeg",
-                "/Magical%20Kashmir%20Honeymoon%20(5).jpeg",
-                "/Magical%20Kashmir%20Honeymoon%20(6).png",
-                "/Magical%20Kashmir%20Honeymoon%20(7).png"
+                "/Magical%20Kashmir%20Honeymoon/Magical%20Kashmir%20Honeymoon%20(1).png",
+                "/Magical%20Kashmir%20Honeymoon/Magical%20Kashmir%20Honeymoon%20(2).png",
+                "/Magical%20Kashmir%20Honeymoon/Magical%20Kashmir%20Honeymoon%20(3).png",
+                "/Magical%20Kashmir%20Honeymoon/Magical%20Kashmir%20Honeymoon%20(4).jpeg",
+                "/Magical%20Kashmir%20Honeymoon/Magical%20Kashmir%20Honeymoon%20(5).jpeg",
+                "/Magical%20Kashmir%20Honeymoon/Magical%20Kashmir%20Honeymoon%20(6).png",
+                "/Magical%20Kashmir%20Honeymoon/Magical%20Kashmir%20Honeymoon%20(7).png"
             ],
             category: "Honeymoon",
             location: "Srinagar, Gulmarg, Pahalgam",
@@ -147,15 +177,15 @@ async function main() {
             title: "Kashmir Family Adventure",
             duration: "6 Nights / 7 Days",
             startingPrice: 15500,
-            image: "/Kashmir%20Family%20Adventure%20(1).png",
+            image: "/Kashmir%20Family%20Adventure/Kashmir%20Family%20Adventure%20(1).png",
             gallery: [
-                "/Kashmir%20Family%20Adventure%20(1).png",
-                "/Kashmir%20Family%20Adventure%20(2).png",
-                "/Kashmir%20Family%20Adventure%20(3).png",
-                "/Kashmir%20Family%20Adventure%20(4).jpeg",
-                "/Kashmir%20Family%20Adventure%20(5).jpeg",
-                "/Kashmir%20Family%20Adventure%20(6).jpeg",
-                "/Kashmir%20Family%20Adventure%20(7).jpeg"
+                "/Kashmir%20Family%20Adventure/Kashmir%20Family%20Adventure%20(1).png",
+                "/Kashmir%20Family%20Adventure/Kashmir%20Family%20Adventure%20(2).png",
+                "/Kashmir%20Family%20Adventure/Kashmir%20Family%20Adventure%20(3).png",
+                "/Kashmir%20Family%20Adventure/Kashmir%20Family%20Adventure%20(4).jpeg",
+                "/Kashmir%20Family%20Adventure/Kashmir%20Family%20Adventure%20(5).jpeg",
+                "/Kashmir%20Family%20Adventure/Kashmir%20Family%20Adventure%20(6).jpeg",
+                "/Kashmir%20Family%20Adventure/Kashmir%20Family%20Adventure%20(7).jpeg"
             ],
             category: "Family",
             location: "Srinagar, Sonmarg, Gulmarg",
@@ -186,16 +216,16 @@ async function main() {
             title: "Gurez Valley Expedition",
             duration: "4 Nights / 5 Days",
             startingPrice: 12500,
-            image: "/Gurez%20Valley%20Expedition%20(1).jpeg",
+            image: "/Gurez%20Valley%20Expedition/Gurez%20Valley%20Expedition%20(1).jpeg",
             gallery: [
-                "/Gurez%20Valley%20Expedition%20(1).jpeg",
-                "/Gurez%20Valley%20Expedition%20(2).jpeg",
-                "/Gurez%20Valley%20Expedition%20(3).jpeg",
-                "/Gurez%20Valley%20Expedition%20(4).jpeg",
-                "/Gurez%20Valley%20Expedition%20(5).jpeg",
-                "/Gurez%20Valley%20Expedition%20(6).jpeg",
-                "/Gurez%20Valley%20Expedition%20(7).jpeg",
-                "/Gurez%20Valley%20Expedition%20(8).jpeg"
+                "/Gurez%20Valley%20Expedition/Gurez%20Valley%20Expedition%20(1).jpeg",
+                "/Gurez%20Valley%20Expedition/Gurez%20Valley%20Expedition%20(2).jpeg",
+                "/Gurez%20Valley%20Expedition/Gurez%20Valley%20Expedition%20(3).jpeg",
+                "/Gurez%20Valley%20Expedition/Gurez%20Valley%20Expedition%20(4).jpeg",
+                "/Gurez%20Valley%20Expedition/Gurez%20Valley%20Expedition%20(5).jpeg",
+                "/Gurez%20Valley%20Expedition/Gurez%20Valley%20Expedition%20(6).jpeg",
+                "/Gurez%20Valley%20Expedition/Gurez%20Valley%20Expedition%20(7).jpeg",
+                "/Gurez%20Valley%20Expedition/Gurez%20Valley%20Expedition%20(8).jpeg"
             ],
             category: "Adventure",
             location: "Gurez, Dawar, Tulail",
@@ -216,13 +246,13 @@ async function main() {
             title: "Luxury Houseboat Retreat",
             duration: "3 Nights / 4 Days",
             startingPrice: 22000,
-            image: "/Luxury%20Houseboat%20Retreat%20(1).jpeg",
+            image: "/Luxury%20Houseboat%20Retreat/Luxury%20Houseboat%20Retreat%20(1).jpeg",
             gallery: [
-                "/Luxury%20Houseboat%20Retreat%20(1).jpeg",
-                "/Luxury%20Houseboat%20Retreat%20(2).jpeg",
-                "/Luxury%20Houseboat%20Retreat%20(3).jpeg",
-                "/Luxury%20Houseboat%20Retreat%20(4).jpeg",
-                "/Luxury%20Houseboat%20Retreat%20(5).jpeg"
+                "/Luxury%20Houseboat%20Retreat/Luxury%20Houseboat%20Retreat%20(1).jpeg",
+                "/Luxury%20Houseboat%20Retreat/Luxury%20Houseboat%20Retreat%20(2).jpeg",
+                "/Luxury%20Houseboat%20Retreat/Luxury%20Houseboat%20Retreat%20(3).jpeg",
+                "/Luxury%20Houseboat%20Retreat/Luxury%20Houseboat%20Retreat%20(4).jpeg",
+                "/Luxury%20Houseboat%20Retreat/Luxury%20Houseboat%20Retreat%20(5).jpeg"
             ],
             category: "Luxury",
             location: "Dal Lake, Srinagar",
@@ -242,13 +272,13 @@ async function main() {
             title: "Complete Kashmir Tour",
             duration: "7 Nights / 8 Days",
             startingPrice: 20500,
-            image: "/Complete%20Kashmir%20Tour%20(1).jpeg",
+            image: "/Complete%20Kashmir%20Tour/Complete%20Kashmir%20Tour%20(1).jpeg",
             gallery: [
-                "/Complete%20Kashmir%20Tour%20(1).jpeg",
-                "/Complete%20Kashmir%20Tour%20(2).jpeg",
-                "/Complete%20Kashmir%20Tour%20(3).jpeg",
-                "/Complete%20Kashmir%20Tour%20(4).jpeg",
-                "/Complete%20Kashmir%20Tour%20(5).jpeg"
+                "/Complete%20Kashmir%20Tour/Complete%20Kashmir%20Tour%20(1).jpeg",
+                "/Complete%20Kashmir%20Tour/Complete%20Kashmir%20Tour%20(2).jpeg",
+                "/Complete%20Kashmir%20Tour/Complete%20Kashmir%20Tour%20(3).jpeg",
+                "/Complete%20Kashmir%20Tour/Complete%20Kashmir%20Tour%20(4).jpeg",
+                "/Complete%20Kashmir%20Tour/Complete%20Kashmir%20Tour%20(5).jpeg"
             ],
             category: "Bestseller",
             location: "All Major Destinations",
@@ -272,8 +302,14 @@ async function main() {
             title: "Winter Wonderland Kashmir",
             duration: "4 Nights / 5 Days",
             startingPrice: 16500,
-            image: "https://images.unsplash.com/photo-1518335965426-30233e72dc02?q=80&w=2070&auto=format&fit=crop",
-            gallery: ["https://images.unsplash.com/photo-1518335965426-30233e72dc02?q=80&w=2070&auto=format&fit=crop"],
+            image: "/Winter%20Wonderland%20Kashmir/Winter%20Wonderland%20Kashmir%20(1).jpeg",
+            gallery: [
+                "/Winter%20Wonderland%20Kashmir/Winter%20Wonderland%20Kashmir%20(1).jpeg",
+                "/Winter%20Wonderland%20Kashmir/Winter%20Wonderland%20Kashmir%20(2).jpeg",
+                "/Winter%20Wonderland%20Kashmir/Winter%20Wonderland%20Kashmir%20(3).jpeg",
+                "/Winter%20Wonderland%20Kashmir/Winter%20Wonderland%20Kashmir%20(4).jpeg",
+                "/Winter%20Wonderland%20Kashmir/Winter%20Wonderland%20Kashmir%20(5).jpeg"
+            ],
             category: "Adventure",
             location: "Gulmarg, Srinagar",
             features: ["Snow Skiing", "Igloo Stay", "Snowfall"],
@@ -293,8 +329,14 @@ async function main() {
             title: "Kashmir Devotional Yatra",
             duration: "5 Nights / 6 Days",
             startingPrice: 14999,
-            image: "https://images.unsplash.com/photo-1623941008688-6927dcc3941a?q=80&w=2070&auto=format&fit=crop",
-            gallery: ["https://images.unsplash.com/photo-1623941008688-6927dcc3941a?q=80&w=2070&auto=format&fit=crop"],
+            image: "/Kashmir%20Devotional%20Yatra/Kashmir%20Devotional%20Yatra%20(1).jpeg",
+            gallery: [
+                "/Kashmir%20Devotional%20Yatra/Kashmir%20Devotional%20Yatra%20(1).jpeg",
+                "/Kashmir%20Devotional%20Yatra/Kashmir%20Devotional%20Yatra%20(2).jpeg",
+                "/Kashmir%20Devotional%20Yatra/Kashmir%20Devotional%20Yatra%20(3).jpeg",
+                "/Kashmir%20Devotional%20Yatra/Kashmir%20Devotional%20Yatra%20(4).jpeg",
+                "/Kashmir%20Devotional%20Yatra/Kashmir%20Devotional%20Yatra%20(5).jpeg"
+            ],
             category: "Religious",
             location: "Kheer Bhawani, Shankaracharya, Hazratbal",
             features: ["Temple Tour", "Spiritual", "Peaceful"],
@@ -315,8 +357,13 @@ async function main() {
             title: "Budget Backpackers Kashmir",
             duration: "5 Nights / 6 Days",
             startingPrice: 9999,
-            image: "https://images.unsplash.com/photo-1595133642055-6b5cf0d08ec8?q=80&w=2070&auto=format&fit=crop",
-            gallery: ["https://images.unsplash.com/photo-1595133642055-6b5cf0d08ec8?q=80&w=2070&auto=format&fit=crop"],
+            image: "/Budget%20Backpackers%20Kashmir/Budget%20Backpackers%20Kashmir%20(1).jpeg",
+            gallery: [
+                "/Budget%20Backpackers%20Kashmir/Budget%20Backpackers%20Kashmir%20(1).jpeg",
+                "/Budget%20Backpackers%20Kashmir/Budget%20Backpackers%20Kashmir%20(2).jpeg",
+                "/Budget%20Backpackers%20Kashmir/Budget%20Backpackers%20Kashmir%20(3).jpeg",
+                "/Budget%20Backpackers%20Kashmir/Budget%20Backpackers%20Kashmir%20(4).jpeg"
+            ],
             category: "Budget",
             location: "Srinagar, Pahalgam",
             features: ["Hostels", "Group Travel", "Budget Friendly"],
@@ -337,8 +384,13 @@ async function main() {
             title: "Doodhpathri Day Delight",
             duration: "2 Nights / 3 Days",
             startingPrice: 8500,
-            image: "https://images.unsplash.com/photo-1620888961730-a151b75cb604?q=80&w=2070&auto=format&fit=crop",
-            gallery: ["https://images.unsplash.com/photo-1620888961730-a151b75cb604?q=80&w=2070&auto=format&fit=crop"],
+            image: "/Doodhpathri%20Day%20Delight/Doodhpathri%20Day%20Delight%20(1).jpeg",
+            gallery: [
+                "/Doodhpathri%20Day%20Delight/Doodhpathri%20Day%20Delight%20(1).jpeg",
+                "/Doodhpathri%20Day%20Delight/Doodhpathri%20Day%20Delight%20(2).jpeg",
+                "/Doodhpathri%20Day%20Delight/Doodhpathri%20Day%20Delight%20(3).jpeg",
+                "/Doodhpathri%20Day%20Delight/Doodhpathri%20Day%20Delight%20(4).jpeg"
+            ],
             category: "Weekend",
             location: "Srinagar, Doodhpathri",
             features: ["Short Trip", "Meadows", "River"],
@@ -356,8 +408,12 @@ async function main() {
             title: "Yusmarg Hidden Paradise",
             duration: "3 Nights / 4 Days",
             startingPrice: 11500,
-            image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=2070&auto=format&fit=crop",
-            gallery: ["https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=2070&auto=format&fit=crop"],
+            image: "/Yusmarg%20Hidden%20Paradise/Yusmarg%20Hidden%20Paradise%20(1).jpeg",
+            gallery: [
+                "/Yusmarg%20Hidden%20Paradise/Yusmarg%20Hidden%20Paradise%20(1).jpeg",
+                "/Yusmarg%20Hidden%20Paradise/Yusmarg%20Hidden%20Paradise%20(2).jpeg",
+                "/Yusmarg%20Hidden%20Paradise/Yusmarg%20Hidden%20Paradise%20(3).jpeg"
+            ],
             category: "Offbeat",
             location: "Yusmarg, Nilnag",
             features: ["Trekking", "Nature", "Solitude"],
@@ -376,8 +432,16 @@ async function main() {
             title: "Kashmir Great Lakes Trek",
             duration: "7 Nights / 8 Days",
             startingPrice: 18500,
-            image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070&auto=format&fit=crop",
-            gallery: ["https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070&auto=format&fit=crop"],
+            image: "/Kashmir%20Great%20Lakes%20Trek/Kashmir%20Great%20Lakes%20Trek%20(1).jpeg",
+            gallery: [
+                "/Kashmir%20Great%20Lakes%20Trek/Kashmir%20Great%20Lakes%20Trek%20(1).jpeg",
+                "/Kashmir%20Great%20Lakes%20Trek/Kashmir%20Great%20Lakes%20Trek%20(2).jpeg",
+                "/Kashmir%20Great%20Lakes%20Trek/Kashmir%20Great%20Lakes%20Trek%20(3).jpeg",
+                "/Kashmir%20Great%20Lakes%20Trek/Kashmir%20Great%20Lakes%20Trek%20(4).jpeg",
+                "/Kashmir%20Great%20Lakes%20Trek/Kashmir%20Great%20Lakes%20Trek%20(5).jpeg",
+                "/Kashmir%20Great%20Lakes%20Trek/Kashmir%20Great%20Lakes%20Trek%20(6).jpeg",
+                "/Kashmir%20Great%20Lakes%20Trek/Kashmir%20Great%20Lakes%20Trek%20(7).jpeg"
+            ],
             category: "Adventure",
             location: "Sonmarg, Naranag",
             features: ["High Altitude", "Camping", "Trekking"],
@@ -400,8 +464,15 @@ async function main() {
             title: "Tulip Festival Special",
             duration: "3 Nights / 4 Days",
             startingPrice: 13999,
-            image: "https://images.unsplash.com/photo-1590822180415-4ef5ce2b4b4b?q=80&w=2070&auto=format&fit=crop",
-            gallery: ["https://images.unsplash.com/photo-1590822180415-4ef5ce2b4b4b?q=80&w=2070&auto=format&fit=crop"],
+            image: "/Tulip%20Festival%20Special/Tulip%20Festival%20Special%20(1).jpeg",
+            gallery: [
+                "/Tulip%20Festival%20Special/Tulip%20Festival%20Special%20(1).jpeg",
+                "/Tulip%20Festival%20Special/Tulip%20Festival%20Special%20(2).jpeg",
+                "/Tulip%20Festival%20Special/Tulip%20Festival%20Special%20(3).jpeg",
+                "/Tulip%20Festival%20Special/Tulip%20Festival%20Special%20(4).jpeg",
+                "/Tulip%20Festival%20Special/Tulip%20Festival%20Special%20(5).jpeg",
+                "/Tulip%20Festival%20Special/Tulip%20Festival%20Special%20(6).jpeg"
+            ],
             category: "Seasonal",
             location: "Srinagar",
             features: ["Tulip Garden", "Spring", "Photography"],
@@ -420,8 +491,16 @@ async function main() {
             title: "Autumn Chinar Tour",
             duration: "4 Nights / 5 Days",
             startingPrice: 14500,
-            image: "https://images.unsplash.com/photo-1508215582376-749e7054f15a?q=80&w=2070&auto=format&fit=crop",
-            gallery: ["https://images.unsplash.com/photo-1508215582376-749e7054f15a?q=80&w=2070&auto=format&fit=crop"],
+            image: "/Autumn%20Chinar%20Tour/Autumn%20Chinar%20Tour%20(1).jpeg",
+            gallery: [
+                "/Autumn%20Chinar%20Tour/Autumn%20Chinar%20Tour%20(1).jpeg",
+                "/Autumn%20Chinar%20Tour/Autumn%20Chinar%20Tour%20(2).jpeg",
+                "/Autumn%20Chinar%20Tour/Autumn%20Chinar%20Tour%20(3).jpeg",
+                "/Autumn%20Chinar%20Tour/Autumn%20Chinar%20Tour%20(4).jpeg",
+                "/Autumn%20Chinar%20Tour/Autumn%20Chinar%20Tour%20(5).jpeg",
+                "/Autumn%20Chinar%20Tour/Autumn%20Chinar%20Tour%20(6).jpeg",
+                "/Autumn%20Chinar%20Tour/Autumn%20Chinar%20Tour%20(7).jpeg"
+            ],
             category: "Seasonal",
             location: "Srinagar, Naseem Bagh",
             features: ["Fall Colors", "Photography", "Chinar"],
@@ -441,8 +520,15 @@ async function main() {
             title: "Ladies Special Retreat",
             duration: "5 Nights / 6 Days",
             startingPrice: 17999,
-            image: "https://images.unsplash.com/photo-1520962922320-2038eebab146?q=80&w=2070&auto=format&fit=crop",
-            gallery: ["https://images.unsplash.com/photo-1520962922320-2038eebab146?q=80&w=2070&auto=format&fit=crop"],
+            image: "/Ladies%20Special%20Retreat/Ladies%20Special%20Retreat%20(1).jpeg",
+            gallery: [
+                "/Ladies%20Special%20Retreat/Ladies%20Special%20Retreat%20(1).jpeg",
+                "/Ladies%20Special%20Retreat/Ladies%20Special%20Retreat%20(2).jpeg",
+                "/Ladies%20Special%20Retreat/Ladies%20Special%20Retreat%20(3).jpeg",
+                "/Ladies%20Special%20Retreat/Ladies%20Special%20Retreat%20(4).jpeg",
+                "/Ladies%20Special%20Retreat/Ladies%20Special%20Retreat%20(5).jpeg",
+                "/Ladies%20Special%20Retreat/Ladies%20Special%20Retreat%20(6).jpeg"
+            ],
             category: "Group",
             location: "Srinagar, Gulmarg, Pahalgam",
             features: ["Safe", "Shopping", "Relaxation"],
@@ -463,8 +549,15 @@ async function main() {
             title: "Photography Tour Kashmir",
             duration: "6 Nights / 7 Days",
             startingPrice: 21000,
-            image: "https://images.unsplash.com/photo-1428515613728-6e880345aa89?q=80&w=2070&auto=format&fit=crop",
-            gallery: ["https://images.unsplash.com/photo-1428515613728-6e880345aa89?q=80&w=2070&auto=format&fit=crop"],
+            image: "/Photography%20Tour%20Kashmir/Photography%20Tour%20Kashmir%20(1).jpeg",
+            gallery: [
+                "/Photography%20Tour%20Kashmir/Photography%20Tour%20Kashmir%20(1).jpeg",
+                "/Photography%20Tour%20Kashmir/Photography%20Tour%20Kashmir%20(2).jpeg",
+                "/Photography%20Tour%20Kashmir/Photography%20Tour%20Kashmir%20(3).jpeg",
+                "/Photography%20Tour%20Kashmir/Photography%20Tour%20Kashmir%20(4).jpeg",
+                "/Photography%20Tour%20Kashmir/Photography%20Tour%20Kashmir%20(5).jpeg",
+                "/Photography%20Tour%20Kashmir/Photography%20Tour%20Kashmir%20(6).jpeg"
+            ],
             category: "Hobby",
             location: "All Photogenic Spots",
             features: ["Golden Hour", "Local Life", "Landscapes"],
@@ -486,7 +579,20 @@ async function main() {
     for (const pkg of packages) {
         const p = await prisma.package.upsert({
             where: { slug: pkg.slug },
-            update: {},
+            update: {
+                title: pkg.title,
+                duration: pkg.duration,
+                startingPrice: pkg.startingPrice,
+                image: pkg.image,
+                gallery: JSON.stringify(pkg.gallery),
+                category: pkg.category,
+                location: pkg.location,
+                features: JSON.stringify(pkg.features),
+                overview: pkg.overview,
+                itinerary: JSON.stringify(pkg.itinerary),
+                inclusions: JSON.stringify(pkg.inclusions),
+                exclusions: JSON.stringify(pkg.exclusions),
+            },
             create: {
                 slug: pkg.slug,
                 title: pkg.title,

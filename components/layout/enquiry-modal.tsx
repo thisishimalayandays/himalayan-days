@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, MessageCircle, Phone, Send, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { createInquiry } from '@/app/actions/inquiries';
 
 interface EnquiryModalProps {
     isOpen: boolean;
@@ -19,21 +20,38 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
         message: ''
     });
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     useEffect(() => {
         setMounted(true);
         if (isOpen) {
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = 'unset';
+            setIsSubmitting(false);
         }
         return () => {
             document.body.style.overflow = 'unset';
         };
     }, [isOpen]);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsSubmitting(true);
 
+        try {
+            // 1. Save to Database
+            await createInquiry({
+                name: formData.name,
+                phone: formData.phone,
+                message: formData.message || "General Enquiry via Website Header",
+                type: "GENERAL"
+            });
+        } catch (error) {
+            console.error("Failed to save enquiry", error);
+        }
+
+        // 2. WhatsApp Redirect
         const message = `*Quick Enquiry from Website* \n\n` +
             `*Name:* ${formData.name}\n` +
             `*Phone:* ${formData.phone}\n` +
@@ -42,6 +60,8 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
 
         const encodedMessage = encodeURIComponent(message);
         window.open(`https://wa.me/917006604148?text=${encodedMessage}`, '_blank');
+
+        setIsSubmitting(false);
         onClose();
     };
 
@@ -126,9 +146,10 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
 
                                 <Button
                                     type="submit"
+                                    disabled={isSubmitting}
                                     className="w-full bg-gray-900 hover:bg-black text-white py-6 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 group"
                                 >
-                                    <span>Send Message</span>
+                                    <span>{isSubmitting ? 'Processing...' : 'Send Message'}</span>
                                     <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                 </Button>
 

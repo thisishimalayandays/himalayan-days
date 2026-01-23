@@ -3,6 +3,7 @@ import { Clock, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface PackageCardProps {
     packageData: {
@@ -26,15 +27,17 @@ export function PackageCard({ packageData, index = 0 }: PackageCardProps) {
         >
             {/* Image Container */}
             <Link href={`/packages/${packageData.slug}`} className="relative h-64 w-full overflow-hidden shrink-0 block">
-                <img
+                <Image
                     src={packageData.image}
                     alt={packageData.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
-                <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-bold text-primary uppercase tracking-wide shadow-sm">
+                <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-bold text-primary uppercase tracking-wide shadow-sm z-10">
                     {packageData.category}
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0" />
             </Link>
 
             {/* Content */}

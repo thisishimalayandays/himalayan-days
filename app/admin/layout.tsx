@@ -1,7 +1,10 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import Link from "next/link";
-import { Home, Map, Package, Settings, LogOut } from "lucide-react";
+import { getInquiryStats } from "@/app/actions/inquiries";
+import { AdminSidebar } from "@/components/admin/admin-sidebar";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { Menu } from "lucide-react";
 
 export default async function AdminLayout({
     children,
@@ -14,37 +17,38 @@ export default async function AdminLayout({
         redirect("/api/auth/signin?callbackUrl=/admin");
     }
 
+    const { pending: pendingInquiries } = await getInquiryStats();
+
     return (
-        <div className="flex h-screen bg-gray-100 font-sans">
-            <aside className="w-64 bg-white shadow-md flex flex-col">
-                <div className="p-6 border-b">
-                    <h1 className="text-xl font-bold text-gray-800">Admin Panel</h1>
-                    <p className="text-sm text-gray-500">Himalayan Days</p>
-                </div>
-                <nav className="flex-1 p-4 space-y-1">
-                    <Link href="/admin" className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
-                        <Home className="w-5 h-5" />
-                        Dashboard
-                    </Link>
-                    <Link href="/admin/packages" className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
-                        <Package className="w-5 h-5" />
-                        Packages
-                    </Link>
-                    <Link href="/admin/destinations" className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
-                        <Map className="w-5 h-5" />
-                        Destinations
-                    </Link>
-                </nav>
-                <div className="p-4 border-t">
-                    <Link href="/api/auth/signout" className="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                        <LogOut className="w-5 h-5" />
-                        Sign Out
-                    </Link>
-                </div>
+        <div className="flex h-screen bg-gray-100 font-sans overflow-hidden">
+            {/* Desktop Sidebar */}
+            <aside className="hidden md:flex w-64 bg-white shadow-md flex-col border-r h-full">
+                <AdminSidebar pendingInquiries={pendingInquiries} />
             </aside>
-            <main className="flex-1 p-8 overflow-y-auto">
-                {children}
-            </main>
+
+            {/* Main Content Area */}
+            <div className="flex-1 flex flex-col h-full overflow-hidden">
+                {/* Mobile Header with Hamburger */}
+                <header className="md:hidden bg-white border-b p-4 flex items-center justify-between sticky top-0 z-10">
+                    <h1 className="font-bold text-gray-800">Admin Panel</h1>
+                    <Sheet>
+                        <SheetTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                                <Menu className="w-5 h-5" />
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side="left" className="p-0 w-72">
+                            {/* Pass a dummy onClick to close sheet? No, simple link navigation usually works but better to use a client wrapper if we want auto-close. 
+                                For now, default link behavior + standard Sheet is fine. */}
+                            <AdminSidebar pendingInquiries={pendingInquiries} />
+                        </SheetContent>
+                    </Sheet>
+                </header>
+
+                <main className="flex-1 p-4 md:p-8 overflow-y-auto">
+                    {children}
+                </main>
+            </div>
         </div>
     );
 }

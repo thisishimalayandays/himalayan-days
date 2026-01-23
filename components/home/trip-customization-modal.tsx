@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, User, Phone, Wallet, Map, Clock, Plane } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { createInquiry, InquiryInput } from '@/app/actions/inquiries';
 
 interface TripCustomizationModalProps {
     isOpen: boolean;
@@ -13,6 +14,7 @@ interface TripCustomizationModalProps {
 
 export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationModalProps) {
     const [mounted, setMounted] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
@@ -35,10 +37,32 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
         };
     }, [isOpen]);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsSubmitting(true);
 
-        // Construct WhatsApp Message
+        try {
+            // 1. Save to Database
+            const inquiryData: InquiryInput = {
+                name: formData.name,
+                phone: formData.phone,
+                startDate: formData.date ? new Date(formData.date).toISOString() : undefined,
+                budget: formData.budget,
+                type: "PLAN_MY_TRIP",
+                // Construct a message with extra details not directly mapped
+                message: `Duration: ${formData.duration} days, Type: ${formData.type}`,
+                travelers: undefined // Not explicitly asked in this form, maybe infer or leave blank
+            };
+
+            // We don't await this to block the user, or maybe we should? 
+            // Better to try save, but ensure redirect happens regardless.
+            await createInquiry(inquiryData);
+
+        } catch (error) {
+            console.error("Failed to save inquiry", error);
+        }
+
+        // 2. Construct WhatsApp Message
         const message = `*New Trip Enquiry via Website* \n\n` +
             `*Name:* ${formData.name}\n` +
             `*Phone:* ${formData.phone}\n` +
@@ -50,6 +74,8 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
 
         const encodedMessage = encodeURIComponent(message);
         window.open(`https://wa.me/917006604148?text=${encodedMessage}`, '_blank');
+
+        setIsSubmitting(false);
         onClose();
     };
 
@@ -224,10 +250,11 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
 
                                 <Button
                                     type="submit"
+                                    disabled={isSubmitting}
                                     className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold h-12 rounded-xl shadow-lg hover:shadow-xl hover:shadow-[#25D366]/20 transition-all text-lg flex items-center justify-center gap-2 mt-2"
                                 >
                                     <Phone className="w-5 h-5 fill-current" />
-                                    Get Quote on WhatsApp
+                                    {isSubmitting ? 'Processing...' : 'Get Quote on WhatsApp'}
                                 </Button>
 
                                 <p className="text-xs text-center text-gray-400 mt-2">

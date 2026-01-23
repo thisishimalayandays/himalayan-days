@@ -1,10 +1,13 @@
 'use client';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Phone, CheckCircle2 } from 'lucide-react';
 import { useState } from 'react';
+import { createInquiry, InquiryInput } from '@/app/actions/inquiries';
 
-export function BookingForm({ packageTitle }: { packageTitle?: string }) {
-    const [countryCode, setCountryCode] = useState('+91');
+export function BookingForm({ packageTitle, packageId }: { packageTitle?: string, packageId?: string }) {
+    const [countryIso, setCountryIso] = useState('IN');
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
@@ -13,74 +16,94 @@ export function BookingForm({ packageTitle }: { packageTitle?: string }) {
     });
 
     const countryCodes = [
-        { code: '+91', label: '🇮🇳 India (+91)' },
-        { code: '+1', label: '🇺🇸 USA (+1)' },
-        { code: '+44', label: '🇬🇧 UK (+44)' },
-        { code: '+971', label: '🇦🇪 UAE (+971)' },
-        { code: '+61', label: '🇦🇺 Australia (+61)' },
-        { code: '+1', label: '🇨🇦 Canada (+1)' },
-        { code: '+65', label: '🇸🇬 Singapore (+65)' },
-        { code: '+60', label: '🇲🇾 Malaysia (+60)' },
-        { code: '+81', label: '🇯🇵 Japan (+81)' },
-        { code: '+49', label: '🇩🇪 Germany (+49)' },
-        { code: '+33', label: '🇫🇷 France (+33)' },
-        { code: '+966', label: '🇸🇦 Saudi Arabia (+966)' },
-        { code: '+974', label: '🇶🇦 Qatar (+974)' },
-        { code: '+965', label: '🇰🇼 Kuwait (+965)' },
-        { code: '+968', label: '🇴🇲 Oman (+968)' },
-        { code: '+973', label: '🇧🇭 Bahrain (+973)' },
-        { code: '+880', label: '🇧🇩 Bangladesh (+880)' },
-        { code: '+94', label: '🇱🇰 Sri Lanka (+94)' },
-        { code: '+977', label: '🇳🇵 Nepal (+977)' },
-        { code: '+66', label: '🇹🇭 Thailand (+66)' },
-        { code: '+62', label: '🇮🇩 Indonesia (+62)' },
-        { code: '+63', label: '🇵🇭 Philippines (+63)' },
-        { code: '+84', label: '🇻🇳 Vietnam (+84)' },
-        { code: '+86', label: '🇨🇳 China (+86)' },
-        { code: '+852', label: '🇭🇰 Hong Kong (+852)' },
-        { code: '+82', label: '🇰🇷 South Korea (+82)' },
-        { code: '+39', label: '🇮🇹 Italy (+39)' },
-        { code: '+34', label: '🇪🇸 Spain (+34)' },
-        { code: '+31', label: '🇳🇱 Netherlands (+31)' },
-        { code: '+41', label: '🇨🇭 Switzerland (+41)' },
-        { code: '+46', label: '🇸🇪 Sweden (+46)' },
-        { code: '+47', label: '🇳🇴 Norway (+47)' },
-        { code: '+45', label: '🇩🇰 Denmark (+45)' },
-        { code: '+353', label: '🇮🇪 Ireland (+353)' },
-        { code: '+32', label: '🇧🇪 Belgium (+32)' },
-        { code: '+43', label: '🇦🇹 Austria (+43)' },
-        { code: '+48', label: '🇵🇱 Poland (+48)' },
-        { code: '+351', label: '🇵🇹 Portugal (+351)' },
-        { code: '+30', label: '🇬🇷 Greece (+30)' },
-        { code: '+90', label: '🇹🇷 Turkey (+90)' },
-        { code: '+7', label: '🇷🇺 Russia (+7)' },
-        { code: '+20', label: '🇪🇬 Egypt (+20)' },
-        { code: '+27', label: '🇿🇦 South Africa (+27)' },
-        { code: '+254', label: '🇰🇪 Kenya (+254)' },
-        { code: '+55', label: '🇧🇷 Brazil (+55)' },
-        { code: '+52', label: '🇲🇽 Mexico (+52)' },
-        { code: '+54', label: '🇦🇷 Argentina (+54)' },
-        { code: '+64', label: '🇳🇿 New Zealand (+64)' },
-        { code: '+92', label: '🇵🇰 Pakistan (+92)' },
-        { code: '+93', label: '🇦🇫 Afghanistan (+93)' },
-        { code: '+95', label: '🇲🇲 Myanmar (+95)' },
-        { code: '+960', label: '🇲🇻 Maldives (+960)' },
-        { code: '+975', label: '🇧🇹 Bhutan (+975)' },
-        { code: '+98', label: '🇮🇷 Iran (+98)' },
-        { code: '+964', label: '🇮🇶 Iraq (+964)' },
-        { code: '+972', label: '🇮🇱 Israel (+972)' },
+        { code: '+91', iso: 'IN', label: 'India' },
+        { code: '+1', iso: 'US', label: 'USA' },
+        { code: '+44', iso: 'GB', label: 'UK' },
+        { code: '+971', iso: 'AE', label: 'UAE' },
+        { code: '+61', iso: 'AU', label: 'Australia' },
+        { code: '+1', iso: 'CA', label: 'Canada' },
+        { code: '+65', iso: 'SG', label: 'Singapore' },
+        { code: '+60', iso: 'MY', label: 'Malaysia' },
+        { code: '+81', iso: 'JP', label: 'Japan' },
+        { code: '+49', iso: 'DE', label: 'Germany' },
+        { code: '+33', iso: 'FR', label: 'France' },
+        { code: '+966', iso: 'SA', label: 'Saudi Arabia' },
+        { code: '+974', iso: 'QA', label: 'Qatar' },
+        { code: '+965', iso: 'KW', label: 'Kuwait' },
+        { code: '+968', iso: 'OM', label: 'Oman' },
+        { code: '+973', iso: 'BH', label: 'Bahrain' },
+        { code: '+880', iso: 'BD', label: 'Bangladesh' },
+        { code: '+94', iso: 'LK', label: 'Sri Lanka' },
+        { code: '+977', iso: 'NP', label: 'Nepal' },
+        { code: '+66', iso: 'TH', label: 'Thailand' },
+        { code: '+62', iso: 'ID', label: 'Indonesia' },
+        { code: '+63', iso: 'PH', label: 'Philippines' },
+        { code: '+84', iso: 'VN', label: 'Vietnam' },
+        { code: '+86', iso: 'CN', label: 'China' },
+        { code: '+852', iso: 'HK', label: 'Hong Kong' },
+        { code: '+82', iso: 'KR', label: 'South Korea' },
+        { code: '+39', iso: 'IT', label: 'Italy' },
+        { code: '+34', iso: 'ES', label: 'Spain' },
+        { code: '+31', iso: 'NL', label: 'Netherlands' },
+        { code: '+41', iso: 'CH', label: 'Switzerland' },
+        { code: '+46', iso: 'SE', label: 'Sweden' },
+        { code: '+47', iso: 'NO', label: 'Norway' },
+        { code: '+45', iso: 'DK', label: 'Denmark' },
+        { code: '+353', iso: 'IE', label: 'Ireland' },
+        { code: '+32', iso: 'BE', label: 'Belgium' },
+        { code: '+43', iso: 'AT', label: 'Austria' },
+        { code: '+48', iso: 'PL', label: 'Poland' },
+        { code: '+351', iso: 'PT', label: 'Portugal' },
+        { code: '+30', iso: 'GR', label: 'Greece' },
+        { code: '+90', iso: 'TR', label: 'Turkey' },
+        { code: '+7', iso: 'RU', label: 'Russia' },
+        { code: '+20', iso: 'EG', label: 'Egypt' },
+        { code: '+27', iso: 'ZA', label: 'South Africa' },
+        { code: '+254', iso: 'KE', label: 'Kenya' },
+        { code: '+55', iso: 'BR', label: 'Brazil' },
+        { code: '+52', iso: 'MX', label: 'Mexico' },
+        { code: '+54', iso: 'AR', label: 'Argentina' },
+        { code: '+64', iso: 'NZ', label: 'New Zealand' },
+        { code: '+93', iso: 'AF', label: 'Afghanistan' },
+        { code: '+95', iso: 'MM', label: 'Myanmar' },
+        { code: '+960', iso: 'MV', label: 'Maldives' },
+        { code: '+975', iso: 'BT', label: 'Bhutan' },
+        { code: '+98', iso: 'IR', label: 'Iran' },
+        { code: '+964', iso: 'IQ', label: 'Iraq' },
     ];
 
     // Get today's date for min attribute
     const today = new Date().toISOString().split('T')[0];
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const fullPhone = `${countryCode} ${formData.phone}`;
+        setIsSubmitting(true);
+        const selectedCountry = countryCodes.find(c => c.iso === countryIso);
+        const code = selectedCountry?.code || '+91';
+        const fullPhone = `${code} ${formData.phone}`;
+
+        // 1. Save to Database
+        try {
+            const inquiryData: InquiryInput = {
+                name: formData.name,
+                phone: fullPhone,
+                startDate: formData.date ? new Date(formData.date).toISOString() : undefined,
+                type: "PACKAGE_BOOKING",
+                travelers: parseInt(formData.guests) || undefined,
+                message: packageTitle ? `Booking Inquiry for Package: ${packageTitle}` : "General Booking Inquiry",
+                packageId: packageId
+            };
+            await createInquiry(inquiryData);
+        } catch (error) {
+            console.error("Failed to save booking inquiry", error);
+        }
+
+        // 2. WhatsApp Redirect
         const packageNameText = packageTitle ? `\nPackage: *${packageTitle}*` : '';
         const message = `Hello, I am interested in booking a package.${packageNameText}\n\nName: ${formData.name}\nPhone: ${fullPhone}\nDate: ${formData.date}\nGuests: ${formData.guests}`;
         const whatsappUrl = `https://wa.me/918825039323?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, '_blank');
+        setIsSubmitting(false);
     };
 
     return (
@@ -108,17 +131,27 @@ export function BookingForm({ packageTitle }: { packageTitle?: string }) {
                 <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-700">Phone Number</label>
                     <div className="flex gap-2">
-                        <select
-                            value={countryCode}
-                            onChange={(e) => setCountryCode(e.target.value)}
-                            className="w-[140px] px-2 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm bg-white"
-                        >
-                            {countryCodes.map((c, i) => (
-                                <option key={i} value={c.code}>
-                                    {c.label}
-                                </option>
-                            ))}
-                        </select>
+                        <Select value={countryIso} onValueChange={setCountryIso}>
+                            <SelectTrigger className="w-[140px] px-2 h-10 border-gray-200 bg-white">
+                                <SelectValue placeholder="Code" />
+                            </SelectTrigger>
+                            <SelectContent className="max-h-[300px]">
+                                {countryCodes.map((c) => (
+                                    <SelectItem key={c.iso} value={c.iso}>
+                                        <div className="flex items-center gap-2">
+                                            <img
+                                                src={`https://flagcdn.com/w20/${c.iso.toLowerCase()}.png`}
+                                                srcSet={`https://flagcdn.com/w40/${c.iso.toLowerCase()}.png 2x`}
+                                                width="20"
+                                                alt={c.iso}
+                                                className="object-contain"
+                                            />
+                                            <span>{c.code}</span>
+                                        </div>
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                         <input
                             required
                             type="tel"
@@ -165,8 +198,8 @@ export function BookingForm({ packageTitle }: { packageTitle?: string }) {
                     </div>
                 </div>
 
-                <Button type="submit" className="w-full bg-primary hover:bg-orange-600 text-lg font-semibold h-12">
-                    Send Enquiry
+                <Button type="submit" disabled={isSubmitting} className="w-full bg-primary hover:bg-orange-600 text-lg font-semibold h-12">
+                    {isSubmitting ? 'Processing...' : 'Send Enquiry'}
                 </Button>
             </form>
 
