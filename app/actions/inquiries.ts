@@ -1,5 +1,6 @@
 'use server';
 
+import { sendInquiryNotification } from '@/lib/email';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
@@ -32,6 +33,20 @@ export async function createInquiry(data: InquiryInput) {
         const inquiry = await prisma.inquiry.create({
             data: inquiryData,
         });
+
+        // Send Email Notification (Fire and forget, don't block response)
+        const packageTitle = validated.packageId ?
+            (await prisma.package.findUnique({ where: { id: validated.packageId }, select: { title: true } }))?.title
+            : undefined;
+
+        sendInquiryNotification({
+            name: validated.name,
+            email: validated.email || '',
+            phone: validated.phone,
+            type: validated.type,
+            message: validated.message,
+            packageName: packageTitle
+        }).catch(err => console.error('Background email failed:', err));
 
         return { success: true, inquiryId: inquiry.id };
     } catch (error) {
