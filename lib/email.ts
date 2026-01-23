@@ -25,64 +25,81 @@ export async function sendInquiryNotification(data: EmailPayload) {
             subject: `🔔 New Lead: ${data.name} - ${data.type}`,
             html: `
                 <!DOCTYPE html>
-                <html>
+                <html lang="en">
                 <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>New Inquiry</title>
                     <style>
-                        body { font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; }
-                        .container { max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; }
-                        .header { background-color: #f97316; padding: 20px; text-align: center; color: white; }
-                        .content { padding: 30px; background-color: #ffffff; }
-                        .field { margin-bottom: 15px; border-bottom: 1px solid #f0f0f0; padding-bottom: 10px; }
-                        .label { font-weight: bold; color: #666; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
-                        .value { font-size: 16px; margin-top: 5px; color: #000; }
-                        .btn { display: inline-block; background-color: #000; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 20px; }
-                        .footer { background-color: #f9f9f9; padding: 15px; text-align: center; font-size: 12px; color: #999; }
+                        body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f5f5f7; color: #1d1d1f; -webkit-font-smoothing: antialiased; }
+                        .wrapper { width: 100%; padding: 40px 0; background-color: #f5f5f7; }
+                        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 24px; box-shadow: 0 4px 24px rgba(0,0,0,0.06); overflow: hidden; }
+                        .header { padding: 40px 40px 20px; text-align: left; }
+                        .logo { font-size: 18px; font-weight: 600; color: #f97316; letter-spacing: -0.5px; text-transform: uppercase; }
+                        .hero { font-size: 32px; font-weight: 700; line-height: 1.1; margin-top: 12px; color: #000; letter-spacing: -0.03em; }
+                        .content { padding: 10px 40px 40px; }
+                        .section { margin-bottom: 32px; }
+                        .label { font-size: 12px; font-weight: 600; color: #86868b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+                        .value { font-size: 17px; line-height: 1.5; color: #1d1d1f; font-weight: 400; }
+                        .value.highlight { font-weight: 600; }
+                        .message-box { background-color: #f5f5f7; padding: 24px; border-radius: 16px; margin-top: 8px; font-size: 16px; line-height: 1.6; color: #424245; }
+                        .tag { display: inline-block; background-color: #f5f5f7; color: #1d1d1f; padding: 6px 12px; border-radius: 8px; font-size: 14px; font-weight: 600; }
+                        .btn-container { margin-top: 40px; text-align: left; }
+                        .btn { display: inline-block; background-color: #000000; color: #ffffff; text-decoration: none; padding: 16px 32px; border-radius: 99px; font-size: 16px; font-weight: 500; transition: background-color 0.2s ease; }
+                        .btn:hover { background-color: #333333; }
+                        .footer { padding: 30px 40px; text-align: center; color: #86868b; font-size: 13px; }
+                        .divider { height: 1px; background-color: #f0f0f0; margin: 24px 0; }
+                        a { color: #0066cc; text-decoration: none; }
+                        a:hover { text-decoration: underline; }
                     </style>
                 </head>
                 <body>
-                    <div class="container">
-                        <div class="header">
-                            <h1 style="margin:0; font-size: 24px;">New Website Inquiry</h1>
-                        </div>
-                        <div class="content">
-                            <div class="field">
-                                <div class="label">Customer Name</div>
-                                <div class="value">${data.name}</div>
+                    <div class="wrapper">
+                        <div class="container">
+                            <div class="header">
+                                <div class="logo">Himalayan Days</div>
+                                <div class="hero">New Inquiry Receive.</div>
                             </div>
                             
-                            <div class="field">
-                                <div class="label">Phone Number</div>
-                                <div class="value"><a href="tel:${data.phone}" style="color: #f97316; text-decoration: none;">${data.phone}</a></div>
-                            </div>
+                            <div class="content">
+                                <div class="section">
+                                    <div class="label">Customer Details</div>
+                                    <div class="value highlight">${data.name}</div>
+                                    <div class="value"><a href="tel:${data.phone}" style="color: #1d1d1f; text-decoration: none;">${data.phone}</a></div>
+                                    ${data.email ? `<div class="value"><a href="mailto:${data.email}">${data.email}</a></div>` : ''}
+                                </div>
 
-                            <div class="field">
-                                <div class="label">Inquiry Type</div>
-                                <div class="value" style="display: inline-block; background: #fff7ed; color: #c2410c; padding: 4px 12px; rounded: 4px; font-size: 14px; border-radius: 999px;">${data.type}</div>
-                            </div>
+                                <div class="divider"></div>
 
-                            ${data.email ? `
-                            <div class="field">
-                                <div class="label">Email Address</div>
-                                <div class="value"><a href="mailto:${data.email}">${data.email}</a></div>
-                            </div>` : ''}
+                                <div class="section">
+                                    <div class="label">Inquiry Info</div>
+                                    <div style="margin-bottom: 8px;">
+                                        <span class="tag">${data.type}</span>
+                                    </div>
+                                    ${data.packageName ? `<div class="value" style="margin-top: 8px;">Interested in: <strong>${data.packageName}</strong></div>` : ''}
+                                </div>
 
-                            ${data.packageName ? `
-                            <div class="field">
-                                <div class="label">Interested Package</div>
-                                <div class="value" style="font-weight: bold;">${data.packageName}</div>
-                            </div>` : ''}
+                                <div class="section">
+                                    <div class="label">Message</div>
+                                    <div class="message-box">
+                                        ${data.message || 'No specific requirements mentioned.'}
+                                    </div>
+                                </div>
+                                
+                                <div class="section" style="margin-bottom: 0;">
+                                    <div class="label">Submission Timestamp</div>
+                                    <div class="value" style="font-size: 13px; color: #86868b; font-family: monospace;">
+                                        ${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "full", timeStyle: "medium" })}
+                                    </div>
+                                </div>
 
-                            <div class="field" style="border-bottom: none;">
-                                <div class="label">Message</div>
-                                <div class="value" style="background: #f8f8f8; padding: 15px; border-radius: 6px;">${data.message || 'No specific message provided.'}</div>
-                            </div>
-
-                            <div style="text-align: center; margin-top: 30px;">
-                                <a href="https://himalayandays.in/admin/inquiries" class="btn">Manage in Dashboard</a>
+                                <div class="btn-container">
+                                    <a href="https://himalayandays.in/admin/inquiries" class="btn">View in Dashboard</a>
+                                </div>
                             </div>
                         </div>
                         <div class="footer">
-                            Sent automatically from Himalayan Days Website
+                            <p style="margin: 0;">Sent via Himalayan Days system.</p>
                         </div>
                     </div>
                 </body>
