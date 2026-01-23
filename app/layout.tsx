@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 import { Toaster } from "@/components/ui/toaster";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -49,8 +50,9 @@ export default function RootLayout({
         className={`${inter.variable} antialiased font-sans`}
       >
         {children}
-        <Toaster />
         <WhatsAppButton />
+        <Toaster />
+        <Analytics />
       </body>
     </html>
   );
