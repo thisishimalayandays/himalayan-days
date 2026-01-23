@@ -20,7 +20,7 @@ export async function sendInquiryNotification(data: EmailPayload) {
     try {
         // 1. Notify Admin (You)
         await resend.emails.send({
-            from: 'admin@himalayandays.in', // Official Sender
+            from: 'onboarding@resend.dev', // Default sender for testing/unverified domains
             to: 'thisishimalayandays@gmail.com', // Agency email
             subject: `🔔 New Lead: ${data.name} - ${data.type}`,
             html: `
