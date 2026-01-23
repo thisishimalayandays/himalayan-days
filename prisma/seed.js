@@ -25,7 +25,7 @@ async function main() {
     const destinations = [
         {
             name: "Srinagar",
-            image: "https://images.unsplash.com/photo-1595846519845-68e298c2edd8?q=80&w=2070&auto=format&fit=crop",
+            image: "/Destinations/Srinagar.jpeg",
             description: "The summer capital, famous for Dal Lake, Houseboats, and Mughal Gardens.",
             slug: "Srinagar",
             rating: 4.8,
@@ -33,7 +33,7 @@ async function main() {
         },
         {
             name: "Gulmarg",
-            image: "https://images.unsplash.com/photo-1518335965426-30233e72dc02?q=80&w=2070&auto=format&fit=crop",
+            image: "/Destinations/Gulmarg.jpeg",
             description: "The 'Meadow of Flowers', known for the world's highest gondola and skiing.",
             slug: "Gulmarg",
             rating: 4.9,
@@ -41,7 +41,7 @@ async function main() {
         },
         {
             name: "Pahalgam",
-            image: "https://images.unsplash.com/photo-1595133642055-6b5cf0d08ec8?q=80&w=2070&auto=format&fit=crop",
+            image: "/Destinations/Pahalgham.jpeg",
             description: "The 'Valley of Shepherds', bringing you closer to nature, rivers, and treks.",
             slug: "Pahalgam",
             rating: 4.7,
@@ -49,7 +49,7 @@ async function main() {
         },
         {
             name: "Sonmarg",
-            image: "https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=2076&auto=format&fit=crop",
+            image: "/Destinations/Sonmarg.jpeg",
             description: "The 'Meadow of Gold', gateway to Ladakh and home to the Thajiwas Glacier.",
             slug: "Sonmarg",
             rating: 4.8,
@@ -57,7 +57,7 @@ async function main() {
         },
         {
             name: "Gurez Valley",
-            image: "https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?q=80&w=2070&auto=format&fit=crop",
+            image: "/Destinations/Gurez%20Valley.jpeg",
             description: "An offbeat gem along the silk route, offering pristine beauty and solitude.",
             slug: "Gurez",
             rating: 4.9,
@@ -65,7 +65,7 @@ async function main() {
         },
         {
             name: "Doodhpathri",
-            image: "https://images.unsplash.com/photo-1620888961730-a151b75cb604?q=80&w=2070&auto=format&fit=crop",
+            image: "/Destinations/Doodhpathri.jpeg",
             description: "The 'Valley of Milk', a lush green meadow perfect for day picnics.",
             slug: "Doodhpathri",
             rating: 4.6,
@@ -73,7 +73,7 @@ async function main() {
         },
         {
             name: "Yusmarg",
-            image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=2070&auto=format&fit=crop",
+            image: "/Destinations/Yusmarg%20Kashmir.jpeg",
             description: "A hidden paradise with vast meadows and pine forests, ideal for trekkers.",
             slug: "Yusmarg",
             rating: 4.7,
@@ -81,7 +81,7 @@ async function main() {
         },
         {
             name: "Aru Valley",
-            image: "https://images.unsplash.com/photo-1620888961730-a151b75cb604?q=80&w=2070&auto=format&fit=crop",
+            image: "/Destinations/Aru%20Valley.jpeg",
             description: "A pristine scenic village known for its lush meadows, hiking trails, and camping sites.",
             slug: "Aru-Valley",
             rating: 4.8,
@@ -89,7 +89,7 @@ async function main() {
         },
         {
             name: "Sinthan Top",
-            image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070&auto=format&fit=crop",
+            image: "/Destinations/Sinthan%20Top.jpeg",
             description: "A mountain pass connecting Breng Valley with Kishtwar, offering 360-degree views of snow-capped peaks.",
             slug: "Sinthan-Top",
             rating: 4.9,
@@ -97,7 +97,7 @@ async function main() {
         },
         {
             name: "Verinag",
-            image: "https://images.unsplash.com/photo-1595846519845-68e298c2edd8?q=80&w=2070&auto=format&fit=crop",
+            image: "/Destinations/Verinag.jpeg",
             description: "Home to the famous Mughal Garden and the spring source of the Jhelum River.",
             slug: "Verinag",
             rating: 4.6,
