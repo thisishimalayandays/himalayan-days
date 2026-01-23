@@ -1,5 +1,6 @@
 'use client';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 export function Intro() {
@@ -22,9 +23,11 @@ export function Intro() {
                     </div>
 
                     <div className="pt-2">
-                        <Button size="lg" className="h-14 px-10 rounded-full text-lg shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all">
-                            Read More About Us
-                        </Button>
+                        <Link href="/about">
+                            <Button size="lg" className="h-14 px-10 rounded-full text-lg shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all">
+                                Read More About Us
+                            </Button>
+                        </Link>
                     </div>
                 </div>
 
