@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { createDestination, updateDestination } from '@/app/actions/destinations';
+import { ImageUpload } from '@/components/ui/image-upload';
 
 interface DestinationData {
     id?: string;
@@ -19,6 +20,7 @@ interface DestinationData {
 export default function DestinationForm({ initialData, isNew }: { initialData?: DestinationData | null, isNew: boolean }) {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [image, setImage] = useState(initialData?.image || '');
 
     async function handleSubmit(formData: FormData) {
         setIsSubmitting(true);
@@ -68,8 +70,12 @@ export default function DestinationForm({ initialData, isNew }: { initialData?: 
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
-                <input name="image" defaultValue={initialData?.image} required className="w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border" placeholder="https://..." />
+                <label className="block text-sm font-medium text-gray-700 mb-1">Destination Image</label>
+                <input type="hidden" name="image" value={image} />
+                <ImageUpload
+                    value={image}
+                    onChange={(url) => setImage(url)}
+                />
             </div>
 
             <div>

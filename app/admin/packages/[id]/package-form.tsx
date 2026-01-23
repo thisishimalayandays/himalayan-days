@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Plus, Trash, GripVertical, Loader2 } from 'lucide-react';
 import { createPackage, updatePackage } from '@/app/actions/packages';
+import { ImageUpload } from '@/components/ui/image-upload';
 
 interface ItineraryItem {
     day: number;
@@ -33,6 +34,7 @@ export default function PackageForm({ initialData, isNew }: { initialData?: Pack
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // State for dynamic fields
+    const [image, setImage] = useState(initialData?.image || '');
     const [gallery, setGallery] = useState<string[]>(initialData?.gallery || []);
     const [features, setFeatures] = useState<string[]>(initialData?.features || []);
     const [inclusions, setInclusions] = useState<string[]>(initialData?.inclusions || []);
@@ -143,8 +145,12 @@ export default function PackageForm({ initialData, isNew }: { initialData?: Pack
                         </select>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Main Image URL</label>
-                        <input name="image" defaultValue={initialData?.image} required className="w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border" />
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Main Image</label>
+                        <input type="hidden" name="image" value={image} />
+                        <ImageUpload
+                            value={image}
+                            onChange={setImage}
+                        />
                     </div>
                     <div className="md:col-span-2">
                         <label className="block text-sm font-medium text-gray-700 mb-1">Overview</label>
@@ -199,26 +205,22 @@ export default function PackageForm({ initialData, isNew }: { initialData?: Pack
                         <Plus size={16} /> Add Image
                     </button>
                 </div>
-                <div className="grid grid-cols-1 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     {gallery.map((url, index) => (
                         <div key={index} className="border-b border-gray-100 pb-2 mb-2 last:border-0 last:mb-0 last:pb-0">
-                            <div className="flex gap-2">
-                                <input
+                            <div className="flex gap-2 items-center">
+                                <ImageUpload
                                     value={url}
-                                    onChange={(e) => updateGalleryImage(index, e.target.value)}
-                                    placeholder="Image URL (http://...)"
-                                    className="flex-1 border-gray-300 rounded p-2 border shadow-sm"
+                                    onChange={(newUrl) => updateGalleryImage(index, newUrl)}
+                                    className="flex-1"
                                 />
-                                <button type="button" onClick={() => removeGalleryImage(index)} className="text-red-500 hover:text-red-700 p-2"><Trash size={18} /></button>
+                                <button type="button" onClick={() => removeGalleryImage(index)} className="text-red-500 hover:text-red-700 p-2 bg-gray-50 rounded-full"><Trash size={18} /></button>
                             </div>
                             <div className="flex justify-end mt-1">
                                 <button
                                     type="button"
                                     onClick={() => {
-                                        const imageInput = document.querySelector('input[name="image"]') as HTMLInputElement;
-                                        if (imageInput) {
-                                            imageInput.value = url;
-                                        }
+                                        setImage(url);
                                         alert("Image set as Main Thumbnail!");
                                     }}
                                     className="text-xs text-orange-600 hover:text-orange-700 font-medium disabled:opacity-50 flex items-center gap-1"
