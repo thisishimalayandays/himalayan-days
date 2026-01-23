@@ -84,7 +84,7 @@ export function Footer() {
                     <NewsletterForm />
                     <div className="mt-8 space-y-3">
                         <div className="flex items-center gap-3 text-sm text-gray-400">
-                            <Phone className="w-4 h-4 text-primary" /> +91-8825039323
+                            <Phone className="w-4 h-4 text-primary" /> +91-9103901803
                         </div>
                         <div className="flex items-center gap-3 text-sm text-gray-400">
                             <Mail className="w-4 h-4 text-primary" /> thisishimalayandays@gmail.com

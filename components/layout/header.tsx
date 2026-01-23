@@ -91,8 +91,8 @@ export function Header() {
                                 </Link>
                             ))}
                             <div className="flex flex-col gap-3 mt-2">
-                                <a href="tel:+918825039323" className="flex items-center justify-center gap-2 text-gray-700 font-medium py-2 bg-gray-50 rounded-md">
-                                    <Phone className="w-4 h-4" /> +91-8825039323
+                                <a href="tel:+919103901803" className="flex items-center justify-center gap-2 text-gray-700 font-medium py-2 bg-gray-50 rounded-md">
+                                    <Phone className="w-4 h-4" /> +91-9103901803
                                 </a>
                                 <Button
                                     className="w-full bg-primary text-white"
