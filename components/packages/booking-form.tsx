@@ -101,7 +101,7 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
         // 2. WhatsApp Redirect
         const packageNameText = packageTitle ? `\nPackage: *${packageTitle}*` : '';
         const message = `Hello, I am interested in booking a package.${packageNameText}\n\nName: ${formData.name}\nPhone: ${fullPhone}\nDate: ${formData.date}\nGuests: ${formData.guests}`;
-        const whatsappUrl = `https://wa.me/918825039323?text=${encodeURIComponent(message)}`;
+        const whatsappUrl = `https://wa.me/919103901803?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, '_blank');
         setIsSubmitting(false);
     };
@@ -205,8 +205,8 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
 
             <div className="p-4 bg-gray-50 text-center border-t border-gray-100">
                 <p className="text-sm text-gray-500 mb-2">Or call our travel expert</p>
-                <a href="tel:+918825039323" className="flex items-center justify-center gap-2 text-primary font-bold text-lg hover:underline">
-                    <Phone className="w-5 h-5" /> +91-8825039323
+                <a href="tel:+919103901803" className="flex items-center justify-center gap-2 text-primary font-bold text-lg hover:underline">
+                    <Phone className="w-5 h-5" /> +91-9103901803
                 </a>
             </div>
 

@@ -59,7 +59,7 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
             `Please connect with me.`;
 
         const encodedMessage = encodeURIComponent(message);
-        window.open(`https://wa.me/917006604148?text=${encodedMessage}`, '_blank');
+        window.open(`https://wa.me/919103901803?text=${encodedMessage}`, '_blank');
 
         setIsSubmitting(false);
         onClose();
@@ -155,7 +155,7 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
 
                                 <div className="text-center">
                                     <p className="text-xs text-gray-400">
-                                        Prefer a call? <a href="tel:+917006604148" className="text-primary hover:underline font-medium">+91-7006604148</a>
+                                        Prefer a call? <a href="tel:+919103901803" className="text-primary hover:underline font-medium">+91-9103901803</a>
                                     </p>
                                 </div>
                             </form>

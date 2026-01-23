@@ -73,7 +73,7 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
             `Please provide a quote.`;
 
         const encodedMessage = encodeURIComponent(message);
-        window.open(`https://wa.me/917006604148?text=${encodedMessage}`, '_blank');
+        window.open(`https://wa.me/919103901803?text=${encodedMessage}`, '_blank');
 
         setIsSubmitting(false);
         onClose();

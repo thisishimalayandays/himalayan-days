@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 
 export function WhatsAppButton() {
-    const phoneNumber = '918825039323';
+    const phoneNumber = '919103901803';
     const message = 'Hello! I am interested in planning a memorable trip to Kashmir with Himalayan Days. Could you please assist me with packages and details?';
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 

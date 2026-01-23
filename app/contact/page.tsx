@@ -25,7 +25,7 @@ export default function ContactPage() {
 
         const fullName = `${formData.firstName} ${formData.lastName}`;
         const message = `Hello, I have an enquiry from the website.\n\nName: ${fullName}\nPhone: ${formData.phone}\nEmail: ${formData.email}\nMessage: ${formData.message}`;
-        const whatsappUrl = `https://wa.me/918825039323?text=${encodeURIComponent(message)}`;
+        const whatsappUrl = `https://wa.me/919103901803?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, '_blank');
 
         setIsSubmitting(false);
@@ -68,7 +68,7 @@ export default function ContactPage() {
                                 <div>
                                     <h3 className="text-xl font-bold text-gray-900">Phone Support</h3>
                                     <p className="text-gray-600 mb-2">24/7 Support for your travel needs.</p>
-                                    <a href="tel:+918825039323" className="text-lg font-bold text-gray-900 hover:text-primary transition-colors block">+91-8825039323</a>
+                                    <a href="tel:+919103901803" className="text-lg font-bold text-gray-900 hover:text-primary transition-colors block">+91-9103901803</a>
                                 </div>
                             </div>
 

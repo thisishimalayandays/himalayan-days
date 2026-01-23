@@ -56,9 +56,9 @@ export function Header() {
 
                 {/* Actions */}
                 <div className="hidden md:flex items-center gap-6 md:justify-self-end">
-                    <a href="tel:+918825039323" className={cn("flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors", scrolled ? "text-gray-700" : "text-white")}>
+                    <a href="tel:+919103901803" className={cn("flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors", scrolled ? "text-gray-700" : "text-white")}>
                         <Phone className="w-4 h-4" />
-                        +91-8825039323
+                        +91-9103901803
                     </a>
                     <Button
                         variant="default"
