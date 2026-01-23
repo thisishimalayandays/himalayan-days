@@ -58,7 +58,7 @@ export async function sendInquiryNotification(data: EmailPayload) {
                         <div class="container">
                             <div class="header">
                                 <div class="logo">Himalayan Days</div>
-                                <div class="hero">New Inquiry Receive.</div>
+                                <div class="hero">New Inquiry Received.</div>
                             </div>
                             
                             <div class="content">
