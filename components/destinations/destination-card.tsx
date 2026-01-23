@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Star, ArrowRight } from 'lucide-react';
-import type { Destination } from '@/lib/data';
+import type { Destination } from '@/lib/types';
 
 interface DestinationCardProps {
     destination: Destination;
