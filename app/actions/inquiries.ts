@@ -30,6 +30,26 @@ export async function createInquiry(data: InquiryInput) {
             startDate: validated.startDate ? new Date(validated.startDate) : null,
         };
 
+        // Rate Limiting: Check if same phone number submitted in last 5 minutes
+        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+        const recentInquiry = await prisma.inquiry.findFirst({
+            where: {
+                phone: validated.phone,
+                createdAt: {
+                    gte: fiveMinutesAgo
+                }
+            }
+        });
+
+        if (recentInquiry) {
+            console.log("Rate limit hit for phone:", validated.phone);
+            // Return success to fool bots, or specific error? 
+            // Better to just return error so genuine users know why if they double clicked.
+            // But for spam protection, maybe silent fail?
+            // Let's return a friendly error.
+            return { success: false, error: "You have already submitted a request recently. Please try again later." };
+        }
+
         const inquiry = await prisma.inquiry.create({
             data: inquiryData,
         });
