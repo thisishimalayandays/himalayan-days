@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     creator: '@himalayandays',
   },
   icons: {
-    icon: '/tourismlogo.png',
+    icon: '/Himalayan%20Days%20Logo.png',
   },
   verification: {
     google: 'C9b0QmnsuBqPEFcDsZvPCCX_6zGN9pUoyBvI4FkPvtM',
