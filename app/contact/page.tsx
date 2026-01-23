@@ -90,8 +90,9 @@ export default function ContactPage() {
                                 <div>
                                     <h3 className="text-xl font-bold text-gray-900">Our Office</h3>
                                     <p className="text-gray-600 text-lg">
-                                        Malabagh Naseem Bagh Srinagar,<br />
-                                        190006, Jammu and Kashmir, India
+                                        Himalayan Days/Kashmir Tour and Travel Agency,<br />
+                                        Malabagh, Naseem bagh, Omer Colony B, Lal Bazar,<br />
+                                        Srinagar, Jammu and Kashmir 190006
                                     </p>
                                 </div>
                             </div>
@@ -189,7 +190,7 @@ export default function ContactPage() {
                 {/* Map Embed */}
                 <div className="mt-24 w-full h-[400px] rounded-2xl overflow-hidden bg-gray-200 grayscale hover:grayscale-0 transition-all duration-500">
                     <iframe
-                        src="https://maps.google.com/maps?q=Mala+bagh+Naseem+bagh+Srinagar&t=&z=16&ie=UTF8&iwloc=B&output=embed"
+                        src="https://maps.google.com/maps?q=Himalayan%20Days%2FKashmir%20Tour%20and%20Travel%20Agency%2C%20Malabagh%2C%20Naseem%20bagh%2C%20Omer%20Colony%20B%2C%20Lal%20Bazar%2C%20Srinagar%2C%20Jammu%20and%20Kashmir%20190006&t=&z=16&ie=UTF8&iwloc=B&output=embed"
                         width="100%"
                         height="100%"
                         style={{ border: 0 }}
