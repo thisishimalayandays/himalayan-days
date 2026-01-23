@@ -29,7 +29,8 @@ async function main() {
             description: "The summer capital, famous for Dal Lake, Houseboats, and Mughal Gardens.",
             slug: "Srinagar",
             rating: 4.8,
-            reviews: 1240
+            reviews: 1240,
+            wikipediaUrl: "https://en.wikipedia.org/wiki/Srinagar"
         },
         {
             name: "Gulmarg",
@@ -37,7 +38,8 @@ async function main() {
             description: "The 'Meadow of Flowers', known for the world's highest gondola and skiing.",
             slug: "Gulmarg",
             rating: 4.9,
-            reviews: 980
+            reviews: 980,
+            wikipediaUrl: "https://en.wikipedia.org/wiki/Gulmarg"
         },
         {
             name: "Pahalgam",
@@ -45,7 +47,8 @@ async function main() {
             description: "The 'Valley of Shepherds', bringing you closer to nature, rivers, and treks.",
             slug: "Pahalgam",
             rating: 4.7,
-            reviews: 850
+            reviews: 850,
+            wikipediaUrl: "https://en.wikipedia.org/wiki/Pahalgam"
         },
         {
             name: "Sonmarg",
@@ -53,7 +56,8 @@ async function main() {
             description: "The 'Meadow of Gold', gateway to Ladakh and home to the Thajiwas Glacier.",
             slug: "Sonmarg",
             rating: 4.8,
-            reviews: 620
+            reviews: 620,
+            wikipediaUrl: "https://en.wikipedia.org/wiki/Sonamarg"
         },
         {
             name: "Gurez Valley",
@@ -61,7 +65,8 @@ async function main() {
             description: "An offbeat gem along the silk route, offering pristine beauty and solitude.",
             slug: "Gurez",
             rating: 4.9,
-            reviews: 150
+            reviews: 150,
+            wikipediaUrl: "https://en.wikipedia.org/wiki/Gurez_Valley"
         },
         {
             name: "Doodhpathri",
@@ -69,7 +74,8 @@ async function main() {
             description: "The 'Valley of Milk', a lush green meadow perfect for day picnics.",
             slug: "Doodhpathri",
             rating: 4.6,
-            reviews: 340
+            reviews: 340,
+            wikipediaUrl: "https://en.wikipedia.org/wiki/Doodhpathri"
         },
         {
             name: "Yusmarg",
@@ -77,7 +83,8 @@ async function main() {
             description: "A hidden paradise with vast meadows and pine forests, ideal for trekkers.",
             slug: "Yusmarg",
             rating: 4.7,
-            reviews: 210
+            reviews: 210,
+            wikipediaUrl: "https://en.wikipedia.org/wiki/Yusmarg"
         },
         {
             name: "Aru Valley",
@@ -85,7 +92,8 @@ async function main() {
             description: "A pristine scenic village known for its lush meadows, hiking trails, and camping sites.",
             slug: "Aru-Valley",
             rating: 4.8,
-            reviews: 450
+            reviews: 450,
+            wikipediaUrl: "https://en.wikipedia.org/wiki/Aru_Valley"
         },
         {
             name: "Sinthan Top",
@@ -93,7 +101,8 @@ async function main() {
             description: "A mountain pass connecting Breng Valley with Kishtwar, offering 360-degree views of snow-capped peaks.",
             slug: "Sinthan-Top",
             rating: 4.9,
-            reviews: 320
+            reviews: 320,
+            wikipediaUrl: "https://en.wikipedia.org/wiki/Sinthan_Top"
         },
         {
             name: "Verinag",
@@ -101,7 +110,8 @@ async function main() {
             description: "Home to the famous Mughal Garden and the spring source of the Jhelum River.",
             slug: "Verinag",
             rating: 4.6,
-            reviews: 280
+            reviews: 280,
+            wikipediaUrl: "https://en.wikipedia.org/wiki/Verinag_Spring"
         }
     ];
 
@@ -113,7 +123,8 @@ async function main() {
                 image: dest.image,
                 description: dest.description,
                 rating: dest.rating,
-                reviews: dest.reviews
+                reviews: dest.reviews,
+                wikipediaUrl: dest.wikipediaUrl
             },
             create: {
                 name: dest.name,
@@ -121,7 +132,8 @@ async function main() {
                 image: dest.image,
                 description: dest.description,
                 rating: dest.rating,
-                reviews: dest.reviews
+                reviews: dest.reviews,
+                wikipediaUrl: dest.wikipediaUrl
             }
         });
         console.log(`Created destination: ${d.name}`);

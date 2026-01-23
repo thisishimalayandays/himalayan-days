@@ -1,9 +1,6 @@
 'use client';
 
-import { DestinationMapModal } from '@/components/destinations/destination-map-modal';
-import { useState } from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
 import { Star, MapPin } from 'lucide-react';
 import { Destination } from '@/lib/data';
 
@@ -12,29 +9,9 @@ interface PopularDestinationsProps {
 }
 
 export function PopularDestinations({ destinations }: PopularDestinationsProps) {
-    const [mapModalOpen, setMapModalOpen] = useState(false);
-    const [selectedDest, setSelectedDest] = useState("");
-
-    const handleExplore = (e: React.MouseEvent, destName: string) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        if (destName === "Aru Valley") {
-            setSelectedDest(destName);
-            setMapModalOpen(true);
-        } else {
-            // Default behavior for others (scroll to packages mainly, or separate page)
-            // For now, let's just log or do nothing special beyond default link if it was a link
-            // But here we are modifying the "Explore" button which wraps logic.
-            // If wikipedia URL exists, maybe we open that?
-            // Existing code opened wikipedia. Let's keep that logic for non-Aru.
-        }
-    };
-
     return (
         <section className="py-24 bg-gray-50">
             <div className="container mx-auto px-4">
-                {/* ... (keep header) */}
                 <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
                     <span className="text-primary font-bold tracking-wider uppercase text-sm">Explore Kashmir</span>
                     <h2 className="text-4xl md:text-5xl font-bold text-gray-900 tracking-tight">Popular Destinations</h2>
@@ -44,7 +21,7 @@ export function PopularDestinations({ destinations }: PopularDestinationsProps) 
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {destinations.map((dest, idx) => (
+                    {destinations.map((dest) => (
                         <div
                             key={dest.id}
                             className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
@@ -77,37 +54,22 @@ export function PopularDestinations({ destinations }: PopularDestinationsProps) 
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="flex items-center text-primary font-medium text-sm group-hover:underline w-fit"
-                                        onClick={(e) => {
-                                            if (dest.name === "Aru Valley") {
-                                                handleExplore(e, dest.name);
-                                            } else {
-                                                e.stopPropagation();
-                                            }
-                                        }}
+                                        onClick={(e) => e.stopPropagation()}
                                     >
                                         <MapPin className="w-4 h-4 mr-1" />
                                         Explore {dest.name}
                                     </a>
                                 ) : (
-                                    <button
-                                        onClick={(e) => handleExplore(e, dest.name)}
-                                        className="flex items-center text-primary font-medium text-sm group-hover:underline w-fit"
-                                    >
+                                    <span className="flex items-center text-gray-400 font-medium text-sm w-fit cursor-default">
                                         <MapPin className="w-4 h-4 mr-1" />
                                         Explore {dest.name}
-                                    </button>
+                                    </span>
                                 )}
                             </div>
                         </div>
                     ))}
                 </div>
             </div>
-
-            <DestinationMapModal
-                isOpen={mapModalOpen}
-                onClose={() => setMapModalOpen(false)}
-                destinationName={selectedDest}
-            />
         </section >
     );
 }
