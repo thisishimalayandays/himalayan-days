@@ -1,7 +1,15 @@
+'use client';
+
 import { DestinationMapModal } from '@/components/destinations/destination-map-modal';
 import { useState } from 'react';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { Star, MapPin } from 'lucide-react';
+import { Destination } from '@/lib/data';
 
-// ... (keep props interface)
+interface PopularDestinationsProps {
+    destinations: Destination[];
+}
 
 export function PopularDestinations({ destinations }: PopularDestinationsProps) {
     const [mapModalOpen, setMapModalOpen] = useState(false);
