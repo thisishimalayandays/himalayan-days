@@ -7,7 +7,7 @@ async function main() {
     console.log('Start seeding ...');
 
     // Create Admin User
-    const hashedPassword = await bcrypt.hash('admin123', 10);
+    const hashedPassword = await bcrypt.hash('n0ml^tiT/7|nr6yr,j49!!w)K#49J,', 10);
     const user = await prisma.user.upsert({
         where: { email: 'admin@himalayandays.in' },
         update: {

@@ -22,6 +22,34 @@ export default async function Home() {
   return (
     <main className="min-h-screen font-sans">
       <Header />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "TravelAgency",
+            "name": "Himalayan Days",
+            "url": "https://himalayandays.in",
+            "logo": "https://himalayandays.in/tourismlogo.png",
+            "description": "Your trusted partner for authentic Kashmir experiences.",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Srinagar",
+              "addressRegion": "Jammu and Kashmir",
+              "addressCountry": "IN"
+            },
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "telephone": "+91-9103901803",
+              "contactType": "customer service"
+            },
+            "sameAs": [
+              "https://instagram.com/himalayandays",
+              "https://facebook.com/himalayandays"
+            ]
+          })
+        }}
+      />
       <Hero />
       <Intro />
       <WhyChooseUs />

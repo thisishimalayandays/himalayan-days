@@ -45,7 +45,7 @@ export default function ContactPage() {
             <PageHeader
                 title="Contact Us"
                 description="Get in touch with our travel experts to plan your dream Kashmir vacation."
-                image="https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=2076&auto=format&fit=crop"
+                image="/Destinations/Srinagar.jpeg"
             />
 
             <div className="container mx-auto px-4 py-24">

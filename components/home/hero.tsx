@@ -20,6 +20,7 @@ export function Hero() {
                     loop
                     muted
                     playsInline
+                    poster="/Destinations/Gulmarg.jpeg"
                     className="absolute top-1/2 left-1/2 w-full h-full object-cover -translate-x-1/2 -translate-y-1/2 pointer-events-none"
                 >
                     <source src="/Hero_Video_Trimmed.mp4" type="video/mp4" />

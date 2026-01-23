@@ -1,5 +1,9 @@
-'use client';
-import { statistics } from '@/lib/data';
+const statistics = [
+    { label: "Happy Travelers", value: "1,500+" },
+    { label: "Destinations", value: "50+" },
+    { label: "Years Experience", value: "12+" },
+    { label: "4.9/5 Rating", value: "Google Reviews" }
+];
 import { motion } from 'framer-motion';
 
 export function StatsSection() {

@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { Star, MapPin } from 'lucide-react';
-import { Destination } from '@/lib/data';
+import { Destination } from '@/lib/types';
 
 interface PopularDestinationsProps {
     destinations: Destination[];

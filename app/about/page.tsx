@@ -18,7 +18,7 @@ export default function AboutPage() {
             <PageHeader
                 title="About Us"
                 description="Your trusted partner for authentic Kashmir experiences since 2012."
-                image="https://images.unsplash.com/photo-1595846519845-68e298c2edd8?q=80&w=2070&auto=format&fit=crop"
+                image="/Destinations/Gulmarg.jpeg"
             />
 
             <div className="container mx-auto px-4 py-24 space-y-24">

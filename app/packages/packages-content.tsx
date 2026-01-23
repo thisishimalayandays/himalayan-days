@@ -58,7 +58,7 @@ export function PackagesContent({ packages }: { packages: Package[] }) {
             <PageHeader
                 title="Our Tour Packages"
                 description="Explore our wide range of curated Kashmir holiday packages designed for every traveler."
-                image="https://images.unsplash.com/photo-1566837945700-30057527ade0?q=80&w=2070&auto=format&fit=crop"
+                image="/Destinations/Pahalgham.jpeg"
             />
 
             <div className="container mx-auto px-4 py-16">

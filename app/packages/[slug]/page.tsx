@@ -57,6 +57,30 @@ export default async function PackagePage({ params }: { params: Promise<{ slug: 
         <main className="min-h-screen font-sans bg-white">
             <div className="bg-black/80"><Header /></div> {/* Dark header for contrast */}
 
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "Product",
+                        "name": pkg.title,
+                        "description": pkg.overview,
+                        "image": pkg.image,
+                        "offers": {
+                            "@type": "Offer",
+                            "priceCurrency": "INR",
+                            "price": pkg.startingPrice,
+                            "availability": "https://schema.org/InStock"
+                        },
+                        "aggregateRating": {
+                            "@type": "AggregateRating",
+                            "ratingValue": "4.9",
+                            "reviewCount": "150"
+                        }
+                    })
+                }}
+            />
+
             <PackageHero
                 title={pkg.title}
                 image={pkg.image}

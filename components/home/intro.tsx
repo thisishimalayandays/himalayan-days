@@ -41,6 +41,7 @@ export function Intro() {
                             muted={true}
                             loop={true}
                             playsInline={true}
+                            poster="/Destinations/Pahalgham.jpeg"
                             className="w-full h-full object-cover scale-110 will-change-transform"
                         />
                     </div>

@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
-import { packages } from '@/lib/data';
+import { prisma } from '@/lib/prisma';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://himalayandays.in';
 
     // Static routes
@@ -18,11 +18,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }));
 
     // Dynamic package routes
+    const packages = await prisma.package.findMany({
+        select: { slug: true, updatedAt: true }
+    });
+
     const packageRoutes = packages.map((pkg) => ({
         url: `${baseUrl}/packages/${pkg.slug}`,
-        lastModified: new Date(),
+        lastModified: pkg.updatedAt,
         changeFrequency: 'weekly' as const,
-        priority: 0.9, // Higher priority for products/packages
+        priority: 0.9,
     }));
 
     return [...routes, ...packageRoutes];
