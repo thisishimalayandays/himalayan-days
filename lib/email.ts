@@ -22,17 +22,71 @@ export async function sendInquiryNotification(data: EmailPayload) {
         await resend.emails.send({
             from: 'onboarding@resend.dev', // Default sender for testing/unverified domains
             to: 'thisishimalayandays@gmail.com', // Agency email
-            subject: `New Inquiry: ${data.name} (${data.type})`,
+            subject: `🔔 New Lead: ${data.name} - ${data.type}`,
             html: `
-                <h2>New Inquiry Received</h2>
-                <p><strong>Name:</strong> ${data.name}</p>
-                <p><strong>Phone:</strong> ${data.phone}</p>
-                <p><strong>Email:</strong> ${data.email || 'Not provided'}</p>
-                <p><strong>Type:</strong> ${data.type}</p>
-                ${data.packageName ? `<p><strong>Package:</strong> ${data.packageName}</p>` : ''}
-                <p><strong>Message:</strong> ${data.message || 'No message'}</p>
-                <br />
-                <p><a href="https://himalayandays.in/admin/inquiries">View in Dashboard</a></p>
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body { font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; }
+                        .container { max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; }
+                        .header { background-color: #f97316; padding: 20px; text-align: center; color: white; }
+                        .content { padding: 30px; background-color: #ffffff; }
+                        .field { margin-bottom: 15px; border-bottom: 1px solid #f0f0f0; padding-bottom: 10px; }
+                        .label { font-weight: bold; color: #666; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+                        .value { font-size: 16px; margin-top: 5px; color: #000; }
+                        .btn { display: inline-block; background-color: #000; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 20px; }
+                        .footer { background-color: #f9f9f9; padding: 15px; text-align: center; font-size: 12px; color: #999; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h1 style="margin:0; font-size: 24px;">New Website Inquiry</h1>
+                        </div>
+                        <div class="content">
+                            <div class="field">
+                                <div class="label">Customer Name</div>
+                                <div class="value">${data.name}</div>
+                            </div>
+                            
+                            <div class="field">
+                                <div class="label">Phone Number</div>
+                                <div class="value"><a href="tel:${data.phone}" style="color: #f97316; text-decoration: none;">${data.phone}</a></div>
+                            </div>
+
+                            <div class="field">
+                                <div class="label">Inquiry Type</div>
+                                <div class="value" style="display: inline-block; background: #fff7ed; color: #c2410c; padding: 4px 12px; rounded: 4px; font-size: 14px; border-radius: 999px;">${data.type}</div>
+                            </div>
+
+                            ${data.email ? `
+                            <div class="field">
+                                <div class="label">Email Address</div>
+                                <div class="value"><a href="mailto:${data.email}">${data.email}</a></div>
+                            </div>` : ''}
+
+                            ${data.packageName ? `
+                            <div class="field">
+                                <div class="label">Interested Package</div>
+                                <div class="value" style="font-weight: bold;">${data.packageName}</div>
+                            </div>` : ''}
+
+                            <div class="field" style="border-bottom: none;">
+                                <div class="label">Message</div>
+                                <div class="value" style="background: #f8f8f8; padding: 15px; border-radius: 6px;">${data.message || 'No specific message provided.'}</div>
+                            </div>
+
+                            <div style="text-align: center; margin-top: 30px;">
+                                <a href="https://himalayandays.in/admin/inquiries" class="btn">Manage in Dashboard</a>
+                            </div>
+                        </div>
+                        <div class="footer">
+                            Sent automatically from Himalayan Days Website
+                        </div>
+                    </div>
+                </body>
+                </html>
             `,
         });
 
@@ -41,7 +95,7 @@ export async function sendInquiryNotification(data: EmailPayload) {
             await resend.emails.send({
                 from: 'onboarding@resend.dev',
                 to: data.email,
-                subject: 'Thank you for contacting Himalayan Days',
+                subject: 'We successfully received your inquiry! 🏔️',
                 html: `
                     <h2>Hello ${data.name},</h2>
                     <p>Thank you for your interest in Himalayan Days! We have received your inquiry.</p>
