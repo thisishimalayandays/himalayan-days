@@ -30,6 +30,29 @@ interface ActivityItem {
     quantity: number;
 }
 
+// --- Helper Components (Moved Outside) ---
+const CurrencyInput = ({
+    value,
+    onChange,
+    placeholder = "0",
+}: {
+    value: number;
+    onChange: (val: number) => void;
+    placeholder?: string;
+}) => (
+    <div className="relative">
+        <span className="absolute left-3 top-2.5 text-gray-500">₹</span>
+        <Input
+            type="number"
+            min="0"
+            value={value || ""}
+            onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
+            className="pl-7"
+            placeholder={placeholder}
+        />
+    </div>
+);
+
 export default function CalculatorPage() {
     // --- State ---
     const [hotels, setHotels] = useState<HotelItem[]>([
@@ -42,6 +65,7 @@ export default function CalculatorPage() {
         { id: "1", name: "Shikara Ride", rate: 0, quantity: 1 },
     ]);
     const [commission, setCommission] = useState<number>(0);
+    const [isCopied, setIsCopied] = useState(false);
 
     // --- Calculations ---
     const calculateHotelTotal = () =>
@@ -115,30 +139,9 @@ _Generated via Himalayan Days Admin_`;
 
         navigator.clipboard.writeText(text);
         toast.success("Quote copied to clipboard!");
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000);
     };
-
-    // --- Render Helpers ---
-    const CurrencyInput = ({
-        value,
-        onChange,
-        placeholder = "0",
-    }: {
-        value: number;
-        onChange: (val: number) => void;
-        placeholder?: string;
-    }) => (
-        <div className="relative">
-            <span className="absolute left-3 top-2.5 text-gray-500">₹</span>
-            <Input
-                type="number"
-                min="0"
-                value={value || ""}
-                onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
-                className="pl-7"
-                placeholder={placeholder}
-            />
-        </div>
-    );
 
     return (
         <div className="p-8 max-w-5xl mx-auto space-y-8 pb-32">
@@ -151,8 +154,12 @@ _Generated via Himalayan Days Admin_`;
                     <Button variant="outline" onClick={resetCalculator}>
                         <RefreshCcw className="w-4 h-4 mr-2" /> Reset
                     </Button>
-                    <Button onClick={copyToClipboard} className="bg-emerald-600 hover:bg-emerald-700">
-                        <Copy className="w-4 h-4 mr-2" /> Copy Quote
+                    <Button
+                        onClick={copyToClipboard}
+                        className={`transition-all ${isCopied ? 'bg-green-600 hover:bg-green-700' : 'bg-emerald-600 hover:bg-emerald-700'}`}
+                    >
+                        {isCopied ? <CheckCircle2 className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
+                        {isCopied ? "Copied!" : "Copy Quote"}
                     </Button>
                 </div>
             </div>
@@ -425,8 +432,13 @@ _Generated via Himalayan Days Admin_`;
                                     </div>
                                 </div>
 
-                                <Button onClick={copyToClipboard} size="lg" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-200 shadow-xl">
-                                    <Copy className="w-4 h-4 mr-2" /> Copy Quote to Clipboard
+                                <Button
+                                    onClick={copyToClipboard}
+                                    size="lg"
+                                    className={`w-full text-white shadow-xl transition-all ${isCopied ? 'bg-green-600 hover:bg-green-700' : 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-200'}`}
+                                >
+                                    {isCopied ? <CheckCircle2 className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
+                                    {isCopied ? "Copied to Clipboard!" : "Copy Quote to Clipboard"}
                                 </Button>
 
                                 <div className="text-xs text-center text-gray-400">
