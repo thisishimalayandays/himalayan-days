@@ -3,7 +3,8 @@
 import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
 import { PDFDownloadLink } from '@react-pdf/renderer';
-import { ItineraryDocument, ItineraryData } from './itinerary-document';
+import { ItineraryDocument } from './itinerary-document';
+import { ItineraryData } from '@/app/admin/tools/itinerary-maker/page';
 
 import React from 'react';
 
