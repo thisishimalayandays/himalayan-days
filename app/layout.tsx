@@ -4,6 +4,7 @@ import "./globals.css";
 import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 import { Toaster } from "@/components/ui/toaster";
 import { Analytics } from "@vercel/analytics/react";
+import { ReCaptchaWrapper } from "@/components/providers/recaptcha-provider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -49,10 +50,12 @@ export default function RootLayout({
       <body
         className={`${inter.variable} antialiased font-sans`}
       >
-        {children}
-        <WhatsAppButton />
-        <Toaster />
-        <Analytics />
+        <ReCaptchaWrapper>
+          {children}
+          <WhatsAppButton />
+          <Toaster />
+          <Analytics />
+        </ReCaptchaWrapper>
       </body>
     </html>
   );

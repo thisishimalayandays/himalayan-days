@@ -16,6 +16,7 @@ const InquirySchema = z.object({
     message: z.string().optional(),
     type: z.enum(["GENERAL", "PACKAGE_BOOKING", "PLAN_MY_TRIP"]),
     packageId: z.string().optional(),
+    captchaToken: z.string().optional(),
 });
 
 export type InquiryInput = z.infer<typeof InquirySchema>;
@@ -24,37 +25,45 @@ export async function createInquiry(data: InquiryInput) {
     try {
         const validated = InquirySchema.parse(data);
 
-        // Convert startDate string to Date object if present
+        // Verify ReCAPTCHA if token is provided (or enforce it if you want strict security)
+        if (validated.captchaToken) {
+            try {
+                const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        secret: process.env.RECAPTCHA_SECRET_KEY!,
+                        response: validated.captchaToken,
+                    }),
+                });
+                const data = await response.json();
+                if (!data.success || (data.score !== undefined && data.score < 0.5)) {
+                    console.error("Spam detected:", data);
+                    return { success: false, error: "Spam detected. Please try again later." };
+                }
+            } catch (error) {
+                console.error("Captcha verification failed:", error);
+                return { success: false, error: "Security check failed." };
+            }
+        } else {
+            // Optional: Return error if you want to force captcha for all inquiries
+            // return { success: false, error: "Security check missing." };
+        }
+
         const inquiryData = {
-            ...validated,
+            name: validated.name,
+            email: validated.email,
+            phone: validated.phone,
+            destination: validated.destination,
             startDate: validated.startDate ? new Date(validated.startDate) : null,
+            travelers: validated.travelers,
+            budget: validated.budget,
+            message: validated.message,
+            type: validated.type,
+            packageId: validated.packageId
         };
 
-        // Rate Limiting: Check if same phone number submitted in last 5 minutes
-        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-
-        // Normalize phone number for comparison (remove spaces, dashes)
-        const normalizedPhone = validated.phone.replace(/\s+/g, '').replace(/-/g, '');
-
-        // We can't easily query normalized in DB without a raw query or stored column, 
-        // so we'll fetch recent records and compare in JS (it's only 5 mins window, so small dataset)
-        const recentInquiries = await prisma.inquiry.findMany({
-            where: {
-                createdAt: {
-                    gte: fiveMinutesAgo
-                }
-            },
-            select: { phone: true }
-        });
-
-        const isRateLimited = recentInquiries.some(inq =>
-            inq.phone.replace(/\s+/g, '').replace(/-/g, '') === normalizedPhone
-        );
-
-        if (isRateLimited) {
-            console.log("Rate limit hit for phone:", validated.phone);
-            return { success: false, error: "You have already submitted a request recently. Please try again later." };
-        }
+        // Rate Limiting Removed
 
         const inquiry = await prisma.inquiry.create({
             data: inquiryData,

@@ -6,7 +6,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { Phone, Mail, MapPin, Clock } from 'lucide-react';
-import { GoogleReCaptchaProvider, useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 function ContactForm() {
     const { executeRecaptcha } = useGoogleReCaptcha();
@@ -162,110 +162,100 @@ function ContactForm() {
 
 export default function ContactPage() {
     return (
-        <GoogleReCaptchaProvider
-            reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "6LfpmFQsAAAAAJhFMk6rDTn5ybkvmdqGWw2l-s8v"}
-            scriptProps={{
-                async: false,
-                defer: false,
-                appendTo: "head",
-                nonce: undefined,
-            }}
-        >
-            <main className="min-h-screen bg-white font-sans">
-                <div className="bg-black/90"><Header /></div>
+        <main className="min-h-screen bg-white font-sans">
+            <div className="bg-black/90"><Header /></div>
 
-                <PageHeader
-                    title="Contact Us"
-                    description="Get in touch with our travel experts to plan your dream Kashmir vacation."
-                    image="/Destinations/Srinagar.jpeg"
-                />
+            <PageHeader
+                title="Contact Us"
+                description="Get in touch with our travel experts to plan your dream Kashmir vacation."
+                image="/Destinations/Srinagar.jpeg"
+            />
 
-                <div className="container mx-auto px-4 py-24">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-                        {/* Contact Info */}
-                        <div className="space-y-12">
-                            <div>
-                                <span className="text-primary font-bold uppercase tracking-widest text-sm">Get in Touch</span>
-                                <h2 className="text-4xl font-bold text-gray-900 mt-2">Ready to Start Your Journey?</h2>
-                                <p className="text-gray-600 mt-4 text-lg leading-relaxed">
-                                    Whether you have a question about packages, pricing, or need a custom itinerary, our team is ready to answer all your questions.
-                                </p>
-                            </div>
-
-                            <div className="space-y-8">
-                                <div className="flex items-start gap-6">
-                                    <div className="bg-primary/10 p-4 rounded-full text-primary">
-                                        <Phone className="w-6 h-6" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-xl font-bold text-gray-900">Phone Support</h3>
-                                        <p className="text-gray-600 mb-2">24/7 Support for your travel needs.</p>
-                                        <a href="tel:+919103901803" className="text-lg font-bold text-gray-900 hover:text-primary transition-colors block">+91-9103901803</a>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-start gap-6">
-                                    <div className="bg-primary/10 p-4 rounded-full text-primary">
-                                        <Mail className="w-6 h-6" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-xl font-bold text-gray-900">Email Us</h3>
-                                        <p className="text-gray-600 mb-2">We usually reply within 24 hours.</p>
-                                        <a href="mailto:thisishimalayandays@gmail.com" className="text-lg font-bold text-gray-900 hover:text-primary transition-colors">thisishimalayandays@gmail.com</a>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-start gap-6">
-                                    <div className="bg-primary/10 p-4 rounded-full text-primary">
-                                        <MapPin className="w-6 h-6" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-xl font-bold text-gray-900">Our Office</h3>
-                                        <p className="text-gray-600 text-lg">
-                                            Himalayan Days/Kashmir Tour and Travel Agency,<br />
-                                            Malabagh, Naseem bagh, Omer Colony B, Lal Bazar,<br />
-                                            Srinagar, Jammu and Kashmir 190006
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-start gap-6">
-                                    <div className="bg-primary/10 p-4 rounded-full text-primary">
-                                        <Clock className="w-6 h-6" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-xl font-bold text-gray-900">Business Hours</h3>
-                                        <p className="text-gray-600 text-lg">
-                                            Mon - Sat: 09:00 AM - 08:00 PM<br />
-                                            Sunday: Closed
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+            <div className="container mx-auto px-4 py-24">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                    {/* Contact Info */}
+                    <div className="space-y-12">
+                        <div>
+                            <span className="text-primary font-bold uppercase tracking-widest text-sm">Get in Touch</span>
+                            <h2 className="text-4xl font-bold text-gray-900 mt-2">Ready to Start Your Journey?</h2>
+                            <p className="text-gray-600 mt-4 text-lg leading-relaxed">
+                                Whether you have a question about packages, pricing, or need a custom itinerary, our team is ready to answer all your questions.
+                            </p>
                         </div>
 
-                        {/* Contact Form */}
-                        <div className="bg-gray-50 p-8 md:p-12 rounded-3xl border border-gray-100">
-                            <ContactForm />
+                        <div className="space-y-8">
+                            <div className="flex items-start gap-6">
+                                <div className="bg-primary/10 p-4 rounded-full text-primary">
+                                    <Phone className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-gray-900">Phone Support</h3>
+                                    <p className="text-gray-600 mb-2">24/7 Support for your travel needs.</p>
+                                    <a href="tel:+919103901803" className="text-lg font-bold text-gray-900 hover:text-primary transition-colors block">+91-9103901803</a>
+                                </div>
+                            </div>
+
+                            <div className="flex items-start gap-6">
+                                <div className="bg-primary/10 p-4 rounded-full text-primary">
+                                    <Mail className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-gray-900">Email Us</h3>
+                                    <p className="text-gray-600 mb-2">We usually reply within 24 hours.</p>
+                                    <a href="mailto:thisishimalayandays@gmail.com" className="text-lg font-bold text-gray-900 hover:text-primary transition-colors">thisishimalayandays@gmail.com</a>
+                                </div>
+                            </div>
+
+                            <div className="flex items-start gap-6">
+                                <div className="bg-primary/10 p-4 rounded-full text-primary">
+                                    <MapPin className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-gray-900">Our Office</h3>
+                                    <p className="text-gray-600 text-lg">
+                                        Himalayan Days/Kashmir Tour and Travel Agency,<br />
+                                        Malabagh, Naseem bagh, Omer Colony B, Lal Bazar,<br />
+                                        Srinagar, Jammu and Kashmir 190006
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-start gap-6">
+                                <div className="bg-primary/10 p-4 rounded-full text-primary">
+                                    <Clock className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-gray-900">Business Hours</h3>
+                                    <p className="text-gray-600 text-lg">
+                                        Mon - Sat: 09:00 AM - 08:00 PM<br />
+                                        Sunday: Closed
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Map Embed */}
-                    <div className="mt-24 w-full h-[400px] rounded-2xl overflow-hidden bg-gray-200 grayscale hover:grayscale-0 transition-all duration-500">
-                        <iframe
-                            src="https://maps.google.com/maps?q=34.144059,74.828131&t=&z=16&ie=UTF8&iwloc=B&output=embed"
-                            width="100%"
-                            height="100%"
-                            style={{ border: 0 }}
-                            allowFullScreen
-                            loading="lazy"
-                            referrerPolicy="no-referrer-when-downgrade"
-                        />
+                    {/* Contact Form */}
+                    <div className="bg-gray-50 p-8 md:p-12 rounded-3xl border border-gray-100">
+                        <ContactForm />
                     </div>
                 </div>
 
-                <Footer />
-            </main>
-        </GoogleReCaptchaProvider>
+                {/* Map Embed */}
+                <div className="mt-24 w-full h-[400px] rounded-2xl overflow-hidden bg-gray-200 grayscale hover:grayscale-0 transition-all duration-500">
+                    <iframe
+                        src="https://maps.google.com/maps?q=34.144059,74.828131&t=&z=16&ie=UTF8&iwloc=B&output=embed"
+                        width="100%"
+                        height="100%"
+                        style={{ border: 0 }}
+                        allowFullScreen
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                    />
+                </div>
+            </div>
+
+            <Footer />
+        </main>
     )
 }

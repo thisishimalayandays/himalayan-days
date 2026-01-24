@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, MessageCircle, Phone, Send, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createInquiry } from '@/app/actions/inquiries';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 interface EnquiryModalProps {
     isOpen: boolean;
@@ -20,6 +21,7 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
         message: ''
     });
 
+    const { executeRecaptcha } = useGoogleReCaptcha();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
@@ -37,15 +39,24 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!executeRecaptcha) {
+            console.error("ReCAPTCHA not ready");
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {
+            const token = await executeRecaptcha('enquiry_modal_submit');
+
             // 1. Save to Database
             await createInquiry({
                 name: formData.name,
                 phone: formData.phone,
                 message: formData.message || "General Enquiry via Website Header",
-                type: "GENERAL"
+                type: "GENERAL",
+                captchaToken: token
             });
         } catch (error) {
             console.error("Failed to save enquiry", error);

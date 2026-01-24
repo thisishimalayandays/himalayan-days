@@ -4,8 +4,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Phone, CheckCircle2 } from 'lucide-react';
 import { useState } from 'react';
 import { createInquiry, InquiryInput } from '@/app/actions/inquiries';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 export function BookingForm({ packageTitle, packageId }: { packageTitle?: string, packageId?: string }) {
+    const { executeRecaptcha } = useGoogleReCaptcha();
     const [countryIso, setCountryIso] = useState('IN');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
@@ -77,6 +79,12 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!executeRecaptcha) {
+            console.error("ReCAPTCHA not ready");
+            return;
+        }
+
         setIsSubmitting(true);
         const selectedCountry = countryCodes.find(c => c.iso === countryIso);
         const code = selectedCountry?.code || '+91';
@@ -84,6 +92,8 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
 
         // 1. Save to Database
         try {
+            const token = await executeRecaptcha('booking_form_submit');
+
             const inquiryData: InquiryInput = {
                 name: formData.name,
                 phone: fullPhone,
@@ -91,7 +101,8 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
                 type: "PACKAGE_BOOKING",
                 travelers: parseInt(formData.guests) || undefined,
                 message: packageTitle ? `Booking Inquiry for Package: ${packageTitle}` : "General Booking Inquiry",
-                packageId: packageId
+                packageId: packageId,
+                captchaToken: token
             };
             await createInquiry(inquiryData);
         } catch (error) {

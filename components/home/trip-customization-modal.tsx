@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, User, Phone, Wallet, Map, Clock, Plane } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createInquiry, InquiryInput } from '@/app/actions/inquiries';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 interface TripCustomizationModalProps {
     isOpen: boolean;
@@ -13,6 +14,7 @@ interface TripCustomizationModalProps {
 }
 
 export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationModalProps) {
+    const { executeRecaptcha } = useGoogleReCaptcha();
     const [mounted, setMounted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
@@ -30,6 +32,7 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = 'unset';
+            setIsSubmitting(false); // Reset submitting state on close
         }
         return () => {
             document.body.style.overflow = 'unset';
@@ -39,9 +42,17 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!executeRecaptcha) {
+            console.error("ReCAPTCHA not ready");
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {
+            const token = await executeRecaptcha('trip_customization_submit');
+
             // 1. Save to Database
             const inquiryData: InquiryInput = {
                 name: formData.name,
@@ -51,7 +62,8 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
                 type: "PLAN_MY_TRIP",
                 // Construct a message with extra details not directly mapped
                 message: `Duration: ${formData.duration} days, Type: ${formData.type}`,
-                travelers: undefined // Not explicitly asked in this form, maybe infer or leave blank
+                travelers: undefined, // Not explicitly asked in this form, maybe infer or leave blank
+                captchaToken: token
             };
 
             // We don't await this to block the user, or maybe we should? 
