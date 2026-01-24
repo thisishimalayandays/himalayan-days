@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { Home, Map, Package, LogOut, MessageSquare, Mail, Calculator, FileText, KanbanSquare } from "lucide-react";
+import { Home, Map, Package, LogOut, MessageSquare, Mail, Calculator, FileText } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
@@ -68,20 +68,6 @@ export function AdminSidebar({ pendingInquiries, className, onItemClick }: Admin
                             {pendingInquiries}
                         </span>
                     )}
-                </Link>
-
-                <Link
-                    href="/admin/leads"
-                    onClick={onItemClick}
-                    className={cn(
-                        "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
-                        isActive("/admin/leads")
-                            ? "bg-orange-50 text-orange-600 font-medium"
-                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                    )}
-                >
-                    <KanbanSquare className="w-5 h-5" />
-                    Leads Pipeline
                 </Link>
             </nav>
             <div className="p-4 border-t">

@@ -15,8 +15,10 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calendar } from '@/components/ui/calendar';
 import { Mail, Phone, Calendar as CalendarIcon, MapPin, Trash2, RefreshCcw, FileDown, Eye } from 'lucide-react';
-import { softDeleteInquiry, restoreInquiry, permanentDeleteInquiry, markInquiryAsRead } from '@/app/actions/inquiries';
+import { softDeleteInquiry, restoreInquiry, permanentDeleteInquiry, markInquiryAsRead, updateInquiryStatus } from '@/app/actions/inquiries';
 import { useRouter } from 'next/navigation';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { toast } from 'sonner';
 
 interface Inquiry {
     id: string;
@@ -109,17 +111,45 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
         }
     };
 
-    const StatusBadge = ({ status }: { status: string }) => {
+    const StatusSelector = ({ id, status, isTrash }: { id: string, status: string, isTrash: boolean }) => {
+        if (isTrash) {
+            return <Badge variant="outline" className="bg-gray-100 text-gray-800 border-gray-200 capitalize">{status.toLowerCase()}</Badge>;
+        }
+
+        const handleStatusChange = async (newStatus: string) => {
+            // Optimistic update could go here, but router.refresh() is safer for now
+            const result = await updateInquiryStatus(id, newStatus);
+            if (result.success) {
+                toast.success(`Status updated to ${newStatus.toLowerCase()}`)
+                router.refresh();
+            } else {
+                toast.error("Failed to update status");
+            }
+        };
+
         const variants: any = {
             'PENDING': 'bg-yellow-100 text-yellow-800 border-yellow-200',
             'CONTACTED': 'bg-blue-100 text-blue-800 border-blue-200',
-            'CONVERTED': 'bg-green-100 text-green-800 border-green-200',
+            'INTERESTED': 'bg-purple-100 text-purple-800 border-purple-200',
+            'BOOKED': 'bg-green-100 text-green-800 border-green-200',
             'CLOSED': 'bg-gray-100 text-gray-800 border-gray-200',
         };
+
         return (
-            <Badge variant="outline" className={`${variants[status] || ''} capitalize`}>
-                {status.toLowerCase()}
-            </Badge>
+            <div onClick={e => e.stopPropagation()}>
+                <Select defaultValue={status} onValueChange={handleStatusChange}>
+                    <SelectTrigger className={`h-8 w-[130px] text-xs font-medium border-0 focus:ring-0 focus:ring-offset-0 capitalize ${variants[status] || ''}`}>
+                        <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="PENDING">Pending</SelectItem>
+                        <SelectItem value="CONTACTED">Contacted</SelectItem>
+                        <SelectItem value="INTERESTED">Interested</SelectItem>
+                        <SelectItem value="BOOKED">Booked</SelectItem>
+                        <SelectItem value="CLOSED">Closed/Lost</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
         );
     };
 
@@ -223,8 +253,8 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
                                     )}
                                 </div>
                             </TableCell>
-                            <TableCell className="w-[100px]">
-                                <StatusBadge status={inquiry.status} />
+                            <TableCell className="w-[140px]" onClick={e => e.stopPropagation()}>
+                                <StatusSelector id={inquiry.id} status={inquiry.status} isTrash={isTrash} />
                             </TableCell>
                             <TableCell className="text-right w-[100px]">
                                 <div className="flex justify-end gap-2">
