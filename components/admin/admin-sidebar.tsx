@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { Home, Map, Package, LogOut, MessageSquare, Mail, Calculator } from "lucide-react";
+import { Home, Map, Package, LogOut, MessageSquare, Mail, Calculator, FileText } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +22,7 @@ export function AdminSidebar({ pendingInquiries, className, onItemClick }: Admin
         { href: "/admin/destinations", label: "Destinations", icon: Map },
         { href: "/admin/subscribers", label: "Subscribers", icon: Mail },
         { href: "/admin/tools/calculator", label: "Calculator", icon: Calculator },
+        { href: "/admin/tools/itinerary-maker", label: "Itinerary Maker", icon: FileText },
     ];
 
     return (
