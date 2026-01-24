@@ -20,7 +20,34 @@ export async function sendContactEmail(formData: FormData) {
         email: formData.get('email'),
         phone: formData.get('phone'),
         message: formData.get('message'),
+        captchaToken: formData.get('captchaToken'),
     };
+
+    if (!rawData.captchaToken) {
+        return { success: false, message: "Captcha token missing." };
+    }
+
+    // Verify Captcha with Google
+    try {
+        const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                secret: process.env.RECAPTCHA_SECRET_KEY!,
+                response: rawData.captchaToken as string,
+            }),
+        });
+
+        const data = await response.json();
+        if (!data.success) {
+            return { success: false, message: "Captcha verification failed. Are you a robot?" };
+        }
+    } catch (error) {
+        console.error("Captcha verification error:", error);
+        return { success: false, message: "Captcha verification failed due to network error." };
+    }
 
     const validated = ContactSchema.safeParse(rawData);
 

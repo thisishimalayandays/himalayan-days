@@ -7,8 +7,11 @@ import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { Phone, Mail, MapPin, Clock } from 'lucide-react';
 
+import ReCAPTCHA from "react-google-recaptcha";
+
 export default function ContactPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [captchaToken, setCaptchaToken] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -19,6 +22,12 @@ export default function ContactPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!captchaToken) {
+            toast.error("Please complete the captcha challenge.");
+            return;
+        }
+
         setIsSubmitting(true);
 
         const formDataObj = new FormData();
@@ -27,6 +36,7 @@ export default function ContactPage() {
         formDataObj.append('email', formData.email);
         formDataObj.append('phone', formData.phone);
         formDataObj.append('message', formData.message);
+        formDataObj.append('captchaToken', captchaToken);
 
         try {
             const { sendContactEmail } = await import('@/app/actions/contact');
@@ -191,13 +201,19 @@ export default function ContactPage() {
                                 />
                             </div>
 
-                            <Button
-                                type="submit"
-                                disabled={isSubmitting}
-                                className="w-full bg-primary hover:bg-orange-600 text-lg font-bold h-14"
-                            >
-                                {isSubmitting ? 'Sending Message...' : 'Send Message'}
-                            </Button>
+                            <div className="space-y-4">
+                                <ReCAPTCHA
+                                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+                                    onChange={(token) => setCaptchaToken(token)}
+                                />
+                                <Button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className="w-full bg-primary hover:bg-orange-600 text-lg font-bold h-14"
+                                >
+                                    {isSubmitting ? 'Sending Message...' : 'Send Message'}
+                                </Button>
+                            </div>
                         </form>
                     </div>
                 </div>
