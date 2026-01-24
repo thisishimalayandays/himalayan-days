@@ -5,7 +5,9 @@ import { Download } from 'lucide-react';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { ItineraryDocument, ItineraryData } from './itinerary-document';
 
-export default function PDFExportButton({ data }: { data: ItineraryData }) {
+import React from 'react';
+
+const PDFExportButton = React.memo(({ data }: { data: ItineraryData }) => {
     return (
         <PDFDownloadLink
             document={<ItineraryDocument data={data} />}
@@ -19,4 +21,6 @@ export default function PDFExportButton({ data }: { data: ItineraryData }) {
             )}
         </PDFDownloadLink>
     );
-}
+});
+
+export default PDFExportButton;

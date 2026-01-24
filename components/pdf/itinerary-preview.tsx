@@ -21,9 +21,13 @@ interface ItineraryData {
 
 const LOGO_URL = "https://himalayandays.in/Himalayan%20Days%20Logo.png";
 
-export function ItineraryHTMLPreview({ data }: { data: ItineraryData }) {
+// Export memoized component to prevent re-renders unless data changes
+export const ItineraryHTMLPreview = React.memo(ItineraryHTMLPreviewComponent);
+
+function ItineraryHTMLPreviewComponent({ data }: { data: ItineraryData }) {
     return (
         <div className="w-full h-full bg-white text-black font-sans p-8 overflow-y-auto shadow-lg relative">
+            {/* ... content ... */}
 
             {/* Aspect Ratio simulation for A4 if needed, but scrolling is better for preview */}
 
