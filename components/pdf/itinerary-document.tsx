@@ -235,6 +235,32 @@ const styles = StyleSheet.create({
         fontSize: 8,
         color: '#9ca3af',
     },
+    // Terms
+    termsContainer: {
+        marginBottom: 20,
+        padding: 15,
+        backgroundColor: '#f9fafb',
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#e5e7eb',
+    },
+    termsHeader: {
+        fontSize: 10,
+        fontWeight: 'bold',
+        color: COLORS.primary,
+        marginBottom: 8,
+        textTransform: 'uppercase',
+        letterSpacing: 1,
+        borderBottomWidth: 1,
+        borderBottomColor: '#e5e7eb',
+        paddingBottom: 4,
+    },
+    termItem: {
+        fontSize: 7, // Small legible font
+        color: COLORS.secondary,
+        marginBottom: 4,
+        lineHeight: 1.4,
+    },
 });
 
 export function ItineraryDocument({ data }: { data: ItineraryData }) {
@@ -365,6 +391,23 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
                                 <Text style={{ fontSize: 9, color: '#9ca3af', textAlign: 'center' }}>{row.exc}</Text>
                             </View>
                         </View>
+                    ))}
+                </View>
+
+                {/* Terms & Conditions */}
+                <View style={styles.termsContainer} wrap={false}>
+                    <Text style={styles.termsHeader}>Terms & Conditions</Text>
+                    {[
+                        "From your first contact till your Tour ends, our Tour Advisors are available for your assistance 24x7.",
+                        "Customers are requested to pay 30% of the total booking amount in advance & 70% upon arrival.",
+                        "All bookings will be confirmed after the advance payment reflects in our bank account or online wallets.",
+                        "In case of a government-imposed lockdown, your booking amount is safe with us and can be used in the future.",
+                        "In case you choose to cancel your bookings with us after confirming, we trust you to pay the remaining amount over the advance payments made by you as per the hotel policies. Himalayan Days will not charge you anything as Tour Operators for cancellations except the Hotel & Driver charges after settlements.",
+                        "Kindly make the Advance Payments soon after finalizing your desired Itinerary. This helps us ensure that the Hotels/Houseboats are not Sold Out.",
+                        "All Visitors are bound to Hire Local Taxis for Sightseeing within the vicinities of Sonmarg, Pahalgam, Gulmarg & other destinations in Kashmir as per Kashmir Tourism Advisory.",
+                        "Your Prepaid Sim cards will not work on your Trip to Kashmir & Ladakh, kindly arrange a Postpaid/Pre-on-Postpaid Sim on your own beforehand."
+                    ].map((term, idx) => (
+                        <Text key={idx} style={styles.termItem}>• {term}</Text>
                     ))}
                 </View>
 
