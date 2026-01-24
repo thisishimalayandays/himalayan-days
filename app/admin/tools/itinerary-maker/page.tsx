@@ -60,7 +60,26 @@ export default function ItineraryMakerPage() {
         setDays(mappedDays);
     };
 
-    // ... addDay, updateDay, removeDay ...
+    const addDay = () => {
+        setDays([...days, {
+            dayNumber: days.length + 1,
+            title: '',
+            description: '',
+            meals: 'Breakfast & Dinner',
+            stay: ''
+        }]);
+    };
+
+    const updateDay = (index: number, field: string, value: string) => {
+        const newDays = [...days];
+        newDays[index] = { ...newDays[index], [field]: value };
+        setDays(newDays);
+    };
+
+    const removeDay = (index: number) => {
+        const newDays = days.filter((_, i) => i !== index).map((d, i) => ({ ...d, dayNumber: i + 1 }));
+        setDays(newDays);
+    };
 
     return (
         <div className="h-[calc(100vh-4rem)] flex flex-col md:flex-row overflow-hidden bg-gray-50">
