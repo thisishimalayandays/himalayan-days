@@ -36,9 +36,9 @@ export default function ItineraryMakerPage() {
 
     useEffect(() => {
         // Fetch packages for import dropdown
-        getPackages().then(res => {
-            if (res.success && res.data) {
-                setPackages(res.data);
+        getPackages().then(data => {
+            if (Array.isArray(data)) {
+                setPackages(data);
             }
         });
     }, []);
