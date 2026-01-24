@@ -127,15 +127,33 @@ export default function ItineraryMakerPage() {
         setDays(newDays);
     };
 
-    const removeDay = (index: number) => {
-        const newDays = days.filter((_, i) => i !== index).map((d, i) => ({ ...d, dayNumber: i + 1 }));
-        setDays(newDays);
-    };
+    // Mobile Tab State
+    const [mobileTab, setMobileTab] = useState<'editor' | 'preview'>('editor');
 
     return (
-        <div className="h-[calc(100vh-4rem)] flex flex-col md:flex-row overflow-hidden bg-gray-50">
+        <div className="h-[calc(100vh-4rem)] flex flex-col md:flex-row overflow-hidden bg-gray-50 relative">
+            {/* Mobile Tab Switcher */}
+            <div className="md:hidden flex border-b border-gray-200 bg-white p-2 gap-2 absolute top-0 left-0 right-0 z-20 h-14 items-center">
+                <Button
+                    variant={mobileTab === 'editor' ? "default" : "secondary"}
+                    className="flex-1 text-xs"
+                    onClick={() => setMobileTab('editor')}
+                    size="sm"
+                >
+                    <FileText className="w-3 h-3 mr-2" /> Editor
+                </Button>
+                <Button
+                    variant={mobileTab === 'preview' ? "default" : "secondary"}
+                    className="flex-1 text-xs"
+                    onClick={() => setMobileTab('preview')}
+                    size="sm"
+                >
+                    <Download className="w-3 h-3 mr-2" /> Preview
+                </Button>
+            </div>
+
             {/* Left Panel: Builder Form */}
-            <div className="w-full md:w-1/2 p-6 overflow-y-auto border-r border-gray-200">
+            <div className={`w-full md:w-1/2 p-6 overflow-y-auto border-r border-gray-200 pt-16 md:pt-6 ${mobileTab === 'preview' ? 'hidden md:block' : 'block'}`}>
                 <div className="flex items-center justify-between mb-6">
                     <h1 className="text-2xl font-bold text-gray-800">Itinerary Builder</h1>
                     <Button variant="outline" size="sm" onClick={() => window.location.reload()}>
@@ -349,7 +367,7 @@ export default function ItineraryMakerPage() {
             </div>
 
             {/* Right Panel: Live Preview */}
-            <div className="w-full md:w-1/2 bg-gray-900 border-l border-gray-800 flex flex-col">
+            <div className={`w-full md:w-1/2 bg-gray-900 border-l border-gray-800 flex flex-col pt-14 md:pt-0 ${mobileTab === 'editor' ? 'hidden md:flex' : 'flex'}`}>
                 <div className="p-3 bg-gray-800 border-b border-gray-700 flex justify-between items-center text-white">
                     <div className="flex items-center gap-2">
                         <FileText className="w-4 h-4 text-primary" />
@@ -359,15 +377,15 @@ export default function ItineraryMakerPage() {
                     {/* Explicit Download Button - Lazy Generation ensures performance */}
                     <PDFExportButton data={previewData} />
                 </div>
-                <div className="flex-1 w-full h-full bg-gray-200 p-4 overflow-hidden">
+                <div className="flex-1 w-full h-full bg-gray-200 p-4 overflow-hidden relative">
                     {/* HTML Preview Wrapper */}
-                    <div className="h-full w-full overflow-y-auto flex justify-center">
-                        <div className="w-[210mm] min-h-[297mm] h-fit bg-white shadow-xl mx-auto">
+                    <div className="h-full w-full overflow-auto flex justify-center items-start">
+                        <div className="w-[210mm] min-w-[210mm] min-h-[297mm] h-fit bg-white shadow-xl mx-auto origin-top md:scale-100 scale-[0.55] sm:scale-75 transition-transform duration-200">
                             <ItineraryHTMLPreview data={previewData} />
                         </div>
                     </div>
                 </div>
             </div>
-        </div >
+        </div>
     );
 }
