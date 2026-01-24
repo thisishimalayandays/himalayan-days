@@ -163,7 +163,7 @@ function ContactForm() {
 export default function ContactPage() {
     return (
         <GoogleReCaptchaProvider
-            reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+            reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "6LfpmFQsAAAAAJhFMk6rDTn5ybkvmdqGWw2l-s8v"}
             scriptProps={{
                 async: false,
                 defer: false,
