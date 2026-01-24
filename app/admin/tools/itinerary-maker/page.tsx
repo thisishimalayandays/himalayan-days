@@ -38,8 +38,13 @@ export default function ItineraryMakerPage() {
         { dayNumber: 1, title: 'Arrival in Srinagar', description: 'Welcome to Kashmir.', meals: 'Dinner', stay: 'Srinagar Houseboat' }
     ]);
 
-    // Unique Durations for Dropdown
-    const availableDurations = Array.from(new Set(ITINERARY_TEMPLATES.map(t => t.duration)));
+    // Unique Durations for Dropdown (Sorted by Days)
+    const availableDurations = Array.from(new Set(ITINERARY_TEMPLATES.map(t => t.duration)))
+        .sort((a, b) => {
+            const daysA = parseInt(a.split(' ')[0]) || 0;
+            const daysB = parseInt(b.split(' ')[0]) || 0;
+            return daysA - daysB;
+        });
 
     // Filtered Templates based on Duration
     const filteredTemplates = ITINERARY_TEMPLATES.filter(t => t.duration === selectedDuration);
