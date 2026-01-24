@@ -282,7 +282,7 @@ export default function ItineraryMakerPage() {
                     {/* HTML Preview Wrapper */}
                     <div className="h-full w-full overflow-y-auto flex justify-center">
                         <div className="w-[210mm] min-h-[297mm] h-fit bg-white shadow-xl mx-auto">
-                            <ItineraryHTMLPreview data={{ ...clientInfo, days }} />
+                            <ItineraryHTMLPreview data={pdfData} />
                         </div>
                     </div>
                 </div>
