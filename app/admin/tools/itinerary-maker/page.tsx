@@ -12,10 +12,10 @@ import { ItineraryHTMLPreview } from '@/components/pdf/itinerary-preview';
 
 // PDFViewer removed: using HTML Preview for reliability
 
-// Dynamically import PDFDownloadLink
-const PDFDownloadLink = dynamic(
-    () => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink),
-    { ssr: false, loading: () => <Button variant="secondary" size="sm" disabled>Loading Actions...</Button> }
+// Dynamically import PDFExportButton to isolate @react-pdf/renderer
+const PDFExportButton = dynamic(
+    () => import('@/components/pdf/pdf-export-button'),
+    { ssr: false, loading: () => <Button variant="secondary" size="sm" disabled>Loading...</Button> }
 );
 
 export default function ItineraryMakerPage() {
@@ -229,18 +229,8 @@ export default function ItineraryMakerPage() {
                         <span className="font-medium text-sm">Live PDF Preview</span>
                     </div>
 
-                    {/* Explicit Download Button */}
-                    <PDFDownloadLink
-                        document={<ItineraryDocument data={{ ...clientInfo, days }} />}
-                        fileName={`${clientInfo.clientName.replace(/\s+/g, '_')}_Itinerary.pdf`}
-                    >
-                        {({ blob, url, loading, error }) => (
-                            <Button size="sm" variant="default" className="bg-orange-600 hover:bg-orange-700 text-white" disabled={loading}>
-                                <Download className="w-4 h-4 mr-2" />
-                                {loading ? 'Preparing...' : 'Download PDF'}
-                            </Button>
-                        )}
-                    </PDFDownloadLink>
+                    {/* Explicit Download Button - Dynamic Import to prevent build errors */}
+                    <PDFExportButton data={{ ...clientInfo, days }} />
                 </div>
                 <div className="flex-1 w-full h-full bg-gray-200 p-4 overflow-hidden">
                     {/* HTML Preview Wrapper to center it and act like a document viewer */}
