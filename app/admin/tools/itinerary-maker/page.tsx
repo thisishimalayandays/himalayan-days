@@ -8,20 +8,17 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { Plus, Trash2, Download, RefreshCw, FileText } from 'lucide-react';
-import { ItineraryHTMLPreview } from '@/components/pdf/itinerary-preview';
-import { getPackages } from '@/app/actions/packages';
+// Imports
+import { ITINERARY_TEMPLATES, ItineraryTemplate } from './data/templates';
 
-// PDFViewer removed: using HTML Preview for reliability
-
-// Dynamically import PDFExportButton to isolate @react-pdf/renderer
-const PDFExportButton = dynamic(
-    () => import('@/components/pdf/pdf-export-button'),
-    { ssr: false, loading: () => <Button variant="secondary" size="sm" disabled>Loading...</Button> }
-);
+// ... other imports ...
 
 export default function ItineraryMakerPage() {
-    const [packages, setPackages] = useState<any[]>([]);
-    const [selectedPkgId, setSelectedPkgId] = useState('');
+    // const [packages, setPackages] = useState<any[]>([]); // Removed: Using Templates now
+
+    // Template Selection State
+    const [selectedDuration, setSelectedDuration] = useState('');
+    const [selectedTemplateId, setSelectedTemplateId] = useState('');
 
     const [clientInfo, setClientInfo] = useState({
         clientName: '',
@@ -36,58 +33,34 @@ export default function ItineraryMakerPage() {
         { dayNumber: 1, title: 'Arrival in Srinagar', description: 'Welcome to Kashmir.', meals: 'Dinner', stay: 'Srinagar Houseboat' }
     ]);
 
-    useEffect(() => {
-        // Fetch packages for import dropdown
-        getPackages().then(data => {
-            if (Array.isArray(data)) {
-                setPackages(data);
-            }
-        });
-    }, []);
+    // Unique Durations for Dropdown
+    const availableDurations = Array.from(new Set(ITINERARY_TEMPLATES.map(t => t.duration)));
 
-    const handleImport = () => {
-        const pkg = packages.find(p => p.id === selectedPkgId);
-        if (!pkg) return;
+    // Filtered Templates based on Duration
+    const filteredTemplates = ITINERARY_TEMPLATES.filter(t => t.duration === selectedDuration);
+
+    const handleImportTemplate = () => {
+        const tpl = ITINERARY_TEMPLATES.find(t => t.id === selectedTemplateId);
+        if (!tpl) return;
 
         setClientInfo(prev => ({
             ...prev,
-            pkgTitle: pkg.title,
-            duration: pkg.duration || "5 Days",
-            totalCost: String(pkg.startingPrice || ''),
+            pkgTitle: tpl.title,
+            duration: tpl.duration,
+            totalCost: '', // Templates don't have cost, resetting to empty
         }));
 
-        if (pkg.itinerary && Array.isArray(pkg.itinerary)) {
-            const mappedDays = pkg.itinerary.map((item: any, idx: number) => ({
-                dayNumber: idx + 1,
-                title: item.title || `Day ${idx + 1}`,
-                description: item.description || item.desc || item.details || '',
-                meals: 'Breakfast & Dinner',
-                stay: 'Standard Hotel'
-            }));
-            setDays(mappedDays);
-        }
+        const mappedDays = tpl.days.map((d, idx) => ({
+            dayNumber: idx + 1,
+            title: d.title,
+            description: d.description,
+            meals: d.meals,
+            stay: d.stay
+        }));
+        setDays(mappedDays);
     };
 
-    const addDay = () => {
-        setDays([...days, {
-            dayNumber: days.length + 1,
-            title: '',
-            description: '',
-            meals: 'Breakfast & Dinner',
-            stay: ''
-        }]);
-    };
-
-    const updateDay = (index: number, field: string, value: string) => {
-        const newDays = [...days];
-        newDays[index] = { ...newDays[index], [field]: value };
-        setDays(newDays);
-    };
-
-    const removeDay = (index: number) => {
-        const newDays = days.filter((_, i) => i !== index).map((d, i) => ({ ...d, dayNumber: i + 1 }));
-        setDays(newDays);
-    };
+    // ... addDay, updateDay, removeDay ...
 
     return (
         <div className="h-[calc(100vh-4rem)] flex flex-col md:flex-row overflow-hidden bg-gray-50">
@@ -100,22 +73,51 @@ export default function ItineraryMakerPage() {
                     </Button>
                 </div>
 
-                {/* Import Section */}
-                <Card className="p-4 mb-6 bg-blue-50/50 border-blue-100">
-                    <Label className="text-blue-700 font-semibold mb-2 block">Import from Existing Package</Label>
-                    <div className="flex gap-2">
-                        <select
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                            value={selectedPkgId}
-                            onChange={(e) => setSelectedPkgId(e.target.value)}
+                {/* Template Selection Section */}
+                <Card className="p-4 mb-6 bg-orange-50/50 border-orange-100">
+                    <Label className="text-orange-800 font-bold mb-3 block flex items-center gap-2">
+                        <FileText className="w-4 h-4" /> Select Itinerary Template
+                    </Label>
+                    <div className="flex flex-col gap-3">
+                        <div className="grid grid-cols-2 gap-3">
+                            <div>
+                                <Label className="text-xs text-gray-500 mb-1 block">1. Select Duration</Label>
+                                <select
+                                    className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-orange-500"
+                                    value={selectedDuration}
+                                    onChange={(e) => {
+                                        setSelectedDuration(e.target.value);
+                                        setSelectedTemplateId(''); // Reset template when duration changes
+                                    }}
+                                >
+                                    <option value="">-- Choose Duration --</option>
+                                    {availableDurations.map(d => (
+                                        <option key={d} value={d}>{d}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <Label className="text-xs text-gray-500 mb-1 block">2. Select Template</Label>
+                                <select
+                                    className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-orange-500"
+                                    value={selectedTemplateId}
+                                    onChange={(e) => setSelectedTemplateId(e.target.value)}
+                                    disabled={!selectedDuration}
+                                >
+                                    <option value="">-- Choose Template --</option>
+                                    {filteredTemplates.map(t => (
+                                        <option key={t.id} value={t.id}>{t.title}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+
+                        <Button
+                            onClick={handleImportTemplate}
+                            disabled={!selectedTemplateId}
+                            className="w-full bg-orange-600 hover:bg-orange-700 text-white"
                         >
-                            <option value="">Select a package...</option>
-                            {packages.map(p => (
-                                <option key={p.id} value={p.id}>{p.title}</option>
-                            ))}
-                        </select>
-                        <Button onClick={handleImport} disabled={!selectedPkgId}>
-                            Import
+                            Import Template Data
                         </Button>
                     </div>
                 </Card>
