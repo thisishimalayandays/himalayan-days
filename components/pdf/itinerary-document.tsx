@@ -6,7 +6,7 @@ import { ItineraryData } from '@/app/admin/tools/itinerary-maker/page';
 // Register fonts if needed (using standard fonts for speed now)
 // Font.register({ family: 'Inter', src: '...' });
 
-const LOGO_URL = "https://himalayandays.in/Himalayan%20Days%20Logo.png";
+const LOGO_URL = typeof window !== 'undefined' ? `${window.location.origin}/Himalayan%20Days%20Logo.png` : "/Himalayan%20Days%20Logo.png";
 
 // Colors
 const COLORS = {
