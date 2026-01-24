@@ -1,6 +1,6 @@
 'use client';
 import { useState, useCallback, useEffect } from 'react';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 import { PageHeader } from '@/components/layout/page-header';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -10,6 +10,7 @@ import { GoogleReCaptchaProvider, useGoogleReCaptcha } from 'react-google-recapt
 
 function ContactForm() {
     const { executeRecaptcha } = useGoogleReCaptcha();
+    const { toast } = useToast();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         firstName: '',
@@ -22,8 +23,15 @@ function ContactForm() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        console.log("Submitting form...");
+
         if (!executeRecaptcha) {
-            toast.error("Captcha not ready yet. Please try again.");
+            console.error("Recaptcha not ready");
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Captcha not ready yet. Please try again."
+            });
             return;
         }
 
@@ -31,6 +39,7 @@ function ContactForm() {
 
         try {
             const token = await executeRecaptcha('contact_form_submit');
+            console.log("Captcha token received");
 
             const formDataObj = new FormData();
             formDataObj.append('firstName', formData.firstName);
@@ -44,7 +53,8 @@ function ContactForm() {
             const result = await sendContactEmail(formDataObj);
 
             if (result.success) {
-                toast.success("Message sent successfully!", {
+                toast({
+                    title: "Message sent successfully!",
                     description: "We'll get back to you shortly."
                 });
                 setFormData({
@@ -55,11 +65,19 @@ function ContactForm() {
                     message: ''
                 });
             } else {
-                toast.error(result.message || "Something went wrong.");
+                toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: result.message || "Something went wrong."
+                });
             }
         } catch (error) {
-            toast.error("Failed to send message. Please try again.");
-            console.error(error);
+            console.error("Submission error:", error);
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Failed to send message. Please try again."
+            });
         } finally {
             setIsSubmitting(false);
         }
