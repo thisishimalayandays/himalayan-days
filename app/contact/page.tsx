@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { PageHeader } from '@/components/layout/page-header';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -20,22 +21,36 @@ export default function ContactPage() {
         e.preventDefault();
         setIsSubmitting(true);
 
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        const formDataObj = new FormData();
+        formDataObj.append('firstName', formData.firstName);
+        formDataObj.append('lastName', formData.lastName);
+        formDataObj.append('email', formData.email);
+        formDataObj.append('phone', formData.phone);
+        formDataObj.append('message', formData.message);
 
-        const fullName = `${formData.firstName} ${formData.lastName}`;
-        const message = `Hello, I have an enquiry from the website.\n\nName: ${fullName}\nPhone: ${formData.phone}\nEmail: ${formData.email}\nMessage: ${formData.message}`;
-        const whatsappUrl = `https://wa.me/919103901803?text=${encodeURIComponent(message)}`;
-        window.open(whatsappUrl, '_blank');
+        try {
+            const { sendContactEmail } = await import('@/app/actions/contact');
+            const result = await sendContactEmail(formDataObj);
 
-        setIsSubmitting(false);
-        setFormData({
-            firstName: '',
-            lastName: '',
-            email: '',
-            phone: '',
-            message: ''
-        });
+            if (result.success) {
+                toast.success("Message sent successfully!", {
+                    description: "We'll get back to you shortly."
+                });
+                setFormData({
+                    firstName: '',
+                    lastName: '',
+                    email: '',
+                    phone: '',
+                    message: ''
+                });
+            } else {
+                toast.error(result.message || "Something went wrong.");
+            }
+        } catch (error) {
+            toast.error("Failed to send message. Please try again.");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
