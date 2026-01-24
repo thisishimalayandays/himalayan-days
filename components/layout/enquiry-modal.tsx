@@ -170,6 +170,9 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
                                     </p>
                                 </div>
                             </form>
+                            <p className="text-[10px] text-center text-gray-400 pb-4 px-6">
+                                This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy" className="underline">Privacy Policy</a> and <a href="https://policies.google.com/terms" className="underline">Terms of Service</a> apply.
+                            </p>
                         </motion.div>
                     </div>
                 </>

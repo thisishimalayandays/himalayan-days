@@ -213,6 +213,11 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
                     {isSubmitting ? 'Processing...' : 'Send Enquiry'}
                 </Button>
             </form>
+            <div className="px-6 pb-2">
+                <p className="text-[10px] text-center text-gray-400">
+                    This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy" className="underline">Privacy Policy</a> and <a href="https://policies.google.com/terms" className="underline">Terms of Service</a> apply.
+                </p>
+            </div>
 
             <div className="p-4 bg-gray-50 text-center border-t border-gray-100">
                 <p className="text-sm text-gray-500 mb-2">Or call our travel expert</p>

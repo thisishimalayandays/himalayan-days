@@ -273,6 +273,9 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
                                     Our travel experts will create a custom itinerary for you instantly.
                                 </p>
                             </form>
+                            <p className="text-[10px] text-center text-gray-400 pb-4 px-6 -mt-2">
+                                This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy" className="underline">Privacy Policy</a> and <a href="https://policies.google.com/terms" className="underline">Terms of Service</a> apply.
+                            </p>
                         </motion.div>
                     </div>
                 </>
