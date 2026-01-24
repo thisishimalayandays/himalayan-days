@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { Plus, Trash2, Download, RefreshCw, FileText } from 'lucide-react';
 import { ItineraryHTMLPreview } from '@/components/pdf/itinerary-preview';
+import { getPackages } from '@/app/actions/packages';
 
 // PDFViewer removed: using HTML Preview for reliability
 
