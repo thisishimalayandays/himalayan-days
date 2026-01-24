@@ -105,7 +105,52 @@ const generateTemplates = (): ItineraryTemplate[] => {
     );
 
 
-    return templates;
+    return templates.concat(generateLongDurations());
 };
 
-export const ITINERARY_TEMPLATES: ItineraryTemplate[] = generateTemplates();
+const generateLongDurations = (): ItineraryTemplate[] => {
+    const templates: ItineraryTemplate[] = [];
+
+    // --- 8 DAYS / 7 NIGHTS ---
+    const d8 = '8 Days / 7 Nights';
+    const num8 = 8;
+    templates.push(
+        { id: '8d-complete', title: 'Complete Kashmir (Incl Doodhpathri)', duration: d8, durationDays: num8, days: [BLOCKS.arrivalSrinagar, BLOCKS.sonamargDay, BLOCKS.gulmargStay, BLOCKS.gulmargAdventure, BLOCKS.pahalgamStay, BLOCKS.pahalgamValleys, BLOCKS.doodhpathriDay, BLOCKS.departure] },
+        { id: '8d-relax', title: 'Relaxed Valley Tour', duration: d8, durationDays: num8, days: [BLOCKS.arrivalSrinagar, BLOCKS.srinagarLocal, BLOCKS.gulmargStay, BLOCKS.gulmargStay, BLOCKS.pahalgamStay, BLOCKS.pahalgamLeisure, BLOCKS.pahalgamValleys, BLOCKS.departure] },
+        { id: '8d-adventure', title: 'Adventure Week Plus', duration: d8, durationDays: num8, days: [BLOCKS.arrivalSrinagar, BLOCKS.gulmargStay, BLOCKS.gulmargAdventure, BLOCKS.pahalgamStay, { ...BLOCKS.pahalgamValleys, description: 'Trek to Baisaran.' }, BLOCKS.sonamargStay, { ...BLOCKS.sonamargDay, title: 'Thajiwas Trek' }, BLOCKS.departure] },
+    );
+
+    // --- 9 DAYS / 8 NIGHTS ---
+    const d9 = '9 Days / 8 Nights';
+    const num9 = 9;
+    templates.push(
+        { id: '9d-explorer', title: 'Kashmir Extensive Explorer', duration: d9, durationDays: num9, days: [BLOCKS.arrivalSrinagar, BLOCKS.srinagarLocal, BLOCKS.sonamargStay, BLOCKS.gulmargStay, BLOCKS.gulmargAdventure, BLOCKS.pahalgamStay, BLOCKS.pahalgamValleys, BLOCKS.pahalgamLeisure, BLOCKS.departure] },
+        { id: '9d-offbeat', title: 'Offbeat Kashmir (Gurez-Yusmarg)', duration: d9, durationDays: num9, days: [BLOCKS.arrivalSrinagar, BLOCKS.gurezTrip, { ...BLOCKS.gurezTrip, title: 'Gurez Exploration' }, { ...BLOCKS.gurezTrip, title: 'Return from Gurez', stay: 'Srinagar' }, BLOCKS.gulmargStay, BLOCKS.pahalgamStay, BLOCKS.yusmargDay, BLOCKS.doodhpathriDay, BLOCKS.departure] },
+    );
+
+    // --- 10 DAYS / 9 NIGHTS ---
+    const d10 = '10 Days / 9 Nights';
+    const num10 = 10;
+    templates.push(
+        { id: '10d-royal', title: 'Royal Kashmir Odyssey', duration: d10, durationDays: num10, days: [BLOCKS.arrivalSrinagar, BLOCKS.srinagarLocal, BLOCKS.sonamargStay, BLOCKS.gulmargStay, BLOCKS.gulmargAdventure, BLOCKS.pahalgamStay, BLOCKS.pahalgamValleys, BLOCKS.pahalgamLeisure, BLOCKS.yusmargDay, BLOCKS.departure] },
+        { id: '10d-nature', title: 'Nature Lovers Paradise', duration: d10, durationDays: num10, days: [BLOCKS.arrivalSrinagar, BLOCKS.doodhpathriDay, BLOCKS.sonamargStay, BLOCKS.sonamargDay, BLOCKS.gulmargStay, BLOCKS.gulmargStay, BLOCKS.pahalgamStay, BLOCKS.pahalgamValleys, BLOCKS.pahalgamLeisure, BLOCKS.departure] },
+    );
+
+    // --- 11 DAYS / 10 NIGHTS ---
+    const d11 = '11 Days / 10 Nights';
+    const num11 = 11;
+    templates.push(
+        { id: '11d-gurez', title: 'Hidden Gems (Gurez Special)', duration: d11, durationDays: num11, days: [BLOCKS.arrivalSrinagar, BLOCKS.gurezTrip, { ...BLOCKS.gurezTrip, title: 'Gurez Exploration' }, { ...BLOCKS.gurezTrip, title: 'Return from Gurez', stay: 'Srinagar' }, BLOCKS.gulmargStay, BLOCKS.gulmargAdventure, BLOCKS.pahalgamStay, BLOCKS.pahalgamValleys, BLOCKS.pahalgamLeisure, BLOCKS.doodhpathriDay, BLOCKS.departure] },
+    );
+
+    // --- 12 DAYS / 11 NIGHTS ---
+    const d12 = '12 Days / 11 Nights';
+    const num12 = 12;
+    templates.push(
+        { id: '12d-ultimate', title: 'The Ultimate Kashmir Vacation', duration: d12, durationDays: num12, days: [BLOCKS.arrivalSrinagar, BLOCKS.srinagarLocal, BLOCKS.sonamargStay, BLOCKS.gurezTrip, { ...BLOCKS.gurezTrip, title: 'Gurez Sightseeing' }, { ...BLOCKS.gurezTrip, title: 'Return from Gurez', stay: 'Srinagar' }, BLOCKS.gulmargStay, BLOCKS.gulmargAdventure, BLOCKS.pahalgamStay, BLOCKS.pahalgamValleys, BLOCKS.yusmargDay, BLOCKS.departure] }
+    );
+
+    return templates;
+
+
+    export const ITINERARY_TEMPLATES: ItineraryTemplate[] = generateTemplates();
