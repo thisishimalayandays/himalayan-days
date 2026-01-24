@@ -338,14 +338,14 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
                 </View>
 
                 {/* Inclusions & Exclusions */}
-                <View style={{ marginBottom: 20 }} wrap={false}>
+                <View style={{ marginBottom: 20, marginTop: 10 }} wrap={false}>
                     {/* Header Row */}
-                    <View style={{ flexDirection: 'row', backgroundColor: '#2563eb', padding: 8 }}>
-                        <View style={{ flex: 1, borderRightWidth: 1, borderRightColor: '#60a5fa' }}>
-                            <Text style={{ color: '#ffffff', fontSize: 10, fontWeight: 'bold', textAlign: 'center', textTransform: 'uppercase' }}>TOUR INCLUSIONS</Text>
+                    <View style={{ flexDirection: 'row', backgroundColor: COLORS.primary, paddingVertical: 8, paddingHorizontal: 0 }}>
+                        <View style={{ flex: 1, borderRightWidth: 1, borderRightColor: '#374151' }}>
+                            <Text style={{ color: COLORS.accent, fontSize: 9, fontWeight: 'bold', textAlign: 'center', textTransform: 'uppercase', letterSpacing: 1 }}>Inclusions</Text>
                         </View>
                         <View style={{ flex: 1 }}>
-                            <Text style={{ color: '#ffffff', fontSize: 10, fontWeight: 'bold', textAlign: 'center', textTransform: 'uppercase' }}>TOUR EXCLUSIONS</Text>
+                            <Text style={{ color: '#9ca3af', fontSize: 9, fontWeight: 'bold', textAlign: 'center', textTransform: 'uppercase', letterSpacing: 1 }}>Exclusions</Text>
                         </View>
                     </View>
 
@@ -357,12 +357,12 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
                         { inc: 'All transfers and Srinagar Sightseeing', exc: 'Gandola Ride' },
                         { inc: 'Local Shopping Assistance', exc: 'Entrance Tickets & Activities' },
                     ].map((row, idx) => (
-                        <View key={idx} style={{ flexDirection: 'row', backgroundColor: idx % 2 === 0 ? '#dbeafe' : '#f0f9ff', borderBottomWidth: 1, borderBottomColor: '#bfdbfe' }}>
-                            <View style={{ flex: 1, padding: 6, borderRightWidth: 1, borderRightColor: '#bfdbfe' }}>
-                                <Text style={{ fontSize: 9, color: '#1e3a8a', textAlign: 'center' }}>{row.inc}</Text>
+                        <View key={idx} style={{ flexDirection: 'row', backgroundColor: idx % 2 === 0 ? '#ffffff' : '#f9fafb', borderBottomWidth: 1, borderBottomColor: '#f3f4f6' }}>
+                            <View style={{ flex: 1, padding: 8, borderRightWidth: 1, borderRightColor: '#f3f4f6' }}>
+                                <Text style={{ fontSize: 9, color: COLORS.secondary, textAlign: 'center' }}>{row.inc}</Text>
                             </View>
-                            <View style={{ flex: 1, padding: 6 }}>
-                                <Text style={{ fontSize: 9, color: '#1e3a8a', textAlign: 'center' }}>{row.exc}</Text>
+                            <View style={{ flex: 1, padding: 8 }}>
+                                <Text style={{ fontSize: 9, color: '#9ca3af', textAlign: 'center' }}>{row.exc}</Text>
                             </View>
                         </View>
                     ))}
