@@ -238,7 +238,7 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
                 {/* Costing */}
                 <View style={styles.priceSection}>
                     <Text style={styles.agencyText}>Total Package Cost</Text>
-                    <Text style={styles.totalPrice}>₹ {data.totalCost || "0"}</Text>
+                    <Text style={styles.totalPrice}>Rs. {data.totalCost || "0"}</Text>
                     <Text style={{ fontSize: 9, color: '#6B7280', marginTop: 4, textAlign: 'right' }}>
                         *Includes all taxes & service charges
                     </Text>
