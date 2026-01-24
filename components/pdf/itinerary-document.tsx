@@ -328,7 +328,7 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
                 {/* Cost Section (Keep on same page if possible, or wrap) */}
                 <View style={styles.priceSection} wrap={false}>
                     <Text style={styles.priceLabel}>Total Tour Cost</Text>
-                    <Text style={styles.priceValue}>₹ {data.totalCost || "0"}/-</Text>
+                    <Text style={styles.priceValue}>Rs. {data.totalCost || "0"}/-</Text>
                     <Text style={styles.priceSub}>*Valid for 7 days from issue. Includes all taxes.</Text>
                 </View>
 

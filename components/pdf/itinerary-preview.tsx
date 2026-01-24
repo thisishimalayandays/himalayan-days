@@ -126,7 +126,7 @@ const ItineraryHTMLPreviewComponent = ({ data }: { data: ItineraryData }) => {
             <div className="mt-auto">
                 <div className="flex flex-col items-end mb-8">
                     <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Total Tour Cost</p>
-                    <p className="text-3xl font-bold tracking-tight text-gray-900">₹ {data.totalCost || "0"}/-</p>
+                    <p className="text-3xl font-bold tracking-tight text-gray-900">Rs. {data.totalCost || "0"}/-</p>
                     <p className="text-[10px] text-gray-500 italic mt-1">*Valid for 7 days from issue. Includes all taxes.</p>
                 </div>
 
