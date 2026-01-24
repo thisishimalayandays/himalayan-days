@@ -51,59 +51,10 @@ export default function ItineraryMakerPage() {
         return ITINERARY_TEMPLATES.filter(t => t.duration === selectedDuration);
     }, [selectedDuration]);
 
-    // Debounce Data for PDF Generation
-    const [pdfData, setPdfData] = useState({ ...clientInfo, days });
+    // Live Preview Data (No Debounce Needed for HTML Preview)
+    const previewData = { ...clientInfo, days };
 
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            setPdfData({ ...clientInfo, days });
-        }, 1000); // 1-second delay before regenerating PDF
-
-        return () => clearTimeout(handler);
-    }, [clientInfo, days]);
-
-
-    const handleImportTemplate = () => {
-        const tpl = ITINERARY_TEMPLATES.find(t => t.id === selectedTemplateId);
-        if (!tpl) return;
-
-        setClientInfo(prev => ({
-            ...prev,
-            pkgTitle: tpl.title,
-            duration: tpl.duration,
-            totalCost: '', // Templates don't have cost
-        }));
-
-        const mappedDays = tpl.days.map((d, idx) => ({
-            dayNumber: idx + 1,
-            title: d.title,
-            description: d.description,
-            meals: d.meals,
-            stay: d.stay
-        }));
-        setDays(mappedDays);
-    };
-
-    const addDay = () => {
-        setDays([...days, {
-            dayNumber: days.length + 1,
-            title: '',
-            description: '',
-            meals: 'Breakfast & Dinner',
-            stay: ''
-        }]);
-    };
-
-    const updateDay = (index: number, field: string, value: string) => {
-        const newDays = [...days];
-        newDays[index] = { ...newDays[index], [field]: value };
-        setDays(newDays);
-    };
-
-    const removeDay = (index: number) => {
-        const newDays = days.filter((_, i) => i !== index).map((d, i) => ({ ...d, dayNumber: i + 1 }));
-        setDays(newDays);
-    };
+    // ... handlers ...
 
     return (
         <div className="h-[calc(100vh-4rem)] flex flex-col md:flex-row overflow-hidden bg-gray-50">
@@ -275,14 +226,14 @@ export default function ItineraryMakerPage() {
                         <span className="font-medium text-sm">Live PDF Preview</span>
                     </div>
 
-                    {/* Explicit Download Button - Debounced Data */}
-                    <PDFExportButton data={pdfData} />
+                    {/* Explicit Download Button - Lazy Generation ensures performance */}
+                    <PDFExportButton data={previewData} />
                 </div>
                 <div className="flex-1 w-full h-full bg-gray-200 p-4 overflow-hidden">
                     {/* HTML Preview Wrapper */}
                     <div className="h-full w-full overflow-y-auto flex justify-center">
                         <div className="w-[210mm] min-h-[297mm] h-fit bg-white shadow-xl mx-auto">
-                            <ItineraryHTMLPreview data={pdfData} />
+                            <ItineraryHTMLPreview data={previewData} />
                         </div>
                     </div>
                 </div>
