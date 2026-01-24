@@ -228,8 +228,8 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
                             </View>
                             <Text style={styles.dayDesc}>{day.description}</Text>
                             <View style={styles.dayMeta}>
-                                <Text style={styles.metaItem}>🍽️ Meal Plan: {day.meals || "Not included"}</Text>
-                                <Text style={styles.metaItem}>🏨 Stay: {day.stay || "Standard Hotel"}</Text>
+                                <Text style={styles.metaItem}>Meals: {day.meals || "Not included"}</Text>
+                                <Text style={styles.metaItem}>Stay: {day.stay || "Standard Hotel"}</Text>
                             </View>
                         </View>
                     ))}
