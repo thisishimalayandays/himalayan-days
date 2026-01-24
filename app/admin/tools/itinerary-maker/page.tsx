@@ -127,6 +127,11 @@ export default function ItineraryMakerPage() {
         setDays(newDays);
     };
 
+    const removeDay = (index: number) => {
+        const newDays = days.filter((_, i) => i !== index).map((d, i) => ({ ...d, dayNumber: i + 1 }));
+        setDays(newDays);
+    };
+
     // Mobile Tab State
     const [mobileTab, setMobileTab] = useState<'editor' | 'preview'>('editor');
 
