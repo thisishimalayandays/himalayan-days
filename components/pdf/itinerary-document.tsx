@@ -159,7 +159,7 @@ interface Day {
     stay?: string;
 }
 
-interface ItineraryData {
+export interface ItineraryData {
     clientName: string;
     travelDate: string;
     duration: string;
