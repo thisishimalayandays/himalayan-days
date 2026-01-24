@@ -17,6 +17,12 @@ const PDFViewer = dynamic(
     { ssr: false, loading: () => <p>Loading Preview...</p> }
 );
 
+// Dynamically import PDFDownloadLink
+const PDFDownloadLink = dynamic(
+    () => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink),
+    { ssr: false, loading: () => <Button variant="secondary" size="sm" disabled>Loading Actions...</Button> }
+);
+
 export default function ItineraryMakerPage() {
     const [packages, setPackages] = useState<any[]>([]);
     const [selectedPkgId, setSelectedPkgId] = useState('');
@@ -50,14 +56,15 @@ export default function ItineraryMakerPage() {
         setClientInfo(prev => ({
             ...prev,
             pkgTitle: pkg.title,
-            duration: `${pkg.days} Days / ${pkg.nights} Nights`,
+            duration: pkg.duration || "5 Days",
+            totalCost: String(pkg.startingPrice || ''),
         }));
 
         if (pkg.itinerary && Array.isArray(pkg.itinerary)) {
             const mappedDays = pkg.itinerary.map((item: any, idx: number) => ({
                 dayNumber: idx + 1,
                 title: item.title || `Day ${idx + 1}`,
-                description: item.description || '',
+                description: item.description || item.desc || item.details || '',
                 meals: 'Breakfast & Dinner',
                 stay: 'Standard Hotel'
             }));
@@ -226,7 +233,19 @@ export default function ItineraryMakerPage() {
                         <FileText className="w-4 h-4 text-primary" />
                         <span className="font-medium text-sm">Live PDF Preview</span>
                     </div>
-                    {/* PDFViewer has its own download button usually, but we can add custom instructions if needed */}
+
+                    {/* Explicit Download Button */}
+                    <PDFDownloadLink
+                        document={<ItineraryDocument data={{ ...clientInfo, days }} />}
+                        fileName={`${clientInfo.clientName.replace(/\s+/g, '_')}_Itinerary.pdf`}
+                    >
+                        {({ blob, url, loading, error }) => (
+                            <Button size="sm" variant="default" className="bg-orange-600 hover:bg-orange-700 text-white" disabled={loading}>
+                                <Download className="w-4 h-4 mr-2" />
+                                {loading ? 'Preparing...' : 'Download PDF'}
+                            </Button>
+                        )}
+                    </PDFDownloadLink>
                 </div>
                 <div className="flex-1 w-full h-full">
                     <PDFViewer width="100%" height="100%" className="w-full h-full border-none">
