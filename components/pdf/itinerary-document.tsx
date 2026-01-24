@@ -169,9 +169,8 @@ export interface ItineraryData {
     totalCost: string;
 }
 
-// NOTE: Images must be absolute URLs or base64. 
-// For now, we use a placeholder or public absolute path if env is set.
-const LOGO_URL = "https://himalayandays.in/Himalayan%20Days%20Logo.png";
+// Use local public file. React-PDF in browser can fetch relative URLs or absolute URLs from same origin.
+const LOGO_URL = "/Himalayan Days Logo.png";
 
 export function ItineraryDocument({ data }: { data: ItineraryData }) {
     return (

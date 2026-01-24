@@ -118,6 +118,8 @@ const generateLongDurations = (): ItineraryTemplate[] => {
         { id: '8d-complete', title: 'Complete Kashmir (Incl Doodhpathri)', duration: d8, durationDays: num8, days: [BLOCKS.arrivalSrinagar, BLOCKS.sonamargDay, BLOCKS.gulmargStay, BLOCKS.gulmargAdventure, BLOCKS.pahalgamStay, BLOCKS.pahalgamValleys, BLOCKS.doodhpathriDay, BLOCKS.departure] },
         { id: '8d-relax', title: 'Relaxed Valley Tour', duration: d8, durationDays: num8, days: [BLOCKS.arrivalSrinagar, BLOCKS.srinagarLocal, BLOCKS.gulmargStay, BLOCKS.gulmargStay, BLOCKS.pahalgamStay, BLOCKS.pahalgamLeisure, BLOCKS.pahalgamValleys, BLOCKS.departure] },
         { id: '8d-adventure', title: 'Adventure Week Plus', duration: d8, durationDays: num8, days: [BLOCKS.arrivalSrinagar, BLOCKS.gulmargStay, BLOCKS.gulmargAdventure, BLOCKS.pahalgamStay, { ...BLOCKS.pahalgamValleys, description: 'Trek to Baisaran.' }, BLOCKS.sonamargStay, { ...BLOCKS.sonamargDay, title: 'Thajiwas Trek' }, BLOCKS.departure] },
+        { id: '8d-family', title: 'Big Family Fun Week', duration: d8, durationDays: num8, days: [BLOCKS.arrivalSrinagar, BLOCKS.srinagarLocal, BLOCKS.sonamargDay, BLOCKS.gulmargDay, BLOCKS.pahalgamStay, BLOCKS.pahalgamLeisure, { ...BLOCKS.srinagarLocal, title: 'Shopping Day' }, BLOCKS.departure] },
+        { id: '8d-nature', title: 'Nature Photography Tour', duration: d8, durationDays: num8, days: [BLOCKS.arrivalSrinagar, BLOCKS.doodhpathriDay, BLOCKS.yusmargDay, BLOCKS.pahalgamStay, BLOCKS.pahalgamValleys, BLOCKS.gulmargStay, BLOCKS.srinagarLocal, BLOCKS.departure] },
     );
 
     // --- 9 DAYS / 8 NIGHTS ---
@@ -126,6 +128,8 @@ const generateLongDurations = (): ItineraryTemplate[] => {
     templates.push(
         { id: '9d-explorer', title: 'Kashmir Extensive Explorer', duration: d9, durationDays: num9, days: [BLOCKS.arrivalSrinagar, BLOCKS.srinagarLocal, BLOCKS.sonamargStay, BLOCKS.gulmargStay, BLOCKS.gulmargAdventure, BLOCKS.pahalgamStay, BLOCKS.pahalgamValleys, BLOCKS.pahalgamLeisure, BLOCKS.departure] },
         { id: '9d-offbeat', title: 'Offbeat Kashmir (Gurez-Yusmarg)', duration: d9, durationDays: num9, days: [BLOCKS.arrivalSrinagar, BLOCKS.gurezTrip, { ...BLOCKS.gurezTrip, title: 'Gurez Exploration' }, { ...BLOCKS.gurezTrip, title: 'Return from Gurez', stay: 'Srinagar' }, BLOCKS.gulmargStay, BLOCKS.pahalgamStay, BLOCKS.yusmargDay, BLOCKS.doodhpathriDay, BLOCKS.departure] },
+        { id: '9d-romantic', title: 'Royal Honeymoon Extended', duration: d9, durationDays: num9, days: [BLOCKS.arrivalSrinagarRomantic, BLOCKS.sonamargStay, BLOCKS.gulmargStay, BLOCKS.gulmargStay, BLOCKS.pahalgamStay, BLOCKS.pahalgamLeisure, BLOCKS.pahalgamValleys, BLOCKS.srinagarLocal, BLOCKS.departure] },
+        { id: '9d-winter', title: 'Snow Safari (Winter Special)', duration: d9, durationDays: num9, days: [BLOCKS.arrivalSrinagar, BLOCKS.gulmargStay, BLOCKS.gulmargStay, BLOCKS.gulmargStay, BLOCKS.pahalgamStay, BLOCKS.pahalgamStay, BLOCKS.srinagarLocal, BLOCKS.doodhpathriDay, BLOCKS.departure] },
     );
 
     // --- 10 DAYS / 9 NIGHTS ---
@@ -134,6 +138,8 @@ const generateLongDurations = (): ItineraryTemplate[] => {
     templates.push(
         { id: '10d-royal', title: 'Royal Kashmir Odyssey', duration: d10, durationDays: num10, days: [BLOCKS.arrivalSrinagar, BLOCKS.srinagarLocal, BLOCKS.sonamargStay, BLOCKS.gulmargStay, BLOCKS.gulmargAdventure, BLOCKS.pahalgamStay, BLOCKS.pahalgamValleys, BLOCKS.pahalgamLeisure, BLOCKS.yusmargDay, BLOCKS.departure] },
         { id: '10d-nature', title: 'Nature Lovers Paradise', duration: d10, durationDays: num10, days: [BLOCKS.arrivalSrinagar, BLOCKS.doodhpathriDay, BLOCKS.sonamargStay, BLOCKS.sonamargDay, BLOCKS.gulmargStay, BLOCKS.gulmargStay, BLOCKS.pahalgamStay, BLOCKS.pahalgamValleys, BLOCKS.pahalgamLeisure, BLOCKS.departure] },
+        { id: '10d-cultural', title: 'Culture & Heritage Depth', duration: d10, durationDays: num10, days: [BLOCKS.arrivalSrinagar, BLOCKS.srinagarOldCity, BLOCKS.srinagarLocal, BLOCKS.sonamargStay, BLOCKS.gulmargStay, BLOCKS.pahalgamStay, BLOCKS.pahalgamValleys, BLOCKS.yusmargDay, BLOCKS.doodhpathriDay, BLOCKS.departure] },
+        { id: '10d-trek', title: 'Valley Treks & Trails', duration: d10, durationDays: num10, days: [BLOCKS.arrivalSrinagar, BLOCKS.sonamargStay, { ...BLOCKS.sonamargDay, title: 'Thajiwas Trek' }, BLOCKS.gulmargStay, { ...BLOCKS.gulmargAdventure, title: 'Apharwat Hike' }, BLOCKS.pahalgamStay, { ...BLOCKS.pahalgamValleys, title: 'Baisaran Hike' }, { ...BLOCKS.pahalgamValleys, title: 'Aru Valley Trek' }, BLOCKS.srinagarLocal, BLOCKS.departure] },
     );
 
     // --- 11 DAYS / 10 NIGHTS ---
@@ -141,13 +147,17 @@ const generateLongDurations = (): ItineraryTemplate[] => {
     const num11 = 11;
     templates.push(
         { id: '11d-gurez', title: 'Hidden Gems (Gurez Special)', duration: d11, durationDays: num11, days: [BLOCKS.arrivalSrinagar, BLOCKS.gurezTrip, { ...BLOCKS.gurezTrip, title: 'Gurez Exploration' }, { ...BLOCKS.gurezTrip, title: 'Return from Gurez', stay: 'Srinagar' }, BLOCKS.gulmargStay, BLOCKS.gulmargAdventure, BLOCKS.pahalgamStay, BLOCKS.pahalgamValleys, BLOCKS.pahalgamLeisure, BLOCKS.doodhpathriDay, BLOCKS.departure] },
+        { id: '11d-slow', title: 'Slow Travel Kashmir', duration: d11, durationDays: num11, days: [BLOCKS.arrivalSrinagar, BLOCKS.srinagarLocal, BLOCKS.sonamargStay, BLOCKS.sonamargStay, BLOCKS.gulmargStay, BLOCKS.gulmargStay, BLOCKS.pahalgamStay, BLOCKS.pahalgamStay, BLOCKS.pahalgamLeisure, BLOCKS.srinagarLocal, BLOCKS.departure] },
+        { id: '11d-photo', title: 'Photographers Dream Tour', duration: d11, durationDays: num11, days: [BLOCKS.arrivalSrinagar, BLOCKS.doodhpathriDay, BLOCKS.yusmargDay, BLOCKS.sonamargStay, BLOCKS.sonamargDay, BLOCKS.gulmargStay, BLOCKS.gulmargAdventure, BLOCKS.pahalgamStay, BLOCKS.pahalgamValleys, BLOCKS.srinagarOldCity, BLOCKS.departure] },
     );
 
     // --- 12 DAYS / 11 NIGHTS ---
     const d12 = '12 Days / 11 Nights';
     const num12 = 12;
     templates.push(
-        { id: '12d-ultimate', title: 'The Ultimate Kashmir Vacation', duration: d12, durationDays: num12, days: [BLOCKS.arrivalSrinagar, BLOCKS.srinagarLocal, BLOCKS.sonamargStay, BLOCKS.gurezTrip, { ...BLOCKS.gurezTrip, title: 'Gurez Sightseeing' }, { ...BLOCKS.gurezTrip, title: 'Return from Gurez', stay: 'Srinagar' }, BLOCKS.gulmargStay, BLOCKS.gulmargAdventure, BLOCKS.pahalgamStay, BLOCKS.pahalgamValleys, BLOCKS.yusmargDay, BLOCKS.departure] }
+        { id: '12d-ultimate', title: 'The Ultimate Kashmir Vacation', duration: d12, durationDays: num12, days: [BLOCKS.arrivalSrinagar, BLOCKS.srinagarLocal, BLOCKS.sonamargStay, BLOCKS.gurezTrip, { ...BLOCKS.gurezTrip, title: 'Gurez Sightseeing' }, { ...BLOCKS.gurezTrip, title: 'Return from Gurez', stay: 'Srinagar' }, BLOCKS.gulmargStay, BLOCKS.gulmargAdventure, BLOCKS.pahalgamStay, BLOCKS.pahalgamValleys, BLOCKS.yusmargDay, BLOCKS.departure] },
+        { id: '12d-grand-tour', title: 'Grand Tour of Kashmir', duration: d12, durationDays: num12, days: [BLOCKS.arrivalSrinagar, BLOCKS.srinagarLocal, BLOCKS.sonamargStay, BLOCKS.sonamargDay, BLOCKS.gulmargStay, BLOCKS.gulmargStay, BLOCKS.pahalgamStay, BLOCKS.pahalgamStay, BLOCKS.pahalgamValleys, BLOCKS.doodhpathriDay, BLOCKS.yusmargDay, BLOCKS.departure] },
+        { id: '12d-devotional', title: 'Divine Kashmir Yatra', duration: d12, durationDays: num12, days: [BLOCKS.arrivalSrinagar, { ...BLOCKS.srinagarLocal, title: 'Shankaracharya & Kheer Bhawani' }, { ...BLOCKS.srinagarLocal, title: 'Hari Parbat & Makhdoom Sahib' }, BLOCKS.sonamargDay, BLOCKS.gulmargStay, BLOCKS.gulmargDay, BLOCKS.pahalgamStay, { ...BLOCKS.pahalgamValleys, title: 'Martand Sun Temple' }, BLOCKS.pahalgamLeisure, BLOCKS.yusmargDay, BLOCKS.doodhpathriDay, BLOCKS.departure] }
     );
 
     return templates;
