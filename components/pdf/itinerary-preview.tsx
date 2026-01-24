@@ -5,8 +5,7 @@ import { ItineraryData } from '@/app/admin/tools/itinerary-maker/page';
 
 const LOGO_URL = "https://himalayandays.in/Himalayan%20Days%20Logo.png";
 
-// Export memoized component to prevent re-renders unless data changes
-export const ItineraryHTMLPreview = React.memo(ItineraryHTMLPreviewComponent);
+
 
 const ItineraryHTMLPreviewComponent = ({ data }: { data: ItineraryData }) => {
     // Helper to format date consistent with PDF
@@ -140,3 +139,6 @@ const ItineraryHTMLPreviewComponent = ({ data }: { data: ItineraryData }) => {
         </div>
     );
 };
+
+// Export memoized component to prevent re-renders unless data changes
+export const ItineraryHTMLPreview = React.memo(ItineraryHTMLPreviewComponent);
