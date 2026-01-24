@@ -123,18 +123,18 @@ const ItineraryHTMLPreviewComponent = ({ data }: { data: ItineraryData }) => {
             </div>
 
             {/* Inclusions & Exclusions */}
-            <div className="mb-8 p-0">
+            <div className="mb-0 p-0">
                 {/* Header Row */}
-                <div className="flex bg-blue-600">
-                    <div className="flex-1 py-2 px-4 border-r border-blue-400">
-                        <h3 className="text-white text-xs font-bold text-center uppercase tracking-wider">Tour Inclusions</h3>
+                <div className="flex bg-gray-900">
+                    <div className="flex-1 py-3 px-4 border-r border-gray-700">
+                        <h3 className="text-orange-500 text-[10px] font-bold text-center uppercase tracking-widest">Inclusions</h3>
                     </div>
-                    <div className="flex-1 py-2 px-4">
-                        <h3 className="text-white text-xs font-bold text-center uppercase tracking-wider">Tour Exclusions</h3>
+                    <div className="flex-1 py-3 px-4">
+                        <h3 className="text-gray-400 text-[10px] font-bold text-center uppercase tracking-widest">Exclusions</h3>
                     </div>
                 </div>
                 {/* Body */}
-                <div className="border border-t-0 border-blue-200">
+                <div className="border border-t-0 border-gray-100 mb-8">
                     {[
                         { inc: 'Hotel / Houseboat', exc: 'Airfare' },
                         { inc: 'Breakfast & Dinner', exc: 'Lunch' },
@@ -142,12 +142,12 @@ const ItineraryHTMLPreviewComponent = ({ data }: { data: ItineraryData }) => {
                         { inc: 'All transfers and Srinagar Sightseeing', exc: 'Gandola Ride' },
                         { inc: 'Local Shopping Assistance', exc: 'Entrance Tickets & Activities' },
                     ].map((row, idx) => (
-                        <div key={idx} className={`flex border-b border-blue-200 last:border-b-0 ${idx % 2 === 0 ? 'bg-blue-50' : 'bg-blue-100'}`}>
-                            <div className="flex-1 py-2 px-4 border-r border-blue-200 flex items-center justify-center">
-                                <span className="text-[10px] sm:text-xs font-medium text-blue-900 text-center">{row.inc}</span>
+                        <div key={idx} className={`flex border-b border-gray-100 last:border-b-0 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+                            <div className="flex-1 py-2 px-4 border-r border-gray-100 flex items-center justify-center">
+                                <span className="text-[10px] font-medium text-gray-700 text-center">{row.inc}</span>
                             </div>
                             <div className="flex-1 py-2 px-4 flex items-center justify-center">
-                                <span className="text-[10px] sm:text-xs font-medium text-blue-900 text-center">{row.exc}</span>
+                                <span className="text-[10px] font-medium text-gray-400 text-center">{row.exc}</span>
                             </div>
                         </div>
                     ))}
