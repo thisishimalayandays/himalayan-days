@@ -48,6 +48,7 @@ export default function ItineraryMakerPage() {
     const [selectedTemplateId, setSelectedTemplateId] = useState('');
 
     const [clientInfo, setClientInfo] = useState({
+        clientTitle: 'Mr.',
         clientName: '',
         travelDate: '',
         duration: '',
@@ -81,7 +82,11 @@ export default function ItineraryMakerPage() {
     }, [selectedDuration]);
 
     // Live Preview Data
-    const previewData: ItineraryData = { ...clientInfo, days };
+    const previewData: ItineraryData = {
+        ...clientInfo,
+        clientName: `${clientInfo.clientTitle} ${clientInfo.clientName}`,
+        days
+    };
 
     // ... handlers ...
 
@@ -193,11 +198,25 @@ export default function ItineraryMakerPage() {
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label>Client Name</Label>
-                            <Input
-                                value={clientInfo.clientName}
-                                onChange={e => setClientInfo({ ...clientInfo, clientName: e.target.value })}
-                                placeholder="e.g. Mr. Sharma"
-                            />
+                            <div className="flex gap-2">
+                                <select
+                                    className="flex h-10 w-20 rounded-md border border-gray-300 bg-white px-2 py-2 text-sm focus:ring-2 focus:ring-orange-500"
+                                    value={clientInfo.clientTitle}
+                                    onChange={(e) => setClientInfo({ ...clientInfo, clientTitle: e.target.value })}
+                                >
+                                    <option value="Mr.">Mr.</option>
+                                    <option value="Ms.">Ms.</option>
+                                    <option value="Mrs.">Mrs.</option>
+                                    <option value="Dr.">Dr.</option>
+                                    <option value="Prof.">Prof.</option>
+                                </select>
+                                <Input
+                                    value={clientInfo.clientName}
+                                    onChange={e => setClientInfo({ ...clientInfo, clientName: e.target.value })}
+                                    placeholder="e.g. Sharma"
+                                    className="flex-1"
+                                />
+                            </div>
                         </div>
                         <div className="space-y-2">
                             <Label>Quote ID</Label>
