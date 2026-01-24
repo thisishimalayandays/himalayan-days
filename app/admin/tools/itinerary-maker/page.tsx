@@ -8,14 +8,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { Plus, Trash2, Download, RefreshCw, FileText } from 'lucide-react';
-import { ItineraryDocument } from '@/components/pdf/itinerary-document';
-import { getPackages } from '@/app/actions/packages';
+import { ItineraryHTMLPreview } from '@/components/pdf/itinerary-preview';
 
-// Dynamically import PDFViewer to avoid SSR issues
-const PDFViewer = dynamic(
-    () => import('@react-pdf/renderer').then((mod) => mod.PDFViewer),
-    { ssr: false, loading: () => <p>Loading Preview...</p> }
-);
+// PDFViewer removed: using HTML Preview for reliability
 
 // Dynamically import PDFDownloadLink
 const PDFDownloadLink = dynamic(
@@ -247,16 +242,13 @@ export default function ItineraryMakerPage() {
                         )}
                     </PDFDownloadLink>
                 </div>
-                <div className="flex-1 w-full h-full">
-                    {/* Key forces remount when important data changes to fix preview sticking */}
-                    <PDFViewer key={days.length + clientInfo.pkgTitle} width="100%" height="100%" className="w-full h-full border-none">
-                        <ItineraryDocument
-                            data={{
-                                ...clientInfo,
-                                days: days
-                            }}
-                        />
-                    </PDFViewer>
+                <div className="flex-1 w-full h-full bg-gray-200 p-4 overflow-hidden">
+                    {/* HTML Preview Wrapper to center it and act like a document viewer */}
+                    <div className="h-full w-full overflow-y-auto flex justify-center">
+                        <div className="w-[210mm] min-h-[297mm] h-fit bg-white shadow-xl mx-auto">
+                            <ItineraryHTMLPreview data={{ ...clientInfo, days }} />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
