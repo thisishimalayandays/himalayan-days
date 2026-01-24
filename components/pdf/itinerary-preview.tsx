@@ -72,6 +72,10 @@ const ItineraryHTMLPreviewComponent = ({ data }: { data: ItineraryData }) => {
                         <p className="text-[10px] uppercase font-bold text-gray-500 mb-0.5">Vehicle Type</p>
                         <p className="text-sm font-bold text-gray-900">{data.vehicleType || "Private Cab"}</p>
                     </div>
+                    <div className="mt-4">
+                        <p className="text-[10px] uppercase font-bold text-gray-500 mb-0.5">Rooms</p>
+                        <p className="text-sm font-bold text-gray-900">{data.rooms || "-"}</p>
+                    </div>
                 </div>
             </div>
 

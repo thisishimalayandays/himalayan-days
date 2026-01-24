@@ -318,6 +318,9 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
 
                         <Text style={styles.label}>Vehicle Type</Text>
                         <Text style={styles.value}>{data.vehicleType || "Private Cab"}</Text>
+
+                        <Text style={styles.label}>Rooms</Text>
+                        <Text style={styles.value}>{data.rooms || "-"}</Text>
                     </View>
                 </View>
 
@@ -420,6 +423,22 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
                     </View>
                     <Text style={styles.priceValue}>Rs. {data.totalCost || "0"}/-</Text>
                 </View>
+
+                {/* Payment Section */}
+                {data.upiId && (
+                    <View style={{ marginTop: 20, padding: 15, borderTopWidth: 1, borderTopColor: '#e5e7eb', flexDirection: 'row', alignItems: 'center' }} wrap={false}>
+                        <View style={{ flex: 1 }}>
+                            <Text style={{ fontSize: 12, fontWeight: 'bold', color: COLORS.primary, marginBottom: 4 }}>SCAN TO PAY</Text>
+                            <Text style={{ fontSize: 8, color: COLORS.secondary, marginBottom: 8 }}>Use any UPI app to make the secure payment.</Text>
+                            <Text style={{ fontSize: 10, fontWeight: 'bold', color: COLORS.accent }}>{data.upiId}</Text>
+                        </View>
+                        {/* Dynamic QR Code: Using quickchart.io or similar reliable public API for simple text QR */}
+                        <Image
+                            src={`https://quickchart.io/qr?text=upi://pay?pa=${data.upiId}&size=150`}
+                            style={{ width: 80, height: 80 }}
+                        />
+                    </View>
+                )}
 
                 {/* Footer */}
                 <View style={styles.footer} fixed>
