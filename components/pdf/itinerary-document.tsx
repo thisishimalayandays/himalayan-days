@@ -50,8 +50,9 @@ const styles = StyleSheet.create({
     brandSubtitle: {
         fontSize: 8,
         color: COLORS.secondary,
-        marginTop: 4,
+        marginTop: 8,
         letterSpacing: 1,
+        marginBottom: 8,
     },
     headerRight: {
         alignItems: 'flex-end',
@@ -206,13 +207,14 @@ const styles = StyleSheet.create({
     priceSub: {
         color: '#6b7280',
         fontSize: 8,
-        marginTop: 4,
+        marginTop: 8,
         fontStyle: 'italic',
     },
     // Footer
     footer: {
         marginTop: 'auto',
         paddingTop: 20,
+        paddingHorizontal: 20,
         borderTopWidth: 1,
         borderTopColor: COLORS.border,
         flexDirection: 'row',
