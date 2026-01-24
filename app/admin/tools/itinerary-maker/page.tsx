@@ -18,6 +18,28 @@ const PDFExportButton = dynamic(
     { ssr: false, loading: () => <Button variant="secondary" size="sm" disabled>Loading...</Button> }
 );
 
+// Define types shared with PDF/Preview components
+export interface Day {
+    dayNumber: number;
+    title: string;
+    description: string;
+    meals?: string;
+    stay?: string;
+}
+
+export interface ItineraryData {
+    clientName: string;
+    travelDate: string;
+    duration: string;
+    quoteId: string;
+    pkgTitle: string;
+    totalCost: string;
+    adults: string;
+    kids: string;
+    vehicleType: string;
+    days: Day[];
+}
+
 export default function ItineraryMakerPage() {
     // Template Selection State
     const [selectedDuration, setSelectedDuration] = useState('');
@@ -30,9 +52,12 @@ export default function ItineraryMakerPage() {
         quoteId: `QT-${Math.floor(Math.random() * 10000)}`,
         pkgTitle: '',
         totalCost: '',
+        adults: '',
+        kids: '',
+        vehicleType: '',
     });
 
-    const [days, setDays] = useState([
+    const [days, setDays] = useState<Day[]>([
         { dayNumber: 1, title: 'Arrival in Srinagar', description: 'Welcome to Kashmir.', meals: 'Dinner', stay: 'Srinagar Houseboat' }
     ]);
 
@@ -51,8 +76,8 @@ export default function ItineraryMakerPage() {
         return ITINERARY_TEMPLATES.filter(t => t.duration === selectedDuration);
     }, [selectedDuration]);
 
-    // Live Preview Data (No Debounce Needed for HTML Preview)
-    const previewData = { ...clientInfo, days };
+    // Live Preview Data
+    const previewData: ItineraryData = { ...clientInfo, days };
 
     // ... handlers ...
 
@@ -87,7 +112,7 @@ export default function ItineraryMakerPage() {
         }]);
     };
 
-    const updateDay = (index: number, field: string, value: string) => {
+    const updateDay = (index: number, field: keyof Day, value: string) => {
         const newDays = [...days];
         newDays[index] = { ...newDays[index], [field]: value };
         setDays(newDays);
@@ -191,6 +216,30 @@ export default function ItineraryMakerPage() {
                                 value={clientInfo.duration}
                                 onChange={e => setClientInfo({ ...clientInfo, duration: e.target.value })}
                                 placeholder="e.g. 5 Days / 4 Nights"
+                            />
+                        </div>
+                        {/* New Fields */}
+                        <div className="space-y-2">
+                            <Label>Start Date (Pax)</Label>
+                            <div className="flex gap-2">
+                                <Input
+                                    value={clientInfo.adults}
+                                    onChange={e => setClientInfo({ ...clientInfo, adults: e.target.value })}
+                                    placeholder="Adults"
+                                />
+                                <Input
+                                    value={clientInfo.kids}
+                                    onChange={e => setClientInfo({ ...clientInfo, kids: e.target.value })}
+                                    placeholder="Kids"
+                                />
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Vehicle Type</Label>
+                            <Input
+                                value={clientInfo.vehicleType}
+                                onChange={e => setClientInfo({ ...clientInfo, vehicleType: e.target.value })}
+                                placeholder="e.g. Innova Crysta"
                             />
                         </div>
                     </div>

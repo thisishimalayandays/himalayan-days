@@ -1,256 +1,341 @@
 /* eslint-disable jsx-a11y/alt-text */
 import React from 'react';
 import { Page, Text, View, Document, StyleSheet, Image, Font } from '@react-pdf/renderer';
+import { ItineraryData } from '@/app/admin/tools/itinerary-maker/page';
 
 // Register fonts if needed (using standard fonts for speed now)
 // Font.register({ family: 'Inter', src: '...' });
 
+// Colors
+const COLORS = {
+    primary: '#111827', // Gray 900
+    secondary: '#4b5563', // Gray 600
+    accent: '#ea580c', // Orange 600 (Saffron)
+    lightBg: '#f9fafb', // Gray 50
+    border: '#e5e7eb', // Gray 200
+    white: '#ffffff',
+};
+
+// Create styles
 const styles = StyleSheet.create({
     page: {
         flexDirection: 'column',
-        backgroundColor: '#FFFFFF',
-        padding: 30,
+        backgroundColor: COLORS.white,
+        padding: 40,
         fontFamily: 'Helvetica',
+        color: COLORS.primary,
+        fontSize: 10,
+        lineHeight: 1.5,
     },
+    // Header
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 20,
-        borderBottomWidth: 1,
-        borderBottomColor: '#E5E7EB',
-        paddingBottom: 10,
+        alignItems: 'center',
+        marginBottom: 30,
+        paddingBottom: 20,
+        borderBottomWidth: 2,
+        borderBottomColor: COLORS.accent,
     },
-    logo: {
-        width: 100,
-        height: 40,
-        objectFit: 'contain',
+    headerLeft: {
+        flexDirection: 'column',
     },
-    agencyInfo: {
-        textAlign: 'right',
-    },
-    agencyTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#ea580c', // Orange-600
-    },
-    agencyText: {
-        fontSize: 9,
-        color: '#6B7280',
-        marginTop: 2,
-    },
-    titleSection: {
-        marginBottom: 20,
-        marginTop: 10,
-    },
-    mainTitle: {
+    brandTitle: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#111827',
+        color: COLORS.accent,
+        textTransform: 'uppercase',
+        letterSpacing: 2,
+    },
+    brandSubtitle: {
+        fontSize: 8,
+        color: COLORS.secondary,
+        marginTop: 4,
+        letterSpacing: 1,
+    },
+    headerRight: {
+        alignItems: 'flex-end',
+    },
+    contactText: {
+        fontSize: 8,
+        color: COLORS.secondary,
+        marginBottom: 2,
+    },
+    // Title Section
+    titleSection: {
+        marginBottom: 30,
+    },
+    mainTitle: {
+        fontSize: 28, // Large impact
+        fontWeight: 'bold',
+        color: COLORS.primary,
+        marginBottom: 8,
     },
     subTitle: {
-        fontSize: 10,
-        color: '#6B7280',
-        marginTop: 4,
-    },
-    clientInfo: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        backgroundColor: '#F9FAFB',
-        padding: 10,
-        borderRadius: 4,
-        marginBottom: 20,
-    },
-    clientLabel: {
-        fontSize: 8,
-        color: '#9CA3AF',
-        textTransform: 'uppercase',
-    },
-    clientValue: {
-        fontSize: 10,
-        color: '#374151',
+        fontSize: 12,
+        color: COLORS.accent,
         fontWeight: 'bold',
-        marginTop: 2,
+        textTransform: 'uppercase',
+        letterSpacing: 1,
     },
-    sectionTitle: {
+    // Client Grid
+    clientGrid: {
+        flexDirection: 'row',
+        backgroundColor: COLORS.lightBg,
+        borderRadius: 8,
+        padding: 15,
+        marginBottom: 30,
+        borderWidth: 1,
+        borderColor: COLORS.border,
+    },
+    clientCol: {
+        flex: 1,
+        paddingRight: 10,
+    },
+    label: {
+        fontSize: 8,
+        color: COLORS.secondary,
+        textTransform: 'uppercase',
+        marginBottom: 4,
+        fontWeight: 'bold',
+    },
+    value: {
+        fontSize: 11,
+        color: COLORS.primary,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    // Itinerary Timeline
+    sectionHeader: {
         fontSize: 14,
         fontWeight: 'bold',
-        color: '#000000',
-        marginBottom: 10,
-        borderLeftWidth: 3,
-        borderLeftColor: '#ea580c',
-        paddingLeft: 6,
+        color: COLORS.primary,
+        marginBottom: 20,
+        textTransform: 'uppercase',
+        borderBottomWidth: 1,
+        borderBottomColor: COLORS.border,
+        paddingBottom: 8,
     },
     dayContainer: {
-        marginBottom: 10,
-        padding: 10,
-        backgroundColor: '#F8F9FA',
-        borderRadius: 4,
-    },
-    dayHeader: {
         flexDirection: 'row',
+        marginBottom: 0,
+        position: 'relative',
+    },
+    timelineLeft: {
+        width: 50,
         alignItems: 'center',
-        marginBottom: 4,
+    },
+    timelineLine: {
+        position: 'absolute',
+        top: 15,
+        left: 24.5, // Center of width 50
+        bottom: -15, // Extend to next item
+        width: 1,
+        backgroundColor: COLORS.border,
+    },
+    timelineLineLast: {
+        display: 'none',
     },
     dayBadge: {
-        backgroundColor: '#ea580c',
-        color: '#FFFFFF',
-        fontSize: 8,
-        paddingVertical: 2,
-        paddingHorizontal: 6,
-        borderRadius: 4,
-        marginRight: 6,
+        width: 24,
+        height: 24,
+        borderRadius: 12,
+        backgroundColor: COLORS.accent,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 10,
+        zIndex: 10,
+    },
+    dayNumber: {
+        color: COLORS.white,
+        fontSize: 10,
+        fontWeight: 'bold',
+    },
+    dayContent: {
+        flex: 1,
+        paddingBottom: 30,
     },
     dayTitle: {
-        fontSize: 11,
+        fontSize: 12,
         fontWeight: 'bold',
-        color: '#374151',
-    },
-    dayDesc: {
-        fontSize: 9,
-        color: '#4B5563',
-        lineHeight: 1.4,
+        color: COLORS.primary,
         marginBottom: 6,
     },
-    dayMeta: {
+    dayDesc: {
+        fontSize: 10,
+        color: COLORS.secondary,
+        marginBottom: 10,
+    },
+    metaContainer: {
         flexDirection: 'row',
-        marginTop: 4,
-        paddingTop: 4,
-        borderTopWidth: 1,
-        borderTopColor: '#E5E7EB',
+        marginTop: 5,
     },
     metaItem: {
-        fontSize: 8,
-        color: '#6B7280',
-        marginRight: 10,
+        backgroundColor: COLORS.lightBg,
+        paddingVertical: 4,
+        paddingHorizontal: 8,
+        borderRadius: 4,
+        marginRight: 8,
+        borderWidth: 1,
+        borderColor: COLORS.border,
     },
+    metaText: {
+        fontSize: 8,
+        color: COLORS.secondary,
+        fontWeight: 'bold',
+    },
+    // Pricing
     priceSection: {
         marginTop: 20,
-        padding: 15,
-        backgroundColor: '#FFF7ED', // Orange-50
-        borderRadius: 6,
+        padding: 20,
+        backgroundColor: COLORS.primary, // Dark bg
+        borderRadius: 8,
+        alignItems: 'flex-end',
     },
-    totalPrice: {
-        fontSize: 18,
+    priceLabel: {
+        color: '#9ca3af', // Gray 400
+        fontSize: 10,
+        marginBottom: 4,
+        textTransform: 'uppercase',
+    },
+    priceValue: {
+        color: COLORS.white,
+        fontSize: 24,
         fontWeight: 'bold',
-        color: '#ea580c',
-        textAlign: 'right',
     },
+    priceSub: {
+        color: '#6b7280',
+        fontSize: 8,
+        marginTop: 4,
+        fontStyle: 'italic',
+    },
+    // Footer
     footer: {
-        position: 'absolute',
-        bottom: 30,
-        left: 30,
-        right: 30,
-        textAlign: 'center',
+        marginTop: 'auto',
+        paddingTop: 20,
         borderTopWidth: 1,
-        borderTopColor: '#E5E7EB',
-        paddingTop: 10,
+        borderTopColor: COLORS.border,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     footerText: {
         fontSize: 8,
-        color: '#9CA3AF',
-    }
+        color: '#9ca3af',
+    },
 });
 
-interface Day {
-    dayNumber: number;
-    title: string;
-    description: string;
-    meals?: string;
-    stay?: string;
-}
-
-export interface ItineraryData {
-    clientName: string;
-    travelDate: string;
-    duration: string;
-    quoteId: string;
-    pkgTitle: string;
-    days: Day[];
-    totalCost: string;
-}
-
-// Use local public file. React-PDF in browser can fetch relative URLs or absolute URLs from same origin.
-const LOGO_URL = "/Himalayan Days Logo.png";
-
 export function ItineraryDocument({ data }: { data: ItineraryData }) {
+
+    // Formatting helper
+    const formatDate = (dateStr: string) => {
+        if (!dateStr) return 'TBD';
+        try {
+            return new Date(dateStr).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+        } catch (e) { return dateStr }
+    };
+
     return (
         <Document>
             <Page size="A4" style={styles.page}>
 
                 {/* Header */}
                 <View style={styles.header}>
-                    <View>
-                        {/* eslint-disable-next-line jsx-a11y/alt-text */}
-                        <Image src={LOGO_URL} style={styles.logo} />
+                    <View style={styles.headerLeft}>
+                        <Text style={styles.brandTitle}>HIMALAYAN DAYS</Text>
+                        <Text style={styles.brandSubtitle}>KASHMIR TOUR & TRAVEL EXPERTS</Text>
                     </View>
-                    <View style={styles.agencyInfo}>
-                        <Text style={styles.agencyTitle}>Himalayan Days</Text>
-                        <Text style={styles.agencyText}>Kashmir Tour & Travel Agency</Text>
-                        <Text style={styles.agencyText}>+91-9103901803 | info@himalayandays.in</Text>
+                    <View style={styles.headerRight}>
+                        <Text style={styles.contactText}>+91-9103901803</Text>
+                        <Text style={styles.contactText}>info@himalayandays.in</Text>
+                        <Text style={styles.contactText}>www.himalayandays.in</Text>
                     </View>
                 </View>
 
                 {/* Title */}
                 <View style={styles.titleSection}>
-                    <Text style={styles.mainTitle}>{data.pkgTitle || "Custom Itinerary"}</Text>
-                    <Text style={styles.subTitle}>Experience Heaven on Earth</Text>
+                    <Text style={styles.subTitle}>EXCLUSIVE ITINERARY FOR</Text>
+                    <Text style={styles.mainTitle}>{data.pkgTitle || "Kashmir Tour Package"}</Text>
                 </View>
 
-                {/* Client Info Grid */}
-                <View style={styles.clientInfo}>
-                    <View>
-                        <Text style={styles.clientLabel}>Prepared For</Text>
-                        <Text style={styles.clientValue}>{data.clientName || "Valued Guest"}</Text>
+                {/* Client Grid */}
+                <View style={styles.clientGrid}>
+                    <View style={styles.clientCol}>
+                        <Text style={styles.label}>Guest Name</Text>
+                        <Text style={styles.value}>{data.clientName || "-"}</Text>
+
+                        <Text style={styles.label}>Travel Date</Text>
+                        <Text style={styles.value}>{formatDate(data.travelDate)}</Text>
                     </View>
-                    <View>
-                        <Text style={styles.clientLabel}>Travel Date</Text>
-                        <Text style={styles.clientValue}>{data.travelDate || "TBD"}</Text>
+                    <View style={styles.clientCol}>
+                        <Text style={styles.label}>Duration</Text>
+                        <Text style={styles.value}>{data.duration || "-"}</Text>
+
+                        <Text style={styles.label}>Adults / Kids</Text>
+                        <Text style={styles.value}>{data.adults || 0} Adults, {data.kids || 0} Kids</Text>
                     </View>
-                    <View>
-                        <Text style={styles.clientLabel}>Duration</Text>
-                        <Text style={styles.clientValue}>{data.duration || "N/A"}</Text>
-                    </View>
-                    <View>
-                        <Text style={styles.clientLabel}>Quote ID</Text>
-                        <Text style={styles.clientValue}>{data.quoteId}</Text>
+                    <View style={{ ...styles.clientCol, borderRightWidth: 0 }}>
+                        <Text style={styles.label}>Quote Reference</Text>
+                        <Text style={styles.value}>{data.quoteId}</Text>
+
+                        <Text style={styles.label}>Vehicle Type</Text>
+                        <Text style={styles.value}>{data.vehicleType || "Private Cab"}</Text>
                     </View>
                 </View>
 
-                {/* Itinerary */}
+                {/* Timeline Itinerary */}
                 <View>
-                    <Text style={styles.sectionTitle}>Your Itinerary</Text>
-                    {data.days.map((day, idx) => (
-                        <View key={idx} style={styles.dayContainer}>
-                            <View style={styles.dayHeader}>
-                                <Text style={styles.dayBadge}>Day {day.dayNumber}</Text>
-                                <Text style={styles.dayTitle}>{day.title}</Text>
+                    <Text style={styles.sectionHeader}>Journey Roadmap</Text>
+
+                    {data.days.map((day, idx) => {
+                        const isLast = idx === data.days.length - 1;
+                        return (
+                            <View key={idx} style={styles.dayContainer} wrap={false}>
+                                {/* Left: Timeline Graphic */}
+                                <View style={styles.timelineLeft}>
+                                    {!isLast && <View style={styles.timelineLine} />}
+                                    <View style={styles.dayBadge}>
+                                        <Text style={styles.dayNumber}>{day.dayNumber}</Text>
+                                    </View>
+                                </View>
+
+                                {/* Right: Content */}
+                                <View style={styles.dayContent}>
+                                    <Text style={styles.dayTitle}>{day.title}</Text>
+                                    <Text style={styles.dayDesc}>{day.description}</Text>
+
+                                    {/* Meta Tags */}
+                                    {(day.meals || day.stay) && (
+                                        <View style={styles.metaContainer}>
+                                            {day.stay && (
+                                                <View style={styles.metaItem}>
+                                                    <Text style={styles.metaText}>🏨  {day.stay}</Text>
+                                                </View>
+                                            )}
+                                            {day.meals && (
+                                                <View style={styles.metaItem}>
+                                                    <Text style={styles.metaText}>🍽️  {day.meals}</Text>
+                                                </View>
+                                            )}
+                                        </View>
+                                    )}
+                                </View>
                             </View>
-                            <Text style={styles.dayDesc}>{day.description}</Text>
-                            <View style={styles.dayMeta}>
-                                <Text style={styles.metaItem}>Meals: {day.meals || "Not included"}</Text>
-                                <Text style={styles.metaItem}>Stay: {day.stay || "Standard Hotel"}</Text>
-                            </View>
-                        </View>
-                    ))}
+                        );
+                    })}
                 </View>
 
-                {/* Costing */}
-                <View style={styles.priceSection}>
-                    <Text style={styles.agencyText}>Total Package Cost</Text>
-                    <Text style={styles.totalPrice}>Rs. {data.totalCost || "0"}</Text>
-                    <Text style={{ fontSize: 9, color: '#6B7280', marginTop: 4, textAlign: 'right' }}>
-                        *Includes all taxes & service charges
-                    </Text>
+                {/* Cost Section (Keep on same page if possible, or wrap) */}
+                <View style={styles.priceSection} wrap={false}>
+                    <Text style={styles.priceLabel}>Total Tour Cost</Text>
+                    <Text style={styles.priceValue}>₹ {data.totalCost || "0"}/-</Text>
+                    <Text style={styles.priceSub}>*Valid for 7 days from issue. Includes all taxes.</Text>
                 </View>
 
                 {/* Footer */}
-                <View style={styles.footer}>
-                    <Text style={styles.footerText}>
-                        Himalayan Days - Malabagh, Naseem Bagh, Srinagar, J&K 190006
-                    </Text>
-                    <Text style={styles.footerText}>
-                        www.himalayandays.in
-                    </Text>
+                <View style={styles.footer} fixed>
+                    <Text style={styles.footerText}>© 2026 Himalayan Days. All rights reserved.</Text>
+                    <Text style={styles.footerText}>Page <Text render={({ pageNumber, totalPages }) => `${pageNumber} of ${totalPages}`} /></Text>
                 </View>
 
             </Page>
