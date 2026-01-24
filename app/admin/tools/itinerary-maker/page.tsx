@@ -10,8 +10,13 @@ import { Card } from '@/components/ui/card';
 import { Plus, Trash2, Download, RefreshCw, FileText } from 'lucide-react';
 // Imports
 import { ITINERARY_TEMPLATES, ItineraryTemplate } from './data/templates';
+import { ItineraryHTMLPreview } from '@/components/pdf/itinerary-preview';
 
-// ... other imports ...
+// Dynamically import PDFExportButton to isolate @react-pdf/renderer
+const PDFExportButton = dynamic(
+    () => import('@/components/pdf/pdf-export-button'),
+    { ssr: false, loading: () => <Button variant="secondary" size="sm" disabled>Loading...</Button> }
+);
 
 export default function ItineraryMakerPage() {
     // const [packages, setPackages] = useState<any[]>([]); // Removed: Using Templates now
