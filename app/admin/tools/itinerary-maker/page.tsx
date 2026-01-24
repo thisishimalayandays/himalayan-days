@@ -56,7 +56,6 @@ export default function ItineraryMakerPage() {
         totalCost: '',
         adults: '',
         kids: '',
-        kids: '',
         vehicleType: '',
         rooms: '',
         upiId: 'mweb5890@okhdfcbank', // Default UPI ID
@@ -244,7 +243,6 @@ export default function ItineraryMakerPage() {
                             <Input
                                 value={clientInfo.vehicleType}
                                 onChange={e => setClientInfo({ ...clientInfo, vehicleType: e.target.value })}
-                                placeholder="e.g. Innova Crysta"
                                 placeholder="e.g. Innova Crysta"
                             />
                         </div>
