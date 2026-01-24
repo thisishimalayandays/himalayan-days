@@ -41,8 +41,11 @@ export async function sendContactEmail(formData: FormData) {
         });
 
         const data = await response.json();
-        if (!data.success) {
-            return { success: false, message: "Captcha verification failed. Are you a robot?" };
+
+        // For ReCAPTCHA v3, we check success AND score
+        if (!data.success || (data.score !== undefined && data.score < 0.5)) {
+            console.error("ReCAPTCHA verification failed:", data);
+            return { success: false, message: "Spam detected. Please try again later." };
         }
     } catch (error) {
         console.error("Captcha verification error:", error);
