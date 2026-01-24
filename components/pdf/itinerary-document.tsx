@@ -6,6 +6,8 @@ import { ItineraryData } from '@/app/admin/tools/itinerary-maker/page';
 // Register fonts if needed (using standard fonts for speed now)
 // Font.register({ family: 'Inter', src: '...' });
 
+const LOGO_URL = "https://himalayandays.in/Himalayan%20Days%20Logo.png";
+
 // Colors
 const COLORS = {
     primary: '#111827', // Gray 900
@@ -38,6 +40,16 @@ const styles = StyleSheet.create({
         borderBottomColor: COLORS.accent,
     },
     headerLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    logo: {
+        width: 60,
+        height: 60,
+        marginRight: 15,
+        objectFit: 'contain',
+    },
+    brandTextContainer: {
         flexDirection: 'column',
     },
     brandTitle: {
