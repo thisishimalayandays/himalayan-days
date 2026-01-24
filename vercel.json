@@ -4,6 +4,5 @@
             "path": "/api/keep-alive",
             "schedule": "*/10 * * * *"
         }
-    ],
-    "comment": "Keep-alive cron job configuration"
+    ]
 }
