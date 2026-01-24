@@ -247,7 +247,7 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
                     </View>
                     <View style={styles.headerRight}>
                         <Text style={styles.contactText}>+91-9103901803</Text>
-                        <Text style={styles.contactText}>info@himalayandays.in</Text>
+                        <Text style={styles.contactText}>thisishimalayandays@gmail.com</Text>
                         <Text style={styles.contactText}>www.himalayandays.in</Text>
                     </View>
                 </View>
@@ -309,12 +309,12 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
                                         <View style={styles.metaContainer}>
                                             {day.stay && (
                                                 <View style={styles.metaItem}>
-                                                    <Text style={styles.metaText}>🏨  {day.stay}</Text>
+                                                    <Text style={styles.metaText}>Stay: {day.stay}</Text>
                                                 </View>
                                             )}
                                             {day.meals && (
                                                 <View style={styles.metaItem}>
-                                                    <Text style={styles.metaText}>🍽️  {day.meals}</Text>
+                                                    <Text style={styles.metaText}>Meals: {day.meals}</Text>
                                                 </View>
                                             )}
                                         </View>

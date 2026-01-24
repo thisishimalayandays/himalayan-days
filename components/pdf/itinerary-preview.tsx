@@ -27,7 +27,7 @@ const ItineraryHTMLPreviewComponent = ({ data }: { data: ItineraryData }) => {
                 </div>
                 <div className="text-right text-xs text-gray-500 space-y-0.5">
                     <p>+91-9103901803</p>
-                    <p>info@himalayandays.in</p>
+                    <p>thisishimalayandays@gmail.com</p>
                     <p>www.himalayandays.in</p>
                 </div>
             </div>
@@ -106,12 +106,12 @@ const ItineraryHTMLPreviewComponent = ({ data }: { data: ItineraryData }) => {
                                     <div className="flex flex-wrap gap-2">
                                         {day.stay && (
                                             <span className="inline-flex items-center px-2 py-1 rounded border border-gray-200 bg-gray-50 text-[10px] font-medium text-gray-600">
-                                                🏨 {day.stay}
+                                                Stay: {day.stay}
                                             </span>
                                         )}
                                         {day.meals && (
                                             <span className="inline-flex items-center px-2 py-1 rounded border border-gray-200 bg-gray-50 text-[10px] font-medium text-gray-600">
-                                                🍽️ {day.meals}
+                                                Meals: {day.meals}
                                             </span>
                                         )}
                                     </div>
