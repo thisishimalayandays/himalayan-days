@@ -126,20 +126,63 @@ export async function getPackages() {
 }
 
 export async function getPackageBySlug(slug: string) {
-    const pkg = await prisma.package.findUnique({
-        where: { slug }
-    });
+    try {
+        const pkg = await prisma.package.findUnique({
+            where: { slug },
+        });
 
-    if (!pkg) return null;
+        if (!pkg) return null;
 
-    return {
-        ...pkg,
-        gallery: JSON.parse(pkg.gallery) as string[],
-        features: JSON.parse(pkg.features) as string[],
-        itinerary: JSON.parse(pkg.itinerary) as { day: number; title: string; desc: string }[],
-        inclusions: JSON.parse(pkg.inclusions) as string[],
-        exclusions: JSON.parse(pkg.exclusions) as string[],
-    };
+        return {
+            ...pkg,
+            gallery: JSON.parse(pkg.gallery) as string[],
+            features: JSON.parse(pkg.features) as string[],
+            itinerary: JSON.parse(pkg.itinerary) as { day: number; title: string; desc: string }[],
+            inclusions: JSON.parse(pkg.inclusions) as string[],
+            exclusions: JSON.parse(pkg.exclusions) as string[],
+        };
+    } catch (error) {
+        console.error("Error fetching package:", error);
+        return null;
+    }
+}
+
+export async function getSimilarPackages(currentId: string, duration: string) {
+    try {
+        // 1. Try to find packages with the SAME duration first
+        const similar = await prisma.package.findMany({
+            where: {
+                AND: [
+                    { id: { not: currentId } }, // Exclude current
+                    { duration: duration }      // Match duration
+                ]
+            },
+            take: 3,
+            orderBy: { updatedAt: 'desc' } // Fresh ones first
+        });
+
+        // 2. If we found fewer than 3, fill the gap with other packages
+        if (similar.length < 3) {
+            const needed = 3 - similar.length;
+            const extra = await prisma.package.findMany({
+                where: {
+                    AND: [
+                        { id: { not: currentId } },
+                        { id: { notIn: similar.map(p => p.id) } } // Don't duplicate
+                    ]
+                },
+                take: needed,
+                orderBy: { updatedAt: 'desc' }
+            });
+            return [...similar, ...extra];
+        }
+
+        return similar;
+
+    } catch (error) {
+        console.error("Error fetching similar packages:", error);
+        return [];
+    }
 }
 
 export async function getPackagesList() {

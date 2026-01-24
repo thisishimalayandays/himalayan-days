@@ -7,6 +7,7 @@ import { BookingForm } from '@/components/packages/booking-form';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Check, X } from 'lucide-react';
+import { SimilarPackages } from "@/components/packages/similar-packages";
 
 // generateStaticParams removed to allow build on empty database
 
@@ -155,6 +156,7 @@ export default async function PackagePage({ params }: { params: Promise<{ slug: 
                 </div>
             </div>
 
+            <SimilarPackages currentId={pkg.id} duration={pkg.duration} />
             <Footer />
         </main>
     );
