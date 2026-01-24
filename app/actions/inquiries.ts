@@ -201,3 +201,71 @@ export async function markInquiryAsRead(id: string) {
         return { success: false, error: 'Failed to mark inquiry as read' };
     }
 }
+
+export async function getInquiryAnalytics() {
+    try {
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+        const inquiries = await prisma.inquiry.findMany({
+            where: {
+                createdAt: {
+                    gte: thirtyDaysAgo
+                },
+                isDeleted: false
+            },
+            select: {
+                createdAt: true,
+                type: true
+            },
+            orderBy: {
+                createdAt: 'asc'
+            }
+        });
+
+        // Group by date
+        const grouped = inquiries.reduce((acc, curr) => {
+            const date = curr.createdAt.toISOString().split('T')[0];
+            if (!acc[date]) {
+                acc[date] = 0;
+            }
+            acc[date]++;
+            return acc;
+        }, {} as Record<string, number>);
+
+        // Fill in missing dates
+        const data = [];
+        for (let i = 0; i < 30; i++) {
+            const d = new Date();
+            d.setDate(d.getDate() - (29 - i));
+            const dateStr = d.toISOString().split('T')[0];
+
+            // Format for display (e.g., "Jan 24")
+            const displayDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+            data.push({
+                date: displayDate,
+                count: grouped[dateStr] || 0
+            });
+        }
+
+        // Get Recent Activity (Top 5)
+        const recentInquiries = await prisma.inquiry.findMany({
+            where: { isDeleted: false },
+            take: 5,
+            orderBy: { createdAt: 'desc' },
+            select: {
+                id: true,
+                name: true,
+                type: true,
+                createdAt: true,
+                status: true
+            }
+        });
+
+        return { success: true, chartData: data, recentActivity: recentInquiries };
+    } catch (error) {
+        console.error('Error fetching analytics:', error);
+        return { success: false, chartData: [], recentActivity: [] };
+    }
+}
