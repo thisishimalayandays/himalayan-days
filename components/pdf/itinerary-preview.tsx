@@ -179,6 +179,22 @@ const ItineraryHTMLPreviewComponent = ({ data }: { data: ItineraryData }) => {
                 </ul>
             </div>
 
+            {/* Payment Section */}
+            {data.upiId && (
+                <div className="mb-6 border-t border-gray-200 pt-5 flex items-center justify-between">
+                    <div>
+                        <p className="text-xs font-bold text-gray-900 mb-1 uppercase tracking-wider">Scan to Pay</p>
+                        <p className="text-[10px] text-gray-500 mb-2">Use any UPI app to make the secure payment.</p>
+                        <p className="text-sm font-bold text-orange-600 font-mono">{data.upiId}</p>
+                    </div>
+                    <img
+                        src={`https://quickchart.io/qr?text=upi://pay?pa=${data.upiId}&size=150`}
+                        alt="UPI QR"
+                        className="w-24 h-24 border border-gray-200 p-1 rounded-sm"
+                    />
+                </div>
+            )}
+
             {/* Price & Footer */}
             <div className="mt-auto">
                 <div className="bg-gray-900 rounded-lg p-5 flex items-center justify-between border-l-4 border-orange-600 mb-8 shadow-sm">

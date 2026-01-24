@@ -245,113 +245,112 @@ export default function ItineraryMakerPage() {
                                 value={clientInfo.vehicleType}
                                 onChange={e => setClientInfo({ ...clientInfo, vehicleType: e.target.value })}
                                 placeholder="e.g. Innova Crysta"
+                                placeholder="e.g. Innova Crysta"
                             />
                         </div>
-                            />
-                    </div>
-                    <div className="space-y-2">
-                        <Label>Rooms</Label>
-                        <Input
-                            value={clientInfo.rooms}
-                            onChange={e => setClientInfo({ ...clientInfo, rooms: e.target.value })}
-                            placeholder="e.g. 2 Double Rooms"
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label>UPI ID (Payment)</Label>
-                        <Input
-                            value={clientInfo.upiId}
-                            onChange={e => setClientInfo({ ...clientInfo, upiId: e.target.value })}
-                            placeholder="e.g. mweb5890@okhdfcbank"
-                        />
-                    </div>
-                </div>
-                <div className="space-y-2">
-                    <Label>Package Title (for PDF)</Label>
-                    <Input
-                        value={clientInfo.pkgTitle}
-                        onChange={e => setClientInfo({ ...clientInfo, pkgTitle: e.target.value })}
-                        placeholder="e.g. Premium Kashmir Honeymoon"
-                    />
-                </div>
-                <div className="space-y-2">
-                    <Label>Total Cost (₹)</Label>
-                    <Input
-                        value={clientInfo.totalCost}
-                        onChange={e => setClientInfo({ ...clientInfo, totalCost: e.target.value })}
-                        placeholder="e.g. 45,000"
-                    />
-                </div>
-            </div>
-
-            {/* Itinerary Days */}
-            <div className="space-y-4 mb-20">
-                <div className="flex items-center justify-between border-b pb-2">
-                    <h2 className="text-lg font-semibold">Itinerary Days</h2>
-                    <Button size="sm" onClick={addDay} variant="secondary">
-                        <Plus className="w-4 h-4 mr-2" /> Add Day
-                    </Button>
-                </div>
-
-                {days.map((day, idx) => (
-                    <Card key={idx} className="p-4 relative hover:shadow-md transition-shadow">
-                        <div className="absolute top-4 right-4">
-                            <Button size="icon" variant="ghost" className="text-red-500 hover:text-red-700 h-8 w-8" onClick={() => removeDay(idx)}>
-                                <Trash2 className="w-4 h-4" />
-                            </Button>
-                        </div>
-                        <div className="space-y-3">
-                            <Label className="text-primary font-bold">Day {day.dayNumber}</Label>
+                        <div className="space-y-2">
+                            <Label>Rooms</Label>
                             <Input
-                                value={day.title}
-                                onChange={e => updateDay(idx, 'title', e.target.value)}
-                                placeholder="Title (e.g. Arrival)"
-                                className="font-semibold"
+                                value={clientInfo.rooms}
+                                onChange={e => setClientInfo({ ...clientInfo, rooms: e.target.value })}
+                                placeholder="e.g. 2 Double Rooms"
                             />
-                            <Textarea
-                                value={day.description}
-                                onChange={e => updateDay(idx, 'description', e.target.value)}
-                                placeholder="Day description..."
-                                rows={2}
-                            />
-                            <div className="grid grid-cols-2 gap-4">
-                                <Input
-                                    value={day.meals}
-                                    onChange={e => updateDay(idx, 'meals', e.target.value)}
-                                    placeholder="Meals (e.g. Dinner)"
-                                />
-                                <Input
-                                    value={day.stay}
-                                    onChange={e => updateDay(idx, 'stay', e.target.value)}
-                                    placeholder="Stay (e.g. Houseboat)"
-                                />
-                            </div>
                         </div>
-                    </Card>
-                ))}
-            </div>
-        </div>
+                        <div className="space-y-2">
+                            <Label>UPI ID (Payment)</Label>
+                            <Input
+                                value={clientInfo.upiId}
+                                onChange={e => setClientInfo({ ...clientInfo, upiId: e.target.value })}
+                                placeholder="e.g. mweb5890@okhdfcbank"
+                            />
+                        </div>
+                    </div>
+                    <div className="space-y-2">
+                        <Label>Package Title (for PDF)</Label>
+                        <Input
+                            value={clientInfo.pkgTitle}
+                            onChange={e => setClientInfo({ ...clientInfo, pkgTitle: e.target.value })}
+                            placeholder="e.g. Premium Kashmir Honeymoon"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label>Total Cost (₹)</Label>
+                        <Input
+                            value={clientInfo.totalCost}
+                            onChange={e => setClientInfo({ ...clientInfo, totalCost: e.target.value })}
+                            placeholder="e.g. 45,000"
+                        />
+                    </div>
+                </div>
 
-            {/* Right Panel: Live Preview */ }
-    <div className="w-full md:w-1/2 bg-gray-900 border-l border-gray-800 flex flex-col">
-        <div className="p-3 bg-gray-800 border-b border-gray-700 flex justify-between items-center text-white">
-            <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-primary" />
-                <span className="font-medium text-sm">Live PDF Preview</span>
-            </div>
+                {/* Itinerary Days */}
+                <div className="space-y-4 mb-20">
+                    <div className="flex items-center justify-between border-b pb-2">
+                        <h2 className="text-lg font-semibold">Itinerary Days</h2>
+                        <Button size="sm" onClick={addDay} variant="secondary">
+                            <Plus className="w-4 h-4 mr-2" /> Add Day
+                        </Button>
+                    </div>
 
-            {/* Explicit Download Button - Lazy Generation ensures performance */}
-            <PDFExportButton data={previewData} />
-        </div>
-        <div className="flex-1 w-full h-full bg-gray-200 p-4 overflow-hidden">
-            {/* HTML Preview Wrapper */}
-            <div className="h-full w-full overflow-y-auto flex justify-center">
-                <div className="w-[210mm] min-h-[297mm] h-fit bg-white shadow-xl mx-auto">
-                    <ItineraryHTMLPreview data={previewData} />
+                    {days.map((day, idx) => (
+                        <Card key={idx} className="p-4 relative hover:shadow-md transition-shadow">
+                            <div className="absolute top-4 right-4">
+                                <Button size="icon" variant="ghost" className="text-red-500 hover:text-red-700 h-8 w-8" onClick={() => removeDay(idx)}>
+                                    <Trash2 className="w-4 h-4" />
+                                </Button>
+                            </div>
+                            <div className="space-y-3">
+                                <Label className="text-primary font-bold">Day {day.dayNumber}</Label>
+                                <Input
+                                    value={day.title}
+                                    onChange={e => updateDay(idx, 'title', e.target.value)}
+                                    placeholder="Title (e.g. Arrival)"
+                                    className="font-semibold"
+                                />
+                                <Textarea
+                                    value={day.description}
+                                    onChange={e => updateDay(idx, 'description', e.target.value)}
+                                    placeholder="Day description..."
+                                    rows={2}
+                                />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <Input
+                                        value={day.meals}
+                                        onChange={e => updateDay(idx, 'meals', e.target.value)}
+                                        placeholder="Meals (e.g. Dinner)"
+                                    />
+                                    <Input
+                                        value={day.stay}
+                                        onChange={e => updateDay(idx, 'stay', e.target.value)}
+                                        placeholder="Stay (e.g. Houseboat)"
+                                    />
+                                </div>
+                            </div>
+                        </Card>
+                    ))}
                 </div>
             </div>
-        </div>
-    </div>
+
+            {/* Right Panel: Live Preview */}
+            <div className="w-full md:w-1/2 bg-gray-900 border-l border-gray-800 flex flex-col">
+                <div className="p-3 bg-gray-800 border-b border-gray-700 flex justify-between items-center text-white">
+                    <div className="flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-primary" />
+                        <span className="font-medium text-sm">Live PDF Preview</span>
+                    </div>
+
+                    {/* Explicit Download Button - Lazy Generation ensures performance */}
+                    <PDFExportButton data={previewData} />
+                </div>
+                <div className="flex-1 w-full h-full bg-gray-200 p-4 overflow-hidden">
+                    {/* HTML Preview Wrapper */}
+                    <div className="h-full w-full overflow-y-auto flex justify-center">
+                        <div className="w-[210mm] min-h-[297mm] h-fit bg-white shadow-xl mx-auto">
+                            <ItineraryHTMLPreview data={previewData} />
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div >
     );
 }
