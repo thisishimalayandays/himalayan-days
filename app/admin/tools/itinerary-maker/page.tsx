@@ -382,10 +382,12 @@ export default function ItineraryMakerPage() {
                     {/* Explicit Download Button - Lazy Generation ensures performance */}
                     <PDFExportButton data={previewData} />
                 </div>
-                <div className="flex-1 w-full h-full bg-gray-200 p-0 md:p-4 overflow-hidden relative">
-                    {/* HTML Preview Wrapper - Hide horizontal overflow */}
-                    <div className="h-full w-full overflow-y-auto overflow-x-hidden flex justify-center items-start pt-4 md:pt-8 custom-scrollbar">
-                        <div className="w-[210mm] min-w-[210mm] min-h-[297mm] h-fit bg-white shadow-xl origin-top scale-[0.45] sm:scale-75 md:scale-[0.45] lg:scale-[0.6] xl:scale-[0.75] 2xl:scale-100 transition-transform duration-200 mb-20 shrink-0">
+                <div className="flex-1 w-full h-full bg-gray-200 p-2 md:p-8 overflow-hidden relative">
+                    {/* HTML Preview Wrapper */}
+                    <div className="h-full w-full overflow-auto flex justify-center pt-4 md:pt-8 custom-scrollbar">
+                        <div className={`w-[210mm] min-w-[210mm] min-h-[297mm] h-fit bg-white shadow-xl origin-top transition-transform duration-200 mb-20 shrink-0
+                            scale-[0.4] sm:scale-75 md:scale-[0.4] lg:scale-[0.55] xl:scale-[0.7] 2xl:scale-[0.85]
+                        `}>
                             <ItineraryHTMLPreview data={previewData} />
                         </div>
                     </div>
