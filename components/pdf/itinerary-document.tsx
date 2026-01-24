@@ -191,30 +191,40 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: COLORS.primary, // Dark bg
         borderRadius: 8,
-        alignItems: 'flex-end',
+        flexDirection: 'row', // Flex row for left-right balance
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderLeftWidth: 4,
+        borderLeftColor: COLORS.accent,
+    },
+    priceLeft: {
+        flexDirection: 'column',
     },
     priceLabel: {
         color: '#9ca3af', // Gray 400
         fontSize: 10,
         marginBottom: 4,
         textTransform: 'uppercase',
-    },
-    priceValue: {
-        color: COLORS.white,
-        fontSize: 24,
-        fontWeight: 'bold',
+        letterSpacing: 1,
     },
     priceSub: {
         color: '#6b7280',
         fontSize: 8,
-        marginTop: 8,
         fontStyle: 'italic',
+    },
+    priceValue: {
+        color: COLORS.white,
+        fontSize: 28, // Lager font
+        fontWeight: 'bold',
+        letterSpacing: 0.5,
     },
     // Footer
     footer: {
-        marginTop: 'auto',
-        paddingTop: 20,
-        paddingHorizontal: 20,
+        position: 'absolute',
+        bottom: 30,
+        left: 40,
+        right: 40,
+        paddingTop: 10,
         borderTopWidth: 1,
         borderTopColor: COLORS.border,
         flexDirection: 'row',
@@ -328,10 +338,13 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
                 </View>
 
                 {/* Cost Section (Keep on same page if possible, or wrap) */}
+                {/* Cost Section */}
                 <View style={styles.priceSection} wrap={false}>
-                    <Text style={styles.priceLabel}>Total Tour Cost</Text>
+                    <View style={styles.priceLeft}>
+                        <Text style={styles.priceLabel}>TOTAL TOUR COST</Text>
+                        <Text style={styles.priceSub}>*Valid for 7 days. Includes all taxes.</Text>
+                    </View>
                     <Text style={styles.priceValue}>Rs. {data.totalCost || "0"}/-</Text>
-                    <Text style={styles.priceSub}>*Valid for 7 days from issue. Includes all taxes.</Text>
                 </View>
 
                 {/* Footer */}
