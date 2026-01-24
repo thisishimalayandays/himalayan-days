@@ -154,6 +154,27 @@ const ItineraryHTMLPreviewComponent = ({ data }: { data: ItineraryData }) => {
                 </div>
             </div>
 
+            {/* Terms & Conditions */}
+            <div className="mb-8 bg-gray-50 rounded-lg p-5 border border-gray-100">
+                <h3 className="text-[10px] font-bold text-gray-900 uppercase tracking-widest mb-3 border-b border-gray-200 pb-2">Terms & Conditions</h3>
+                <ul className="space-y-1.5 list-disc pl-3">
+                    {[
+                        "From your first contact till your Tour ends, our Tour Advisors are available for your assistance 24x7.",
+                        "Customers are requested to pay 30% of the total booking amount in advance & 70% upon arrival.",
+                        "All bookings will be confirmed after the advance payment reflects in our bank account or online wallets.",
+                        "In case of a government-imposed lockdown, your booking amount is safe with us and can be used in the future.",
+                        "In case you choose to cancel your bookings with us after confirming, we trust you to pay the remaining amount over the advance payments made by you as per the hotel policies. Himalayan Days will not charge you anything as Tour Operators for cancellations except the Hotel & Driver charges after settlements.",
+                        "Kindly make the Advance Payments soon after finalizing your desired Itinerary. This helps us ensure that the Hotels/Houseboats are not Sold Out.",
+                        "All Visitors are bound to Hire Local Taxis for Sightseeing within the vicinities of Sonmarg, Pahalgam, Gulmarg & other destinations in Kashmir as per Kashmir Tourism Advisory.",
+                        "Your Prepaid Sim cards will not work on your Trip to Kashmir & Ladakh, kindly arrange a Postpaid/Pre-on-Postpaid Sim on your own beforehand."
+                    ].map((term, idx) => (
+                        <li key={idx} className="text-[9px] text-gray-500 leading-relaxed pl-1">
+                            <span className="text-gray-600">{term}</span>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
             {/* Price & Footer */}
             <div className="mt-auto">
                 <div className="bg-gray-900 rounded-lg p-5 flex items-center justify-between border-l-4 border-orange-600 mb-8 shadow-sm">
