@@ -337,6 +337,37 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
                     })}
                 </View>
 
+                {/* Inclusions & Exclusions */}
+                <View style={{ marginBottom: 20 }} wrap={false}>
+                    {/* Header Row */}
+                    <View style={{ flexDirection: 'row', backgroundColor: '#2563eb', padding: 8 }}>
+                        <View style={{ flex: 1, borderRightWidth: 1, borderRightColor: '#60a5fa' }}>
+                            <Text style={{ color: '#ffffff', fontSize: 10, fontWeight: 'bold', textAlign: 'center', textTransform: 'uppercase' }}>TOUR INCLUSIONS</Text>
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Text style={{ color: '#ffffff', fontSize: 10, fontWeight: 'bold', textAlign: 'center', textTransform: 'uppercase' }}>TOUR EXCLUSIONS</Text>
+                        </View>
+                    </View>
+
+                    {/* Table Body */}
+                    {[
+                        { inc: 'Hotel / Houseboat', exc: 'Airfare' },
+                        { inc: 'Breakfast & Dinner', exc: 'Lunch' },
+                        { inc: 'Shikara Ride', exc: 'Pony Ride' },
+                        { inc: 'All transfers and Srinagar Sightseeing', exc: 'Gandola Ride' },
+                        { inc: 'Local Shopping Assistance', exc: 'Entrance Tickets & Activities' },
+                    ].map((row, idx) => (
+                        <View key={idx} style={{ flexDirection: 'row', backgroundColor: idx % 2 === 0 ? '#dbeafe' : '#f0f9ff', borderBottomWidth: 1, borderBottomColor: '#bfdbfe' }}>
+                            <View style={{ flex: 1, padding: 6, borderRightWidth: 1, borderRightColor: '#bfdbfe' }}>
+                                <Text style={{ fontSize: 9, color: '#1e3a8a', textAlign: 'center' }}>{row.inc}</Text>
+                            </View>
+                            <View style={{ flex: 1, padding: 6 }}>
+                                <Text style={{ fontSize: 9, color: '#1e3a8a', textAlign: 'center' }}>{row.exc}</Text>
+                            </View>
+                        </View>
+                    ))}
+                </View>
+
                 {/* Cost Section (Keep on same page if possible, or wrap) */}
                 {/* Cost Section */}
                 <View style={styles.priceSection} wrap={false}>

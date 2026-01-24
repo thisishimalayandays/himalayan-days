@@ -122,12 +122,48 @@ const ItineraryHTMLPreviewComponent = ({ data }: { data: ItineraryData }) => {
                 </div>
             </div>
 
+            {/* Inclusions & Exclusions */}
+            <div className="mb-8 p-0">
+                {/* Header Row */}
+                <div className="flex bg-blue-600">
+                    <div className="flex-1 py-2 px-4 border-r border-blue-400">
+                        <h3 className="text-white text-xs font-bold text-center uppercase tracking-wider">Tour Inclusions</h3>
+                    </div>
+                    <div className="flex-1 py-2 px-4">
+                        <h3 className="text-white text-xs font-bold text-center uppercase tracking-wider">Tour Exclusions</h3>
+                    </div>
+                </div>
+                {/* Body */}
+                <div className="border border-t-0 border-blue-200">
+                    {[
+                        { inc: 'Hotel / Houseboat', exc: 'Airfare' },
+                        { inc: 'Breakfast & Dinner', exc: 'Lunch' },
+                        { inc: 'Shikara Ride', exc: 'Pony Ride' },
+                        { inc: 'All transfers and Srinagar Sightseeing', exc: 'Gandola Ride' },
+                        { inc: 'Local Shopping Assistance', exc: 'Entrance Tickets & Activities' },
+                    ].map((row, idx) => (
+                        <div key={idx} className={`flex border-b border-blue-200 last:border-b-0 ${idx % 2 === 0 ? 'bg-blue-50' : 'bg-blue-100'}`}>
+                            <div className="flex-1 py-2 px-4 border-r border-blue-200 flex items-center justify-center">
+                                <span className="text-[10px] sm:text-xs font-medium text-blue-900 text-center">{row.inc}</span>
+                            </div>
+                            <div className="flex-1 py-2 px-4 flex items-center justify-center">
+                                <span className="text-[10px] sm:text-xs font-medium text-blue-900 text-center">{row.exc}</span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
             {/* Price & Footer */}
             <div className="mt-auto">
-                <div className="flex flex-col items-end mb-8">
-                    <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Total Tour Cost</p>
-                    <p className="text-3xl font-bold tracking-tight text-gray-900">Rs. {data.totalCost || "0"}/-</p>
-                    <p className="text-[10px] text-gray-500 italic mt-1">*Valid for 7 days from issue. Includes all taxes.</p>
+                <div className="bg-gray-900 rounded-lg p-5 flex items-center justify-between border-l-4 border-orange-600 mb-8 shadow-sm">
+                    <div className="flex flex-col">
+                        <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Total Tour Cost</p>
+                        <p className="text-[10px] text-gray-500 italic">*Valid for 7 days. Includes all taxes.</p>
+                    </div>
+                    <div>
+                        <p className="text-3xl font-bold tracking-tight text-white">Rs. {data.totalCost || "0"}/-</p>
+                    </div>
                 </div>
 
                 <div className="pt-4 border-t border-gray-100 flex justify-between items-center text-[10px] text-gray-400">
