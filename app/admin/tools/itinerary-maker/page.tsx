@@ -56,6 +56,48 @@ export default function ItineraryMakerPage() {
 
     // ... handlers ...
 
+    const handleImportTemplate = () => {
+        const tpl = ITINERARY_TEMPLATES.find(t => t.id === selectedTemplateId);
+        if (!tpl) return;
+
+        setClientInfo(prev => ({
+            ...prev,
+            pkgTitle: tpl.title,
+            duration: tpl.duration,
+            totalCost: '', // Templates don't have cost
+        }));
+
+        const mappedDays = tpl.days.map((d, idx) => ({
+            dayNumber: idx + 1,
+            title: d.title,
+            description: d.description,
+            meals: d.meals,
+            stay: d.stay
+        }));
+        setDays(mappedDays);
+    };
+
+    const addDay = () => {
+        setDays([...days, {
+            dayNumber: days.length + 1,
+            title: '',
+            description: '',
+            meals: 'Breakfast & Dinner',
+            stay: ''
+        }]);
+    };
+
+    const updateDay = (index: number, field: string, value: string) => {
+        const newDays = [...days];
+        newDays[index] = { ...newDays[index], [field]: value };
+        setDays(newDays);
+    };
+
+    const removeDay = (index: number) => {
+        const newDays = days.filter((_, i) => i !== index).map((d, i) => ({ ...d, dayNumber: i + 1 }));
+        setDays(newDays);
+    };
+
     return (
         <div className="h-[calc(100vh-4rem)] flex flex-col md:flex-row overflow-hidden bg-gray-50">
             {/* Left Panel: Builder Form */}
