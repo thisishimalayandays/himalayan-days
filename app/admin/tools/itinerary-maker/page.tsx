@@ -199,7 +199,9 @@ export default function ItineraryMakerPage() {
                                 >
                                     <option value="">-- Choose Template --</option>
                                     {filteredTemplates.map(t => (
-                                        <option key={t.id} value={t.id}>{t.title}</option>
+                                        <option key={t.id} value={t.id}>
+                                            {t.type ? `[${t.type}] ` : ''}{t.title}
+                                        </option>
                                     ))}
                                 </select>
                             </div>
