@@ -35,7 +35,7 @@ const ItineraryHTMLPreviewComponent = ({ data }: { data: ItineraryData }) => {
             {/* Title Section */}
             <div className="mb-8 pl-1">
                 <p className="text-xs font-bold text-orange-600 uppercase tracking-widest mb-1">Exclusive Itinerary For</p>
-                <h2 className="text-4xl font-bold text-gray-900 leading-tight">{data.pkgTitle || "Kashmir Tour Package"}</h2>
+                <h2 className="text-4xl font-bold text-gray-900 leading-tight">{data.clientName || "Valued Guest"}</h2>
             </div>
 
             {/* Client Grid */}
@@ -43,8 +43,8 @@ const ItineraryHTMLPreviewComponent = ({ data }: { data: ItineraryData }) => {
                 {/* Column 1 */}
                 <div>
                     <div className="mb-4">
-                        <p className="text-[10px] uppercase font-bold text-gray-500 mb-0.5">Guest Name</p>
-                        <p className="text-sm font-bold text-gray-900">{data.clientName || "-"}</p>
+                        <p className="text-[10px] uppercase font-bold text-gray-500 mb-0.5">Package Name</p>
+                        <p className="text-sm font-bold text-gray-900">{data.pkgTitle || "Kashmir Tour Package"}</p>
                     </div>
                     <div>
                         <p className="text-[10px] uppercase font-bold text-gray-500 mb-0.5">Travel Date</p>
@@ -69,12 +69,11 @@ const ItineraryHTMLPreviewComponent = ({ data }: { data: ItineraryData }) => {
                         <p className="text-sm font-bold text-gray-900 font-mono text-orange-600">{data.quoteId}</p>
                     </div>
                     <div>
-                        <p className="text-[10px] uppercase font-bold text-gray-500 mb-0.5">Vehicle Type</p>
-                        <p className="text-sm font-bold text-gray-900">{data.vehicleType || "Private Cab"}</p>
-                    </div>
-                    <div className="mt-4">
-                        <p className="text-[10px] uppercase font-bold text-gray-500 mb-0.5">Rooms</p>
-                        <p className="text-sm font-bold text-gray-900">{data.rooms || "-"}</p>
+                        <p className="text-[10px] uppercase font-bold text-gray-500 mb-0.5">Vehicle / Rooms</p>
+                        <p className="text-sm font-bold text-gray-900">
+                            {data.vehicleType || "Private Cab"}
+                            {data.rooms ? <span className="text-gray-500 font-normal"> • {data.rooms}</span> : ""}
+                        </p>
                     </div>
                 </div>
             </div>

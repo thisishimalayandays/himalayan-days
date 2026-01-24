@@ -309,14 +309,14 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
                 {/* Title */}
                 <View style={styles.titleSection}>
                     <Text style={styles.subTitle}>EXCLUSIVE ITINERARY FOR</Text>
-                    <Text style={styles.mainTitle}>{data.pkgTitle || "Kashmir Tour Package"}</Text>
+                    <Text style={styles.mainTitle}>{data.clientName || "Valued Guest"}</Text>
                 </View>
 
                 {/* Client Grid */}
                 <View style={styles.clientGrid}>
                     <View style={styles.clientCol}>
-                        <Text style={styles.label}>Guest Name</Text>
-                        <Text style={styles.value}>{data.clientName || "-"}</Text>
+                        <Text style={styles.label}>Package Name</Text>
+                        <Text style={styles.value}>{data.pkgTitle || "Kashmir Tour Package"}</Text>
 
                         <Text style={styles.label}>Travel Date</Text>
                         <Text style={styles.value}>{formatDate(data.travelDate)}</Text>
@@ -332,11 +332,11 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
                         <Text style={styles.label}>Quote Reference</Text>
                         <Text style={styles.value}>{data.quoteId}</Text>
 
-                        <Text style={styles.label}>Vehicle Type</Text>
-                        <Text style={styles.value}>{data.vehicleType || "Private Cab"}</Text>
-
-                        <Text style={styles.label}>Rooms</Text>
-                        <Text style={styles.value}>{data.rooms || "-"}</Text>
+                        <Text style={styles.label}>Vehicle / Rooms</Text>
+                        <Text style={styles.value}>
+                            {data.vehicleType || "Private Cab"}
+                            {data.rooms ? ` • ${data.rooms}` : ""}
+                        </Text>
                     </View>
                 </View>
 
