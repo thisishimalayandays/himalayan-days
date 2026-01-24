@@ -117,6 +117,13 @@ const BLOCKS = {
         stay: 'Gurez Hotel'
     },
 
+    springsDay: {
+        title: 'Saffron, Kokernag & Verinag Springs',
+        description: 'A day of refreshing natural wonders. Drive through the purple Saffron fields of Pampore. Visit the Achabal Garden, a Mughal architectural gem. Proceed to Kokernag to see the largest fresh water spring in Kashmir, blooming with roses. Finally, witness the deep blue spring of Verinag, the source of the mighty Jhelum River.',
+        meals: 'Breakfast & Dinner',
+        stay: 'Srinagar Hotel'
+    },
+
     departure: {
         title: 'Departure & Farewell',
         description: 'After breakfast, check out from the hotel. Depending on your flight timing, you may have time for some last-minute shopping for souvenirs. Transfer to Srinagar Airport with bags full of memories and a promise to return to the Valley of Saints.',
@@ -139,7 +146,8 @@ const generateTemplates = (): ItineraryTemplate[] => {
         { id: '5d-skiing', title: 'Snow Leopard Ski Expedition', duration: d5, durationDays: num5, days: [BLOCKS.arrivalSrinagar, BLOCKS.gulmargStay, BLOCKS.gulmargAdventure, BLOCKS.srinagarLocal, BLOCKS.departure] },
         { id: '5d-honeymoon', title: 'Enchanted Kashmir Romance', duration: d5, durationDays: num5, days: [BLOCKS.arrivalSrinagarRomantic, BLOCKS.pahalgamStay, BLOCKS.pahalgamLeisure, BLOCKS.srinagarLocal, BLOCKS.departure] },
         { id: '5d-nature', title: 'Meadows & Pines Retreat', duration: d5, durationDays: num5, days: [BLOCKS.arrivalSrinagar, BLOCKS.doodhpathriDay, BLOCKS.pahalgamDay, BLOCKS.srinagarLocal, BLOCKS.departure] },
-        { id: '5d-budget', title: 'Essential Kashmir Experience', duration: d5, durationDays: num5, days: [BLOCKS.arrivalSrinagar, BLOCKS.gulmargDay, BLOCKS.sonamargDay, BLOCKS.pahalgamDay, BLOCKS.departure] },
+        { id: '5d-budget', title: 'Budget Backpacker\'s Kashmir', duration: d5, durationDays: num5, days: [BLOCKS.arrivalSrinagar, BLOCKS.gulmargDay, BLOCKS.sonamargDay, BLOCKS.pahalgamDay, BLOCKS.departure] },
+        { id: '5d-springs', title: 'Saffron & Springs Trail', duration: d5, durationDays: num5, days: [BLOCKS.arrivalSrinagar, BLOCKS.pahalgamStay, BLOCKS.springsDay, BLOCKS.srinagarLocal, BLOCKS.departure] },
         { id: '5d-leisure', title: 'Tranquil Srinagar & Gulmarg', duration: d5, durationDays: num5, days: [BLOCKS.arrivalSrinagar, BLOCKS.srinagarLocal, BLOCKS.gulmargStay, BLOCKS.gulmargAdventure, BLOCKS.departure] },
         { id: '5d-spiritual', title: 'Divine Kashmir Pilgrimage', duration: d5, durationDays: num5, days: [BLOCKS.arrivalSrinagar, { ...BLOCKS.srinagarLocal, description: 'Shankaracharya, Kheer Bhawani, Hazratbal Ziyarat.' }, BLOCKS.pahalgamDay, BLOCKS.sonamargDay, BLOCKS.departure] },
     );
@@ -153,6 +161,7 @@ const generateTemplates = (): ItineraryTemplate[] => {
         { id: '6d-leisure', title: 'Family Bliss in the Valley', duration: d6, durationDays: num6, days: [BLOCKS.arrivalSrinagar, BLOCKS.srinagarLocal, BLOCKS.gulmargStay, BLOCKS.pahalgamStay, BLOCKS.pahalgamLeisure, BLOCKS.departure] },
         { id: '6d-adventure', title: 'Himalayan Adventure Quest', duration: d6, durationDays: num6, days: [BLOCKS.arrivalSrinagar, BLOCKS.gulmargStay, BLOCKS.gulmargAdventure, BLOCKS.pahalgamStay, { ...BLOCKS.pahalgamValleys, description: 'Trek to Baisaran and nearby trails.' }, BLOCKS.departure] },
         { id: '6d-offbeat', title: 'Secret Valleys: Yusmarg & Doodhpathri', duration: d6, durationDays: num6, days: [BLOCKS.arrivalSrinagar, BLOCKS.yusmargDay, BLOCKS.doodhpathriDay, BLOCKS.pahalgamStay, BLOCKS.pahalgamValleys, BLOCKS.departure] },
+        { id: '6d-gurez-explorer', title: 'Gurez & Tulail Valley Explorer', duration: d6, durationDays: num6, days: [BLOCKS.arrivalSrinagar, BLOCKS.gurezTrip, { ...BLOCKS.gurezTrip, title: 'Tulail Valley Safari' }, { ...BLOCKS.gurezTrip, title: 'Return to Srinagar', stay: 'Srinagar Hotel' }, BLOCKS.srinagarLocal, BLOCKS.departure] },
         { id: '6d-honeymoon', title: 'Royal Honeymoon Indulgence', duration: d6, durationDays: num6, days: [BLOCKS.arrivalSrinagarRomantic, BLOCKS.sonamargDay, BLOCKS.gulmargStay, BLOCKS.pahalgamStay, BLOCKS.pahalgamLeisure, BLOCKS.departure] },
         { id: '6d-gold', title: 'Golden Triangle of Kashmir', duration: d6, durationDays: num6, days: [BLOCKS.arrivalSrinagar, BLOCKS.sonamargStay, BLOCKS.gulmargStay, BLOCKS.pahalgamStay, BLOCKS.pahalgamValleys, BLOCKS.departure] },
         { id: '6d-winter', title: 'Frozen Fairytale: Winter Special', duration: d6, durationDays: num6, days: [BLOCKS.arrivalSrinagar, BLOCKS.gulmargStay, BLOCKS.gulmargStay, BLOCKS.pahalgamStay, BLOCKS.srinagarLocal, BLOCKS.departure] },
@@ -165,6 +174,7 @@ const generateTemplates = (): ItineraryTemplate[] => {
 
     templates.push(
         { id: '7d-complete', title: 'Majestic Kashmir Panorama', duration: d7, durationDays: num7, days: [BLOCKS.arrivalSrinagar, BLOCKS.sonamargDay, BLOCKS.gulmargStay, BLOCKS.pahalgamStay, BLOCKS.pahalgamValleys, BLOCKS.srinagarLocal, BLOCKS.departure] },
+        { id: '7d-sonamarg-lakes', title: 'Kashmir Great Lakes Preview', duration: d7, durationDays: num7, days: [BLOCKS.arrivalSrinagar, BLOCKS.sonamargStay, { ...BLOCKS.sonamargDay, title: 'Thajiwas & Zero Point' }, BLOCKS.gulmargStay, BLOCKS.pahalgamStay, BLOCKS.srinagarLocal, BLOCKS.departure] },
         { id: '7d-relax', title: 'Unwind in Paradise', duration: d7, durationDays: num7, days: [BLOCKS.arrivalSrinagar, BLOCKS.srinagarLocal, BLOCKS.gulmargStay, BLOCKS.gulmargStay, BLOCKS.pahalgamStay, BLOCKS.pahalgamLeisure, BLOCKS.departure] },
         { id: '7d-trek', title: 'Alpine Trails & Treks', duration: d7, durationDays: num7, days: [BLOCKS.arrivalSrinagar, BLOCKS.sonamargDay, BLOCKS.gulmargStay, { ...BLOCKS.gulmargAdventure, title: 'Gulmarg Trek' }, BLOCKS.pahalgamStay, { ...BLOCKS.pahalgamValleys, title: 'Pahalgam Trek' }, BLOCKS.departure] },
         { id: '7d-gurez', title: 'Mystic Gurez Valley Expedition', duration: d7, durationDays: num7, days: [BLOCKS.arrivalSrinagar, BLOCKS.gurezTrip, { ...BLOCKS.gurezTrip, title: 'Gurez Exploration', description: 'Explore Tulail Valley.' }, { ...BLOCKS.gurezTrip, title: 'Return from Gurez', stay: 'Srinagar Hotel' }, BLOCKS.gulmargDay, BLOCKS.pahalgamDay, BLOCKS.departure] },
@@ -186,6 +196,7 @@ const generateTemplates = (): ItineraryTemplate[] => {
     templates.push(
         { id: '4d-quick', title: 'Himalayan Glimpse', duration: '4 Days / 3 Nights', durationDays: 4, days: [BLOCKS.arrivalSrinagar, BLOCKS.gulmargDay, BLOCKS.pahalgamDay, BLOCKS.departure] },
         { id: '4d-relax', title: 'Valley Serenity Break', duration: '4 Days / 3 Nights', durationDays: 4, days: [BLOCKS.arrivalSrinagar, BLOCKS.gulmargStay, BLOCKS.srinagarLocal, BLOCKS.departure] },
+        { id: '4d-luxury', title: 'Luxury Lakeside Leisure', duration: '4 Days / 3 Nights', durationDays: 4, days: [BLOCKS.arrivalSrinagarRomantic, BLOCKS.srinagarLocal, { ...BLOCKS.arrivalSrinagarRomantic, title: 'Shikara & Chill', description: 'Full day relaxing on the houseboat deck.' }, BLOCKS.departure] },
         { id: '4d-couple', title: 'Romantic Valley Sojourn', duration: '4 Days / 3 Nights', durationDays: 4, days: [BLOCKS.arrivalSrinagarRomantic, BLOCKS.pahalgamStay, BLOCKS.pahalgamLeisure, BLOCKS.departure] },
     );
 
