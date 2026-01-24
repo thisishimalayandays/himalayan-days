@@ -248,7 +248,8 @@ export default function ItineraryMakerPage() {
                     </PDFDownloadLink>
                 </div>
                 <div className="flex-1 w-full h-full">
-                    <PDFViewer width="100%" height="100%" className="w-full h-full border-none">
+                    {/* Key forces remount when important data changes to fix preview sticking */}
+                    <PDFViewer key={days.length + clientInfo.pkgTitle} width="100%" height="100%" className="w-full h-full border-none">
                         <ItineraryDocument
                             data={{
                                 ...clientInfo,
