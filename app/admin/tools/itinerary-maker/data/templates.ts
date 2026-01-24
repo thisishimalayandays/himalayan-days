@@ -151,6 +151,6 @@ const generateLongDurations = (): ItineraryTemplate[] => {
     );
 
     return templates;
+};
 
-
-    export const ITINERARY_TEMPLATES: ItineraryTemplate[] = generateTemplates();
+export const ITINERARY_TEMPLATES: ItineraryTemplate[] = generateTemplates();
