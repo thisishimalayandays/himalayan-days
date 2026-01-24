@@ -280,8 +280,12 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
                 {/* Header */}
                 <View style={styles.header}>
                     <View style={styles.headerLeft}>
-                        <Text style={styles.brandTitle}>HIMALAYAN DAYS</Text>
-                        <Text style={styles.brandSubtitle}>KASHMIR TOUR & TRAVEL EXPERTS</Text>
+                        {/* Logo */}
+                        <Image src={LOGO_URL} style={styles.logo} />
+                        <View style={styles.brandTextContainer}>
+                            <Text style={styles.brandTitle}>HIMALAYAN DAYS</Text>
+                            <Text style={styles.brandSubtitle}>KASHMIR TOUR & TRAVEL EXPERTS</Text>
+                        </View>
                     </View>
                     <View style={styles.headerRight}>
                         <Text style={styles.contactText}>+91-9103901803</Text>
