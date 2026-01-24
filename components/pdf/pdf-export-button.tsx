@@ -8,15 +8,35 @@ import { ItineraryDocument, ItineraryData } from './itinerary-document';
 import React from 'react';
 
 const PDFExportButton = React.memo(({ data }: { data: ItineraryData }) => {
+    const [isGenerating, setIsGenerating] = React.useState(false);
+
+    // Reset generation when data changes so user gets fresh PDF
+    React.useEffect(() => {
+        setIsGenerating(false);
+    }, [data]);
+
+    if (!isGenerating) {
+        return (
+            <Button
+                size="sm"
+                variant="default"
+                className="bg-orange-600 hover:bg-orange-700 text-white"
+                onClick={() => setIsGenerating(true)}
+            >
+                <Download className="w-4 h-4 mr-2" /> Generate PDF
+            </Button>
+        );
+    }
+
     return (
         <PDFDownloadLink
             document={<ItineraryDocument data={data} />}
             fileName={`${data.clientName || 'Guest'} _ ${data.duration.replace(/\//g, '-')} _ Itinerary.pdf`}
         >
             {({ blob, url, loading, error }) => (
-                <Button size="sm" variant="default" className="bg-orange-600 hover:bg-orange-700 text-white" disabled={loading}>
+                <Button size="sm" variant="secondary" className="bg-green-600 hover:bg-green-700 text-white" disabled={loading}>
                     <Download className="w-4 h-4 mr-2" />
-                    {loading ? 'Preparing...' : 'Download PDF'}
+                    {loading ? 'Generating...' : 'Download Ready'}
                 </Button>
             )}
         </PDFDownloadLink>
