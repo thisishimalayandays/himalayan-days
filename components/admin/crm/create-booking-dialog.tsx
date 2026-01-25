@@ -1,4 +1,3 @@
-```javascript
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -102,7 +101,7 @@ export function BookingDialog({ mode = 'create', booking, trigger, open: control
         setLoading(false);
 
         if (result?.success) {
-            toast.success(`Booking ${ mode === 'create' ? 'created' : 'updated' } successfully`);
+            toast.success(`Booking ${mode === 'create' ? 'created' : 'updated'} successfully`);
             setIsOpen(false);
             router.refresh();
         } else {
@@ -127,7 +126,7 @@ export function BookingDialog({ mode = 'create', booking, trigger, open: control
                     <DialogTitle>{mode === 'create' ? 'Create New Booking' : 'Edit Booking'}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    
+
                     {mode === 'create' ? (
                         <div className="space-y-3">
                             <Label>Customer Details</Label>
@@ -166,19 +165,19 @@ export function BookingDialog({ mode = 'create', booking, trigger, open: control
                                         <Input id="new_email" name="new_email" type="email" placeholder="client@example.com" />
                                     </div>
                                     <div className="space-y-2">
-                                         <Label htmlFor="new_address">Address (Optional)</Label>
-                                         <Textarea id="new_address" name="new_address" placeholder="Address..." className="h-20" />
+                                        <Label htmlFor="new_address">Address (Optional)</Label>
+                                        <Textarea id="new_address" name="new_address" placeholder="Address..." className="h-20" />
                                     </div>
                                 </TabsContent>
                             </Tabs>
                         </div>
                     ) : (
                         <div className="space-y-2">
-                             <Label>Customer</Label>
-                             <div className="p-2 border rounded bg-muted/50 text-sm font-medium">
-                                 {booking?.customer?.name || "Existing Customer"}
-                             </div>
-                             <input type="hidden" name="customerId" value={booking?.customerId} />
+                            <Label>Customer</Label>
+                            <div className="p-2 border rounded bg-muted/50 text-sm font-medium">
+                                {booking?.customer?.name || "Existing Customer"}
+                            </div>
+                            <input type="hidden" name="customerId" value={booking?.customerId} />
                         </div>
                     )}
 
@@ -191,12 +190,12 @@ export function BookingDialog({ mode = 'create', booking, trigger, open: control
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="travelDate">Travel Date</Label>
-                                <Input 
-                                    id="travelDate" 
-                                    name="travelDate" 
-                                    type="date" 
-                                    required 
-                                    defaultValue={booking?.travelDate ? new Date(booking.travelDate).toISOString().split('T')[0] : ''} 
+                                <Input
+                                    id="travelDate"
+                                    name="travelDate"
+                                    type="date"
+                                    required
+                                    defaultValue={booking?.travelDate ? new Date(booking.travelDate).toISOString().split('T')[0] : ''}
                                 />
                             </div>
                             <div className="space-y-2">
@@ -216,13 +215,13 @@ export function BookingDialog({ mode = 'create', booking, trigger, open: control
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="totalAmount">Total Cost (₹)</Label>
-                                <Input 
-                                    id="totalAmount" 
-                                    name="totalAmount" 
-                                    type="number" 
-                                    min="0" 
-                                    defaultValue={booking?.totalAmount} 
-                                    required 
+                                <Input
+                                    id="totalAmount"
+                                    name="totalAmount"
+                                    type="number"
+                                    min="0"
+                                    defaultValue={booking?.totalAmount}
+                                    required
                                     onChange={(e) => setTotalAmount(parseInt(e.target.value) || 0)}
                                 />
                             </div>
@@ -233,11 +232,11 @@ export function BookingDialog({ mode = 'create', booking, trigger, open: control
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
                                         <Label htmlFor="initialPayment">Advance / Initial Payment (₹)</Label>
-                                        <Input 
-                                            id="initialPayment" 
-                                            name="initialPayment" 
-                                            type="number" 
-                                            min="0" 
+                                        <Input
+                                            id="initialPayment"
+                                            name="initialPayment"
+                                            type="number"
+                                            min="0"
                                             placeholder="0"
                                             onChange={(e) => setInitialPayment(parseInt(e.target.value) || 0)}
                                         />
@@ -265,7 +264,7 @@ export function BookingDialog({ mode = 'create', booking, trigger, open: control
                             </div>
                         )}
                     </div>
-                    
+
                     <div className="flex justify-end gap-2 pt-4">
                         <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
                         <Button type="submit" disabled={loading}>
