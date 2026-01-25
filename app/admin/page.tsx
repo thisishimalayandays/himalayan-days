@@ -63,7 +63,7 @@ export default async function AdminDashboard() {
                 </div>
                 <div className="col-span-3 space-y-4">
                     <UpcomingTrips trips={crmStats.success ? crmStats.upcomingTrips : []} />
-                    <RecentInquiries inquiries={analyticsData.recentActivity} />
+                    <RecentInquiries activities={analyticsData.recentActivity} />
                 </div>
             </div>
         </div>
