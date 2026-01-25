@@ -175,9 +175,7 @@ function BookingActions({ booking }: { booking: Booking }) {
             {/* Dialog removed */}
 
             <AddPaymentDialog
-                bookingId={booking.id}
-                bookingTitle={booking.title}
-                balance={balance}
+                booking={booking}
                 open={openPayment}
                 onOpenChange={setOpenPayment}
             />
