@@ -92,9 +92,11 @@ export function BookingsTable({ bookings }: { bookings: Booking[] }) {
                                             </Badge>
                                         </TableCell>
                                         <TableCell className="text-right">
-                                            <div className="font-medium">₹{booking.totalAmount.toLocaleString()}</div>
-                                            <div className={`text-xs flex items-center justify-end gap-1 ${isFullyPaid ? 'text-green-600' : 'text-orange-600'}`}>
-                                                <Wallet className="w-3 h-3" />
+                                            <div className="font-medium">Total: ₹{booking.totalAmount.toLocaleString()}</div>
+                                            <div className="text-xs text-muted-foreground">
+                                                Paid: ₹{paidAmount.toLocaleString()}
+                                            </div>
+                                            <div className={`text-xs font-medium ${isFullyPaid ? 'text-green-600' : 'text-orange-600'}`}>
                                                 {isFullyPaid ? 'Fully Paid' : `Bal: ₹${balance.toLocaleString()}`}
                                             </div>
                                         </TableCell>
@@ -120,16 +122,21 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Pencil, Trash } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash, CreditCard } from "lucide-react";
 import { BookingDialog } from "./create-booking-dialog";
 import { useState } from "react";
 import { deleteBooking } from "@/app/actions/crm";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { AddPaymentDialog } from "./add-payment-dialog";
 
 function BookingActions({ booking }: { booking: Booking }) {
     const [openEdit, setOpenEdit] = useState(false);
+    const [openPayment, setOpenPayment] = useState(false);
     const router = useRouter();
+
+    const paidAmount = booking.payments.reduce((sum, p) => sum + p.amount, 0);
+    const balance = booking.totalAmount - paidAmount;
 
     const handleDelete = async () => {
         if (confirm('Are you sure you want to delete this booking?')) {
@@ -153,6 +160,9 @@ function BookingActions({ booking }: { booking: Booking }) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuItem onClick={() => setOpenPayment(true)}>
+                        <CreditCard className="mr-2 h-4 w-4" /> Add Payment
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setOpenEdit(true)}>
                         <Pencil className="mr-2 h-4 w-4" /> Edit
                     </DropdownMenuItem>
@@ -167,6 +177,14 @@ function BookingActions({ booking }: { booking: Booking }) {
                 booking={booking}
                 open={openEdit}
                 onOpenChange={setOpenEdit}
+            />
+
+            <AddPaymentDialog
+                bookingId={booking.id}
+                bookingTitle={booking.title}
+                balance={balance}
+                open={openPayment}
+                onOpenChange={setOpenPayment}
             />
         </>
     );
