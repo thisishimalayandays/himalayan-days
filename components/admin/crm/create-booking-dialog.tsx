@@ -5,7 +5,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, Pencil } from "lucide-react";
+import { Plus, Pencil, User, Phone, Mail, MapPin, Calendar, Clock, CreditCard, Banknote, Users, Baby } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { createBooking, updateBooking } from "@/app/actions/crm";
 import { toast } from "sonner";
 import { useRouter } from 'next/navigation';
