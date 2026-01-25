@@ -115,173 +115,201 @@ export function BookingDialog({ mode = 'create', booking, trigger, open: control
             {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
             {!trigger && mode === 'create' && (
                 <DialogTrigger asChild>
-                    <Button>
-                        <Plus className="w-4 h-4 mr-2" />
+                    <Button size="lg" className="shadow-md hover:shadow-lg transition-all">
+                        <Plus className="w-5 h-5 mr-2" />
                         New Booking
                     </Button>
                 </DialogTrigger>
             )}
 
-            <DialogContent className="max-w-4xl">
-                <DialogHeader>
-                    <DialogTitle>{mode === 'create' ? 'Create New Booking' : 'Edit Booking'}</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleSubmit} className="mt-2">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Left Column: Customer */}
-                        <div className="space-y-4 border-r md:pr-6">
-                            <h3 className="font-semibold text-lg flex items-center gap-2">
-                                <div className="h-6 w-1 bg-primary rounded-full" />
-                                Customer Details
-                            </h3>
+            <DialogContent className="max-w-5xl p-0 overflow-hidden gap-0">
+                <div className="p-6 border-b bg-muted/10">
+                    <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+                        {mode === 'create' ? <Plus className="w-6 h-6 text-primary" /> : <Pencil className="w-6 h-6 text-primary" />}
+                        {mode === 'create' ? 'Create New Booking' : 'Edit Booking Details'}
+                    </DialogTitle>
+                </div>
 
-                            {mode === 'create' ? (
-                                <Tabs value={customerMode} onValueChange={(v) => setCustomerMode(v as 'existing' | 'new')} className="w-full">
-                                    <TabsList className="grid w-full grid-cols-2 mb-4">
-                                        <TabsTrigger value="new">New Customer</TabsTrigger>
-                                        <TabsTrigger value="existing">Existing</TabsTrigger>
-                                    </TabsList>
+                <form onSubmit={handleSubmit}>
+                    <div className="grid grid-cols-1 lg:grid-cols-12 h-[600px]">
+                        {/* Left Column: Customer (5 cols) */}
+                        <div className="lg:col-span-5 p-6 border-r bg-muted/5 flex flex-col gap-6 overflow-y-auto">
+                            <div>
+                                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <User className="w-4 h-4" /> Customer Information
+                                </h3>
 
-                                    <TabsContent value="existing" className="space-y-4">
-                                        <div className="space-y-2">
-                                            <Label>Select Customer</Label>
-                                            <Select name="customerId" required={customerMode === 'existing'} defaultValue={booking?.customerId}>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Search Customer..." />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {customers.map(c => (
-                                                        <SelectItem key={c.id} value={c.id}>
-                                                            {c.name} ({c.phone})
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                    </TabsContent>
+                                {mode === 'create' ? (
+                                    <Tabs value={customerMode} onValueChange={(v) => setCustomerMode(v as 'existing' | 'new')} className="w-full">
+                                        <TabsList className="grid w-full grid-cols-2 mb-6">
+                                            <TabsTrigger value="new">New Profile</TabsTrigger>
+                                            <TabsTrigger value="existing">Existing</TabsTrigger>
+                                        </TabsList>
 
-                                    <TabsContent value="new" className="space-y-4">
-                                        <div className="grid grid-cols-2 gap-3">
+                                        <TabsContent value="existing" className="space-y-4">
                                             <div className="space-y-2">
-                                                <Label htmlFor="new_name">Full Name</Label>
-                                                <Input id="new_name" name="new_name" required={customerMode === 'new'} placeholder="Client Name" />
+                                                <Label>Select Customer</Label>
+                                                <Select name="customerId" required={customerMode === 'existing'} defaultValue={booking?.customerId}>
+                                                    <SelectTrigger className="h-10">
+                                                        <SelectValue placeholder="Search database..." />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {customers.map(c => (
+                                                            <SelectItem key={c.id} value={c.id}>
+                                                                {c.name} ({c.phone})
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
                                             </div>
-                                            <div className="space-y-2">
-                                                <Label htmlFor="new_phone">Phone</Label>
-                                                <Input id="new_phone" name="new_phone" required={customerMode === 'new'} placeholder="Contact Number" />
+                                        </TabsContent>
+
+                                        <TabsContent value="new" className="space-y-4">
+                                            <div className="space-y-3">
+                                                <div className="relative">
+                                                    <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                                    <Input id="new_name" name="new_name" required={customerMode === 'new'} placeholder="Full Name" className="pl-9" />
+                                                </div>
+                                                <div className="relative">
+                                                    <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                                    <Input id="new_phone" name="new_phone" required={customerMode === 'new'} placeholder="Phone Number" className="pl-9" />
+                                                </div>
+                                                <div className="relative">
+                                                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                                    <Input id="new_email" name="new_email" type="email" placeholder="Email (Optional)" className="pl-9" />
+                                                </div>
+                                                <div className="relative">
+                                                    <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                                    <Textarea id="new_address" name="new_address" placeholder="Residential Address..." className="pl-9 resize-none min-h-[100px]" />
+                                                </div>
                                             </div>
+                                        </TabsContent>
+                                    </Tabs>
+                                ) : (
+                                    <div className="p-4 border rounded-xl bg-background shadow-sm">
+                                        <div className="text-xs text-muted-foreground mb-1">Customer Profile</div>
+                                        <div className="text-lg font-bold">
+                                            {booking?.customer?.name || "Existing Customer"}
                                         </div>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="new_email">Email (Optional)</Label>
-                                            <Input id="new_email" name="new_email" type="email" placeholder="client@example.com" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="new_address">Address (Optional)</Label>
-                                            <Textarea id="new_address" name="new_address" placeholder="Residential Address..." className="h-24 resize-none" />
-                                        </div>
-                                    </TabsContent>
-                                </Tabs>
-                            ) : (
-                                <div className="p-4 border rounded-lg bg-muted/30">
-                                    <Label className="text-muted-foreground">Customer</Label>
-                                    <div className="text-lg font-medium mt-1">
-                                        {booking?.customer?.name || "Existing Customer"}
+                                        <input type="hidden" name="customerId" value={booking?.customerId} />
                                     </div>
-                                    <input type="hidden" name="customerId" value={booking?.customerId} />
-                                </div>
-                            )}
+                                )}
+                            </div>
                         </div>
 
-                        {/* Right Column: Trip & Pay */}
-                        <div className="space-y-5">
-                            <h3 className="font-semibold text-lg flex items-center gap-2">
-                                <div className="h-6 w-1 bg-orange-500 rounded-full" />
-                                Trip Details
-                            </h3>
+                        {/* Right Column: Trip & Pay (7 cols) */}
+                        <div className="lg:col-span-7 p-6 flex flex-col gap-6 overflow-y-auto">
+                            <div>
+                                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <MapPin className="w-4 h-4" /> Trip Details
+                                </h3>
 
-                            <div className="space-y-3">
-                                <div className="space-y-2">
-                                    <Label htmlFor="title">Trip Title</Label>
-                                    <Input id="title" name="title" required defaultValue={booking?.title} placeholder="e.g. Kashmir Family Vacation" />
-                                </div>
+                                <div className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="title">Trip Title</Label>
+                                        <Input id="title" name="title" required defaultValue={booking?.title} placeholder="e.g. Kashmir Family Vacation" className="text-lg font-medium" />
+                                    </div>
 
-                                <div className="grid grid-cols-2 gap-3">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="travelDate">Travel Date</Label>
-                                        <Input
-                                            id="travelDate"
-                                            name="travelDate"
-                                            type="date"
-                                            required
-                                            defaultValue={booking?.travelDate ? new Date(booking.travelDate).toISOString().split('T')[0] : ''}
-                                        />
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="travelDate">Travel Date</Label>
+                                            <div className="relative">
+                                                <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                                <Input
+                                                    id="travelDate"
+                                                    name="travelDate"
+                                                    type="date"
+                                                    required
+                                                    defaultValue={booking?.travelDate ? new Date(booking.travelDate).toISOString().split('T')[0] : ''}
+                                                    className="pl-9"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="duration">Duration</Label>
+                                            <div className="relative">
+                                                <Clock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                                <Input id="duration" name="duration" defaultValue={booking?.duration} placeholder="e.g. 5 Days" className="pl-9" />
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="duration">Duration</Label>
-                                        <Input id="duration" name="duration" defaultValue={booking?.duration} placeholder="e.g. 5 Days" />
-                                    </div>
-                                </div>
 
-                                <div className="grid grid-cols-3 gap-3">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="adults">Adults</Label>
-                                        <Input id="adults" name="adults" type="number" min="1" defaultValue={booking?.adults || 2} required />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="kids">Kids</Label>
-                                        <Input id="kids" name="kids" type="number" min="0" defaultValue={booking?.kids || 0} />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="totalAmount">Total Cost (₹)</Label>
-                                        <Input
-                                            id="totalAmount"
-                                            name="totalAmount"
-                                            type="number"
-                                            min="0"
-                                            defaultValue={booking?.totalAmount}
-                                            required
-                                            onChange={(e) => setTotalAmount(parseInt(e.target.value) || 0)}
-                                        />
+                                    <div className="grid grid-cols-3 gap-4">
+                                        <div className="space-y-2">
+                                            <Label>Adults</Label>
+                                            <div className="relative">
+                                                <Users className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                                <Input id="adults" name="adults" type="number" min="1" defaultValue={booking?.adults || 2} required className="pl-9" />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Kids</Label>
+                                            <div className="relative">
+                                                <Baby className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                                <Input id="kids" name="kids" type="number" min="0" defaultValue={booking?.kids || 0} className="pl-9" />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Total Cost</Label>
+                                            <div className="relative">
+                                                <Banknote className="absolute left-3 top-3 h-4 w-4 text-green-600" />
+                                                <Input
+                                                    id="totalAmount"
+                                                    name="totalAmount"
+                                                    type="number"
+                                                    min="0"
+                                                    defaultValue={booking?.totalAmount}
+                                                    required
+                                                    className="pl-9 font-bold text-green-700"
+                                                    onChange={(e) => setTotalAmount(parseInt(e.target.value) || 0)}
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             {mode === 'create' && (
-                                <div className="pt-4 border-t">
-                                    <h3 className="font-semibold text-base mb-3">Initial Payment</h3>
-                                    <div className="p-4 border rounded-lg bg-orange-50/50 dark:bg-muted/10 space-y-4">
+                                <div className="mt-auto">
+                                    <div className="p-5 border rounded-xl bg-orange-50/50 dark:bg-orange-950/20 border-orange-100 dark:border-orange-900/50">
+                                        <h3 className="text-sm font-semibold text-orange-700 dark:text-orange-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                            <CreditCard className="w-4 h-4" /> Initial Payment
+                                        </h3>
+
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="space-y-2">
-                                                <Label htmlFor="initialPayment">Advance (₹)</Label>
+                                                <Label htmlFor="initialPayment">Advance Amount (₹)</Label>
                                                 <Input
                                                     id="initialPayment"
                                                     name="initialPayment"
                                                     type="number"
                                                     min="0"
                                                     placeholder="0"
-                                                    className="bg-background"
+                                                    className="bg-background border-orange-200 focus-visible:ring-orange-500"
                                                     onChange={(e) => setInitialPayment(parseInt(e.target.value) || 0)}
                                                 />
                                             </div>
                                             <div className="space-y-2">
                                                 <Label htmlFor="paymentMode">Payment Mode</Label>
                                                 <Select name="paymentMode" defaultValue="UPI" disabled={initialPayment <= 0}>
-                                                    <SelectTrigger className="bg-background">
-                                                        <SelectValue placeholder="Mode" />
+                                                    <SelectTrigger className="bg-background border-orange-200">
+                                                        <SelectValue placeholder="Select Mode" />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        <SelectItem value="UPI">UPI / GPay</SelectItem>
+                                                        <SelectItem value="UPI">UPI / GPay / PhonePe</SelectItem>
                                                         <SelectItem value="CASH">Cash</SelectItem>
                                                         <SelectItem value="BANK_TRANSFER">Bank Transfer</SelectItem>
+                                                        <SelectItem value="CHEQUE">Cheque</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                             </div>
                                         </div>
-                                        <div className="flex justify-between items-center text-sm font-medium">
-                                            <span>Balance Pending:</span>
-                                            <Badge variant={balance > 0 ? "outline" : "default"} className={balance > 0 ? "text-orange-600 border-orange-200" : "bg-green-600"}>
+
+                                        <div className="flex justify-between items-center mt-4 pt-4 border-t border-orange-200/50">
+                                            <span className="text-sm font-medium text-muted-foreground">Balance Pending</span>
+                                            <div className="text-2xl font-bold font-mono tracking-tight text-orange-700 dark:text-orange-400">
                                                 ₹{balance.toLocaleString()}
-                                            </Badge>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -289,10 +317,10 @@ export function BookingDialog({ mode = 'create', booking, trigger, open: control
                         </div>
                     </div>
 
-                    <div className="flex justify-end gap-2 pt-6 mt-2 border-t">
-                        <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
-                        <Button type="submit" disabled={loading} className="min-w-[150px]">
-                            {loading ? "Processing..." : (mode === 'create' ? "Create Booking" : "Save Changes")}
+                    <div className="p-4 border-t bg-muted/10 flex justify-end gap-3">
+                        <Button type="button" variant="ghost" onClick={() => setIsOpen(false)}>Cancel</Button>
+                        <Button type="submit" disabled={loading} className="min-w-[180px] text-base">
+                            {loading ? "Processing..." : (mode === 'create' ? "Confirm Booking" : "Save Changes")}
                         </Button>
                     </div>
                 </form>
