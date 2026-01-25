@@ -123,15 +123,15 @@ export function BookingDialog({ mode = 'create', booking, trigger, open: control
                 </DialogTrigger>
             )}
 
-            <DialogContent className="max-w-5xl p-0 overflow-hidden gap-0">
-                <div className="p-6 border-b bg-muted/10">
+            <DialogContent className="max-w-[95vw] h-[95vh] p-0 overflow-hidden gap-0">
+                <div className="p-6 border-b bg-muted/10 shrink-0">
                     <DialogTitle className="text-2xl font-bold flex items-center gap-2">
                         {mode === 'create' ? <Plus className="w-6 h-6 text-primary" /> : <Pencil className="w-6 h-6 text-primary" />}
                         {mode === 'create' ? 'Create New Booking' : 'Edit Booking Details'}
                     </DialogTitle>
                 </div>
 
-                <form onSubmit={handleSubmit} className="flex flex-col h-[600px]">
+                <form onSubmit={handleSubmit} className="flex flex-col h-full overflow-hidden">
                     <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
                         {/* Left Column: Customer (5 cols) */}
                         <div className="lg:col-span-5 p-6 lg:p-8 border-r flex flex-col gap-8 overflow-y-auto bg-muted/5">
