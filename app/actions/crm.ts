@@ -153,7 +153,8 @@ export async function updateBooking(id: string, data: any) {
 export async function getBookings() {
     try {
         const bookings = await prisma.booking.findMany({
-            orderBy: { travelDate: 'asc' }, // Upcoming first? Or created desc?
+            where: { isDeleted: false },
+            orderBy: { travelDate: 'asc' },
             include: {
                 customer: true,
                 payments: true
@@ -163,6 +164,23 @@ export async function getBookings() {
     } catch (error) {
         console.error('Get Bookings Error:', error);
         return { success: false, error: 'Failed to fetch bookings' };
+    }
+}
+
+export async function getTrashedBookings() {
+    try {
+        const bookings = await prisma.booking.findMany({
+            where: { isDeleted: true },
+            orderBy: { deletedAt: 'desc' },
+            include: {
+                customer: true,
+                payments: true
+            }
+        });
+        return { success: true, data: bookings };
+    } catch (error) {
+        console.error('Get Trashed Bookings Error:', error);
+        return { success: false, error: 'Failed to fetch trashed bookings' };
     }
 }
 
@@ -185,11 +203,47 @@ export async function getBookingById(id: string) {
 
 export async function deleteBooking(id: string) {
     try {
+        await prisma.booking.update({
+            where: { id },
+            data: {
+                isDeleted: true,
+                deletedAt: new Date()
+            }
+        });
+        revalidatePath('/admin/bookings');
+        return { success: true };
+    } catch (error) {
+        console.error("Delete Error", error);
+        return { success: false, error: 'Failed to delete booking' };
+    }
+}
+
+export async function restoreBooking(id: string) {
+    try {
+        await prisma.booking.update({
+            where: { id },
+            data: {
+                isDeleted: false,
+                deletedAt: null
+            }
+        });
+        revalidatePath('/admin/bookings');
+        return { success: true };
+    } catch (error) {
+        return { success: false, error: 'Failed to restore booking' };
+    }
+}
+
+export async function permanentDeleteBooking(id: string) {
+    try {
+        // Must delete payments first if cascade is not set up, or handle via relation
+        // Basic implementation assuming relation cascade or manual cleanup
+        await prisma.payment.deleteMany({ where: { bookingId: id } });
         await prisma.booking.delete({ where: { id } });
         revalidatePath('/admin/bookings');
         return { success: true };
     } catch (error) {
-        return { success: false, error: 'Failed to delete booking' };
+        return { success: false, error: 'Failed to permanently delete booking' };
     }
 }
 

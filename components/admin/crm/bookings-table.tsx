@@ -27,7 +27,129 @@ interface Booking {
     };
 }
 
-export function BookingsTable({ bookings }: { bookings: Booking[] }) {
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { MoreHorizontal, Pencil, Trash, CreditCard, RotateCcw, AlertTriangle } from "lucide-react";
+import { BookingDialog } from "./create-booking-dialog";
+import { useState } from "react";
+import { deleteBooking, restoreBooking, permanentDeleteBooking } from "@/app/actions/crm";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { AddPaymentDialog } from "./add-payment-dialog";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
+function BookingActions({ booking, isTrash }: { booking: Booking, isTrash?: boolean }) {
+    const router = useRouter();
+    const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+
+    const paidAmount = booking.payments.reduce((sum, p) => sum + p.amount, 0);
+    const balance = booking.totalAmount - paidAmount;
+
+    const handleDelete = async () => {
+        // Soft delete
+        const res = await deleteBooking(booking.id);
+        if (res.success) {
+            toast.success('Booking moved to trash');
+            router.refresh();
+        } else {
+            toast.error('Failed to delete');
+        }
+    };
+
+    const handleRestore = async () => {
+        const res = await restoreBooking(booking.id);
+        if (res.success) {
+            toast.success('Booking restored');
+            router.refresh();
+        } else {
+            toast.error('Failed to restore');
+        }
+    };
+
+    const handlePermanentDelete = async () => {
+        const res = await permanentDeleteBooking(booking.id);
+        if (res.success) {
+            toast.success('Booking permanently deleted');
+            router.refresh();
+        } else {
+            toast.error('Failed to delete permanently');
+        }
+    };
+
+    return (
+        <>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                        <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+
+                    {!isTrash ? (
+                        <>
+                            <DropdownMenuItem onClick={() => router.push(`/admin/bookings/${booking.id}/payment`)}>
+                                <CreditCard className="mr-2 h-4 w-4" /> Add Payment
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => router.push(`/admin/bookings/${booking.id}`)}>
+                                <Pencil className="mr-2 h-4 w-4" /> Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={handleDelete} className="text-red-600">
+                                <Trash className="mr-2 h-4 w-4" /> Move to Trash
+                            </DropdownMenuItem>
+                        </>
+                    ) : (
+                        <>
+                            <DropdownMenuItem onClick={handleRestore}>
+                                <RotateCcw className="mr-2 h-4 w-4" /> Restore
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setShowDeleteAlert(true)} className="text-red-600 font-bold bg-red-50 focus:bg-red-100">
+                                <AlertTriangle className="mr-2 h-4 w-4" /> Delete Forever
+                            </DropdownMenuItem>
+                        </>
+                    )}
+                </DropdownMenuContent>
+            </DropdownMenu>
+
+            <AlertDialog open={showDeleteAlert} onOpenChange={setShowDeleteAlert}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete the booking and all associated payment records from the database.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handlePermanentDelete} className="bg-red-600 hover:bg-red-700">Delete Forever</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+        </>
+    );
+}
+
+export function BookingsTable({ bookings, isTrash }: { bookings: Booking[], isTrash?: boolean }) {
+    // ... existing table code ...
+    // Pass isTrash to BookingActions
+
+    // REDEFINING THE COMPONENT START TO INCLUDE isTrash prop usage
     const getStatusParams = (status: string) => {
         switch (status) {
             case 'CONFIRMED': return { label: 'Confirmed', icon: CheckCircle, class: 'bg-green-100 text-green-800' };
@@ -56,7 +178,7 @@ export function BookingsTable({ bookings }: { bookings: Booking[] }) {
                         {bookings.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
-                                    No bookings found.
+                                    {isTrash ? "Trash is empty." : "No bookings found."}
                                 </TableCell>
                             </TableRow>
                         ) : (
@@ -101,7 +223,7 @@ export function BookingsTable({ bookings }: { bookings: Booking[] }) {
                                             </div>
                                         </TableCell>
                                         <TableCell>
-                                            <BookingActions booking={booking} />
+                                            <BookingActions booking={booking} isTrash={isTrash} />
                                         </TableCell>
                                     </TableRow>
                                 );
@@ -111,66 +233,5 @@ export function BookingsTable({ bookings }: { bookings: Booking[] }) {
                 </Table>
             </CardContent>
         </Card>
-    );
-}
-
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Pencil, Trash, CreditCard } from "lucide-react";
-import { BookingDialog } from "./create-booking-dialog";
-import { useState } from "react";
-import { deleteBooking } from "@/app/actions/crm";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { AddPaymentDialog } from "./add-payment-dialog";
-
-function BookingActions({ booking }: { booking: Booking }) {
-    const [openEdit, setOpenEdit] = useState(false);
-    const [openPayment, setOpenPayment] = useState(false);
-    const router = useRouter();
-
-    const paidAmount = booking.payments.reduce((sum, p) => sum + p.amount, 0);
-    const balance = booking.totalAmount - paidAmount;
-
-    const handleDelete = async () => {
-        if (confirm('Are you sure you want to delete this booking?')) {
-            const res = await deleteBooking(booking.id);
-            if (res.success) {
-                toast.success('Booking deleted');
-                router.refresh();
-            } else {
-                toast.error('Failed to delete');
-            }
-        }
-    };
-
-    return (
-        <>
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                        <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem onClick={() => router.push(`/admin/bookings/${booking.id}/payment`)}>
-                        <CreditCard className="mr-2 h-4 w-4" /> Add Payment
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => router.push(`/admin/bookings/${booking.id}`)}>
-                        <Pencil className="mr-2 h-4 w-4" /> Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleDelete} className="text-red-600">
-                        <Trash className="mr-2 h-4 w-4" /> Delete
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        </>
     );
 }
