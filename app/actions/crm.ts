@@ -166,6 +166,23 @@ export async function getBookings() {
     }
 }
 
+export async function getBookingById(id: string) {
+    try {
+        const booking = await prisma.booking.findUnique({
+            where: { id },
+            include: {
+                customer: true,
+                payments: true
+            }
+        });
+        if (!booking) return { success: false, error: 'Booking not found' };
+        return { success: true, data: booking };
+    } catch (error) {
+        console.error('Get Booking By ID Error:', error);
+        return { success: false, error: 'Failed to fetch booking' };
+    }
+}
+
 export async function deleteBooking(id: string) {
     try {
         await prisma.booking.delete({ where: { id } });
