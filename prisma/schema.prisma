@@ -58,6 +58,8 @@ model Inquiry {
   name      String
   email     String?
   phone     String
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id])
   destination String?
   startDate DateTime?
   travelers Int?
@@ -78,4 +80,51 @@ model Subscriber {
   email     String   @unique
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
+}
+
+model Customer {
+  id        String    @id @default(cuid())
+  name      String
+  email     String?
+  phone     String    @unique
+  address   String?
+  notes     String?
+  bookings  Booking[]
+  inquiries Inquiry[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Booking {
+  id          String    @id @default(cuid())
+  customerId  String
+  customer    Customer  @relation(fields: [customerId], references: [id])
+  
+  title       String    // e.g. "Kashmir Family Trip"
+  packageId   String?   // Optional link to Package
+  
+  status      String    @default("CONFIRMED") // CONFIRMED, COMPLETED, CANCELLED, PENDING
+  travelDate  DateTime
+  duration    String?   // e.g. "5 Days"
+  adults      Int       @default(2)
+  kids        Int       @default(0)
+  
+  totalAmount Float
+  
+  payments    Payment[]
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Payment {
+  id          String   @id @default(cuid())
+  bookingId   String
+  booking     Booking  @relation(fields: [bookingId], references: [id])
+  amount      Float
+  date        DateTime @default(now())
+  method      String   // UPI, BANK_TRANSFER, CASH
+  referenceId String?
+  notes       String?
+  createdAt   DateTime @default(now())
 }

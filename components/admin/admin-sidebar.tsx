@@ -1,8 +1,8 @@
 'use client';
 
 import Link from "next/link";
-import { Home, Map, Package, LogOut, MessageSquare, Mail, Calculator, FileText } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { LayoutDashboard, Package, MapPin, Users, Calculator, FileText, LogOut, MessageSquare, Mail, CalendarDays } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { ModeToggle } from "@/components/mode-toggle";
@@ -19,12 +19,29 @@ export function AdminSidebar({ pendingInquiries, className, onItemClick }: Admin
     const isActive = (path: string) => pathname === path || pathname?.startsWith(`${path}/`);
 
     const links = [
-        { href: "/admin", label: "Dashboard", icon: Home },
-        { href: "/admin/packages", label: "Packages", icon: Package },
-        { href: "/admin/destinations", label: "Destinations", icon: Map },
-        { href: "/admin/subscribers", label: "Subscribers", icon: Mail },
-        { href: "/admin/tools/calculator", label: "Calculator", icon: Calculator },
-        { href: "/admin/tools/itinerary-maker", label: "Itinerary Maker", icon: FileText },
+        {
+            label: "Main",
+            items: [
+                { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+                { href: "/admin/packages", label: "Packages", icon: Package },
+                { href: "/admin/destinations", label: "Destinations", icon: MapPin },
+                { href: "/admin/subscribers", label: "Subscribers", icon: Mail },
+            ]
+        },
+        {
+            label: "CRM",
+            items: [
+                { href: "/admin/customers", label: "Customers", icon: Users },
+                { href: "/admin/bookings", label: "Bookings", icon: CalendarDays },
+            ]
+        },
+        {
+            label: "Tools",
+            items: [
+                { href: "/admin/tools/calculator", label: "Calculator", icon: Calculator },
+                { href: "/admin/tools/itinerary-maker", label: "Itinerary Maker", icon: FileText },
+            ]
+        },
     ];
 
     return (
@@ -37,21 +54,30 @@ export function AdminSidebar({ pendingInquiries, className, onItemClick }: Admin
                 <ModeToggle />
             </div>
             <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-                {links.map((link) => (
-                    <Link
-                        key={link.href}
-                        href={link.href}
-                        onClick={onItemClick}
-                        className={cn(
-                            "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
-                            isActive(link.href) && link.href !== '/admin' || (link.href === '/admin' && pathname === '/admin')
-                                ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                                : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                {links.map((category, index) => (
+                    <div key={category.label || `category-${index}`} className="space-y-1">
+                        {category.label && (
+                            <h3 className="px-4 py-2 text-xs font-semibold uppercase text-muted-foreground">
+                                {category.label}
+                            </h3>
                         )}
-                    >
-                        <link.icon className="w-5 h-5" />
-                        {link.label}
-                    </Link>
+                        {category.items.map((link) => (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                onClick={onItemClick}
+                                className={cn(
+                                    "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
+                                    isActive(link.href) && link.href !== '/admin' || (link.href === '/admin' && pathname === '/admin')
+                                        ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                                        : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                                )}
+                            >
+                                <link.icon className="w-5 h-5" />
+                                {link.label}
+                            </Link>
+                        ))}
+                    </div>
                 ))}
 
                 <Link

@@ -1,17 +1,19 @@
 import { prisma } from "@/lib/prisma";
 import { getInquiryStats, getInquiryAnalytics } from "@/app/actions/inquiries";
-import { AnalyticsChart } from "@/components/admin/dashboard/analytics-chart";
-import { RecentActivity } from "@/components/admin/dashboard/recent-activity";
+import { getDashboardCRMStats } from "@/app/actions/crm";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-
+import { Overview } from "@/components/admin/overview";
+import { RecentInquiries } from "@/components/admin/recent-inquiries";
+import { UpcomingTrips } from "@/components/admin/upcoming-trips";
 
 export default async function AdminDashboard() {
     const packageCount = await prisma.package.count();
     const destinationCount = await prisma.destination.count();
-    const { total: inquiryCount } = await getInquiryStats();
-
-    // Fetch Analytics Data
-    const { chartData, recentActivity } = await getInquiryAnalytics();
+    const [stats, analyticsData, crmStats] = await Promise.all([
+        getInquiryStats(),
+        getInquiryAnalytics(),
+        getDashboardCRMStats()
+    ]);
 
     return (
         <div className="space-y-6">
@@ -42,38 +44,27 @@ export default async function AdminDashboard() {
                         <CardTitle className="text-sm font-medium">Total Inquiries</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-purple-600">{inquiryCount}</div>
+                        <div className="text-2xl font-bold text-purple-600">{stats.total}</div>
                         <p className="text-xs text-muted-foreground">Lifetime leads</p>
                     </CardContent>
                 </Card>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-7 gap-6">
-                {/* Main Chart Area */}
-                <Card className="col-span-1 lg:col-span-4">
-                    <CardHeader>
-                        <CardTitle>Inquiry Trends</CardTitle>
-                        <CardDescription>
-                            Leads received over the last 30 days.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="pl-2">
-                        <AnalyticsChart data={chartData || []} />
-                    </CardContent>
-                </Card>
-
-                {/* Recent Activity Sidebar */}
-                <Card className="col-span-1 lg:col-span-3">
-                    <CardHeader>
-                        <CardTitle>Recent Activity</CardTitle>
-                        <CardDescription>
-                            Latest 5 inquiries received.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <RecentActivity activities={recentActivity || []} />
-                    </CardContent>
-                </Card>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+                <div className="col-span-4">
+                    <Card className="h-full">
+                        <CardHeader>
+                            <CardTitle>Inquiry Overview</CardTitle>
+                        </CardHeader>
+                        <CardContent className="pl-2">
+                            <Overview data={analyticsData.chartData} />
+                        </CardContent>
+                    </Card>
+                </div>
+                <div className="col-span-3 space-y-4">
+                    <UpcomingTrips trips={crmStats.success ? crmStats.upcomingTrips : []} />
+                    <RecentInquiries inquiries={analyticsData.recentActivity} />
+                </div>
             </div>
         </div>
     )
