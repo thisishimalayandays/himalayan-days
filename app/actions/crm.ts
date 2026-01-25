@@ -71,44 +71,55 @@ export async function createBooking(data: {
                 title: data.title,
                 travelDate: data.travelDate,
                 totalAmount: data.totalAmount,
-                adults: data.adults,
-                kids: data.kids,
-                duration: data.duration,
-                status: data.status || 'CONFIRMED'
-            }
-        });
-        revalidatePath('/admin/bookings');
-        revalidatePath(`/admin/customers/${data.customerId}`);
-        return { success: true, booking };
-        await prisma.$transaction(async (tx) => {
-            const booking = await tx.booking.create({
-                data: {
-                    customerId: data.customerId,
-                    title: data.title,
-                    travelDate: data.travelDate,
-                    duration: data.duration,
-                    totalAmount: data.totalAmount,
-                    adults: data.adults,
-                    kids: data.kids,
-                    status: 'CONFIRMED',
-                }
-            });
+                await prisma.$transaction(async (tx) => {
+                    let customerId = data.customerId;
 
-            if (data.initialPayment && data.initialPayment > 0) {
-                await tx.payment.create({
-                    data: {
-                        bookingId: booking.id,
-                        amount: data.initialPayment,
-                        method: data.paymentMode || 'CASH',
-                        date: new Date(),
-                        notes: 'Initial Advance'
+                    // Create new customer if details provided and no ID
+                    if (!customerId && data.newCustomer) {
+                        const customer = await tx.customer.create({
+                            data: {
+                                name: data.newCustomer.name,
+                                phone: data.newCustomer.phone,
+                                email: data.newCustomer.email || null,
+                                address: data.newCustomer.address || null,
+                            }
+                        });
+                        customerId = customer.id;
+                    }
+
+                    if (!customerId) {
+                        throw new Error("Customer is required");
+                    }
+
+                    const booking = await tx.booking.create({
+                        data: {
+                            customerId: customerId,
+                            title: data.title,
+                            travelDate: data.travelDate,
+                            duration: data.duration,
+                            totalAmount: data.totalAmount,
+                            adults: data.adults,
+                            kids: data.kids,
+                            status: 'CONFIRMED',
+                        }
+                    });
+
+                    if (data.initialPayment && data.initialPayment > 0) {
+                        await tx.payment.create({
+                            data: {
+                                bookingId: booking.id,
+                                amount: data.initialPayment,
+                                method: data.paymentMode || 'CASH',
+                                date: new Date(),
+                                notes: 'Initial Advance'
+                            }
+                        });
                     }
                 });
-            }
-        });
 
-        revalidatePath('/admin/bookings');
-        revalidatePath(`/admin/customers/${data.customerId}`); // Keep revalidating customer path
+                revalidatePath('/admin/bookings');
+        revalidatePath(`/admin/customers/${data.customerId
+            }`); // Keep revalidating customer path
         return { success: true };
     } catch (error) {
         console.error('Create Booking Error:', error); // Corrected error message
