@@ -131,28 +131,28 @@ export function BookingDialog({ mode = 'create', booking, trigger, open: control
                     </DialogTitle>
                 </div>
 
-                <form onSubmit={handleSubmit}>
-                    <div className="grid grid-cols-1 lg:grid-cols-12 h-[600px]">
+                <form onSubmit={handleSubmit} className="flex flex-col h-[600px]">
+                    <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
                         {/* Left Column: Customer (5 cols) */}
-                        <div className="lg:col-span-5 p-6 border-r bg-muted/5 flex flex-col gap-6 overflow-y-auto">
+                        <div className="lg:col-span-5 p-6 lg:p-8 border-r flex flex-col gap-8 overflow-y-auto bg-muted/5">
                             <div>
-                                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
-                                    <User className="w-4 h-4" /> Customer Information
+                                <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-6 flex items-center gap-2">
+                                    <User className="w-4 h-4" /> Guest Information
                                 </h3>
 
                                 {mode === 'create' ? (
                                     <Tabs value={customerMode} onValueChange={(v) => setCustomerMode(v as 'existing' | 'new')} className="w-full">
-                                        <TabsList className="grid w-full grid-cols-2 mb-6">
-                                            <TabsTrigger value="new">New Profile</TabsTrigger>
-                                            <TabsTrigger value="existing">Existing</TabsTrigger>
+                                        <TabsList className="grid w-full grid-cols-2 mb-8 bg-muted/50 p-1 rounded-xl">
+                                            <TabsTrigger value="new" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">New Profile</TabsTrigger>
+                                            <TabsTrigger value="existing" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Existing</TabsTrigger>
                                         </TabsList>
 
-                                        <TabsContent value="existing" className="space-y-4">
-                                            <div className="space-y-2">
-                                                <Label>Select Customer</Label>
+                                        <TabsContent value="existing" className="space-y-6">
+                                            <div className="space-y-3">
+                                                <Label className="text-sm font-medium text-muted-foreground">Search Customer</Label>
                                                 <Select name="customerId" required={customerMode === 'existing'} defaultValue={booking?.customerId}>
-                                                    <SelectTrigger className="h-10">
-                                                        <SelectValue placeholder="Search database..." />
+                                                    <SelectTrigger className="h-12 border-muted-foreground/20 focus:ring-0 focus:border-primary bg-white">
+                                                        <SelectValue placeholder="Select from database..." />
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         {customers.map(c => (
@@ -165,95 +165,100 @@ export function BookingDialog({ mode = 'create', booking, trigger, open: control
                                             </div>
                                         </TabsContent>
 
-                                        <TabsContent value="new" className="space-y-4">
-                                            <div className="space-y-3">
-                                                <div className="relative">
-                                                    <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                                    <Input id="new_name" name="new_name" required={customerMode === 'new'} placeholder="Full Name" className="pl-9" />
+                                        <TabsContent value="new" className="space-y-5">
+                                            <div className="space-y-5">
+                                                <div className="relative group">
+                                                    <User className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground/50 group-focus-within:text-primary transition-colors" />
+                                                    <Input id="new_name" name="new_name" required={customerMode === 'new'} placeholder="Full Name" className="pl-10 h-12 border-muted-foreground/20 focus-visible:ring-0 focus-visible:border-primary bg-white transition-all" />
                                                 </div>
-                                                <div className="relative">
-                                                    <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                                    <Input id="new_phone" name="new_phone" required={customerMode === 'new'} placeholder="Phone Number" className="pl-9" />
+                                                <div className="relative group">
+                                                    <Phone className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground/50 group-focus-within:text-primary transition-colors" />
+                                                    <Input id="new_phone" name="new_phone" required={customerMode === 'new'} placeholder="Phone Number" className="pl-10 h-12 border-muted-foreground/20 focus-visible:ring-0 focus-visible:border-primary bg-white transition-all" />
                                                 </div>
-                                                <div className="relative">
-                                                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                                    <Input id="new_email" name="new_email" type="email" placeholder="Email (Optional)" className="pl-9" />
+                                                <div className="relative group">
+                                                    <Mail className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground/50 group-focus-within:text-primary transition-colors" />
+                                                    <Input id="new_email" name="new_email" type="email" placeholder="Email Address" className="pl-10 h-12 border-muted-foreground/20 focus-visible:ring-0 focus-visible:border-primary bg-white transition-all" />
                                                 </div>
-                                                <div className="relative">
-                                                    <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                                    <Textarea id="new_address" name="new_address" placeholder="Residential Address..." className="pl-9 resize-none min-h-[100px]" />
+                                                <div className="relative group">
+                                                    <MapPin className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground/50 group-focus-within:text-primary transition-colors" />
+                                                    <Textarea id="new_address" name="new_address" placeholder="Residential Address" className="pl-10 py-3 resize-none min-h-[100px] border-muted-foreground/20 focus-visible:ring-0 focus-visible:border-primary bg-white" />
                                                 </div>
                                             </div>
                                         </TabsContent>
                                     </Tabs>
                                 ) : (
-                                    <div className="p-4 border rounded-xl bg-background shadow-sm">
-                                        <div className="text-xs text-muted-foreground mb-1">Customer Profile</div>
-                                        <div className="text-lg font-bold">
-                                            {booking?.customer?.name || "Existing Customer"}
+                                    <div className="p-6 border rounded-2xl bg-white shadow-sm flex items-start gap-4">
+                                        <div className="p-3 bg-primary/10 rounded-full">
+                                            <User className="w-6 h-6 text-primary" />
                                         </div>
-                                        <input type="hidden" name="customerId" value={booking?.customerId} />
+                                        <div>
+                                            <div className="text-sm text-muted-foreground font-medium mb-1">Customer</div>
+                                            <div className="text-xl font-bold text-foreground">
+                                                {booking?.customer?.name || "Existing Customer"}
+                                            </div>
+                                            <input type="hidden" name="customerId" value={booking?.customerId} />
+                                        </div>
                                     </div>
                                 )}
                             </div>
                         </div>
 
                         {/* Right Column: Trip & Pay (7 cols) */}
-                        <div className="lg:col-span-7 p-6 flex flex-col gap-6 overflow-y-auto">
+                        <div className="lg:col-span-7 p-6 lg:p-8 flex flex-col gap-8 overflow-y-auto">
                             <div>
-                                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-6 flex items-center gap-2">
                                     <MapPin className="w-4 h-4" /> Trip Details
                                 </h3>
 
-                                <div className="space-y-4">
+                                <div className="space-y-6">
                                     <div className="space-y-2">
-                                        <Label htmlFor="title">Trip Title</Label>
-                                        <Input id="title" name="title" required defaultValue={booking?.title} placeholder="e.g. Kashmir Family Vacation" className="text-lg font-medium" />
+                                        <Label htmlFor="title" className="text-muted-foreground text-xs uppercase font-semibold pl-1">Trip Title</Label>
+                                        <Input id="title" name="title" required defaultValue={booking?.title} placeholder="e.g. Kashmir Family Vacation" className="text-lg font-medium h-12 border-muted-foreground/20 focus-visible:ring-0 focus-visible:border-primary" />
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-2 gap-6">
                                         <div className="space-y-2">
-                                            <Label htmlFor="travelDate">Travel Date</Label>
-                                            <div className="relative">
-                                                <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                            <Label className="text-muted-foreground text-xs uppercase font-semibold pl-1">Dates</Label>
+                                            <div className="relative group">
+                                                <Calendar className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground/50 group-focus-within:text-primary" />
                                                 <Input
                                                     id="travelDate"
                                                     name="travelDate"
                                                     type="date"
                                                     required
                                                     defaultValue={booking?.travelDate ? new Date(booking.travelDate).toISOString().split('T')[0] : ''}
-                                                    className="pl-9"
+                                                    className="pl-10 h-12 border-muted-foreground/20 focus-visible:ring-0 focus-visible:border-primary"
                                                 />
                                             </div>
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="duration">Duration</Label>
-                                            <div className="relative">
-                                                <Clock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                                <Input id="duration" name="duration" defaultValue={booking?.duration} placeholder="e.g. 5 Days" className="pl-9" />
+                                            <Label className="text-muted-foreground text-xs uppercase font-semibold pl-1">Duration</Label>
+                                            <div className="relative group">
+                                                <Clock className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground/50 group-focus-within:text-primary" />
+                                                <Input id="duration" name="duration" defaultValue={booking?.duration} placeholder="e.g. 5 Days" className="pl-10 h-12 border-muted-foreground/20 focus-visible:ring-0 focus-visible:border-primary" />
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-3 gap-4">
+                                    <div className="grid grid-cols-3 gap-6">
                                         <div className="space-y-2">
-                                            <Label>Adults</Label>
+                                            <Label className="text-muted-foreground text-xs uppercase font-semibold pl-1">Adults</Label>
                                             <div className="relative">
-                                                <Users className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                                <Input id="adults" name="adults" type="number" min="1" defaultValue={booking?.adults || 2} required className="pl-9" />
+                                                <Input id="adults" name="adults" type="number" min="1" defaultValue={booking?.adults || 2} required className="h-12 border-muted-foreground/20 focus-visible:ring-0 focus-visible:border-primary text-center font-medium" />
+                                                <span className="absolute right-3 top-3.5 text-sm text-muted-foreground pointer-events-none">Pax</span>
                                             </div>
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>Kids</Label>
+                                            <Label className="text-muted-foreground text-xs uppercase font-semibold pl-1">Kids</Label>
                                             <div className="relative">
-                                                <Baby className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                                <Input id="kids" name="kids" type="number" min="0" defaultValue={booking?.kids || 0} className="pl-9" />
+                                                <Input id="kids" name="kids" type="number" min="0" defaultValue={booking?.kids || 0} className="h-12 border-muted-foreground/20 focus-visible:ring-0 focus-visible:border-primary text-center font-medium" />
+                                                <span className="absolute right-3 top-3.5 text-sm text-muted-foreground pointer-events-none">Pax</span>
                                             </div>
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>Total Cost</Label>
-                                            <div className="relative">
-                                                <Banknote className="absolute left-3 top-3 h-4 w-4 text-green-600" />
+                                            <Label className="text-green-600 text-xs uppercase font-bold pl-1">Total Cost</Label>
+                                            <div className="relative group">
+                                                <Banknote className="absolute left-3 top-3.5 h-5 w-5 text-green-600" />
                                                 <Input
                                                     id="totalAmount"
                                                     name="totalAmount"
@@ -261,7 +266,7 @@ export function BookingDialog({ mode = 'create', booking, trigger, open: control
                                                     min="0"
                                                     defaultValue={booking?.totalAmount}
                                                     required
-                                                    className="pl-9 font-bold text-green-700"
+                                                    className="pl-10 h-12 border-green-200 focus-visible:ring-0 focus-visible:border-green-500 font-bold text-green-700 bg-green-50/50"
                                                     onChange={(e) => setTotalAmount(parseInt(e.target.value) || 0)}
                                                 />
                                             </div>
@@ -271,30 +276,32 @@ export function BookingDialog({ mode = 'create', booking, trigger, open: control
                             </div>
 
                             {mode === 'create' && (
-                                <div className="mt-auto">
-                                    <div className="p-5 border rounded-xl bg-orange-50/50 dark:bg-orange-950/20 border-orange-100 dark:border-orange-900/50">
-                                        <h3 className="text-sm font-semibold text-orange-700 dark:text-orange-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                                            <CreditCard className="w-4 h-4" /> Initial Payment
-                                        </h3>
+                                <div className="mt-auto pt-6 border-t border-dashed">
+                                    <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-6 flex items-center gap-2">
+                                        <CreditCard className="w-4 h-4" /> Payment Status
+                                    </h3>
 
-                                        <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end">
+                                        <div className="space-y-4">
                                             <div className="space-y-2">
-                                                <Label htmlFor="initialPayment">Advance Amount (₹)</Label>
-                                                <Input
-                                                    id="initialPayment"
-                                                    name="initialPayment"
-                                                    type="number"
-                                                    min="0"
-                                                    placeholder="0"
-                                                    className="bg-background border-orange-200 focus-visible:ring-orange-500"
-                                                    onChange={(e) => setInitialPayment(parseInt(e.target.value) || 0)}
-                                                />
+                                                <Label htmlFor="initialPayment" className="text-muted-foreground text-xs uppercase font-semibold pl-1">Advance Amount</Label>
+                                                <div className="relative">
+                                                    <span className="absolute left-3 top-3.5 text-muted-foreground font-medium">₹</span>
+                                                    <Input
+                                                        id="initialPayment"
+                                                        name="initialPayment"
+                                                        type="number"
+                                                        min="0"
+                                                        placeholder="0"
+                                                        className="pl-8 h-12 border-muted-foreground/20 focus-visible:ring-0 focus-visible:border-primary font-medium"
+                                                        onChange={(e) => setInitialPayment(parseInt(e.target.value) || 0)}
+                                                    />
+                                                </div>
                                             </div>
                                             <div className="space-y-2">
-                                                <Label htmlFor="paymentMode">Payment Mode</Label>
                                                 <Select name="paymentMode" defaultValue="UPI" disabled={initialPayment <= 0}>
-                                                    <SelectTrigger className="bg-background border-orange-200">
-                                                        <SelectValue placeholder="Select Mode" />
+                                                    <SelectTrigger className="h-12 border-muted-foreground/20">
+                                                        <SelectValue placeholder="Payment Mode" />
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         <SelectItem value="UPI">UPI / GPay / PhonePe</SelectItem>
@@ -306,9 +313,9 @@ export function BookingDialog({ mode = 'create', booking, trigger, open: control
                                             </div>
                                         </div>
 
-                                        <div className="flex justify-between items-center mt-4 pt-4 border-t border-orange-200/50">
-                                            <span className="text-sm font-medium text-muted-foreground">Balance Pending</span>
-                                            <div className="text-2xl font-bold font-mono tracking-tight text-orange-700 dark:text-orange-400">
+                                        <div className="bg-muted/10 rounded-2xl p-6 flex flex-col items-end justify-center border border-dashed">
+                                            <span className="text-sm font-medium text-muted-foreground mb-1">Balance Pending</span>
+                                            <div className={`text-3xl font-bold tracking-tight ${balance > 0 ? "text-orange-600" : "text-green-600"}`}>
                                                 ₹{balance.toLocaleString()}
                                             </div>
                                         </div>
@@ -318,9 +325,9 @@ export function BookingDialog({ mode = 'create', booking, trigger, open: control
                         </div>
                     </div>
 
-                    <div className="p-4 border-t bg-muted/10 flex justify-end gap-3">
-                        <Button type="button" variant="ghost" onClick={() => setIsOpen(false)}>Cancel</Button>
-                        <Button type="submit" disabled={loading} className="min-w-[180px] text-base">
+                    <div className="p-4 border-t bg-white flex justify-end gap-3 z-10">
+                        <Button type="button" variant="ghost" onClick={() => setIsOpen(false)} className="h-12 px-6">Cancel</Button>
+                        <Button type="submit" disabled={loading} className="h-12 px-8 text-base shadow-lg shadow-primary/20">
                             {loading ? "Processing..." : (mode === 'create' ? "Confirm Booking" : "Save Changes")}
                         </Button>
                     </div>
