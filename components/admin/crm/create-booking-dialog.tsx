@@ -19,6 +19,7 @@ import {
 import { getCustomers } from '@/app/actions/crm';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
 
 interface BookingDialogProps {
     mode?: 'create' | 'edit';
@@ -121,154 +122,177 @@ export function BookingDialog({ mode = 'create', booking, trigger, open: control
                 </DialogTrigger>
             )}
 
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-w-4xl">
                 <DialogHeader>
                     <DialogTitle>{mode === 'create' ? 'Create New Booking' : 'Edit Booking'}</DialogTitle>
                 </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="mt-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Left Column: Customer */}
+                        <div className="space-y-4 border-r md:pr-6">
+                            <h3 className="font-semibold text-lg flex items-center gap-2">
+                                <div className="h-6 w-1 bg-primary rounded-full" />
+                                Customer Details
+                            </h3>
 
-                    {mode === 'create' ? (
-                        <div className="space-y-3">
-                            <Label>Customer Details</Label>
-                            <Tabs value={customerMode} onValueChange={(v) => setCustomerMode(v as 'existing' | 'new')} className="w-full">
-                                <TabsList className="grid w-full grid-cols-2">
-                                    <TabsTrigger value="new">New Customer</TabsTrigger>
-                                    <TabsTrigger value="existing">Existing Customer</TabsTrigger>
-                                </TabsList>
-                                <TabsContent value="existing" className="pt-2">
-                                    <Select name="customerId" required={customerMode === 'existing'} defaultValue={booking?.customerId}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Search / Select Customer" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {customers.map(c => (
-                                                <SelectItem key={c.id} value={c.id}>
-                                                    {c.name} ({c.phone})
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </TabsContent>
-                                <TabsContent value="new" className="space-y-4 pt-2 border rounded-md p-4 bg-muted/20">
-                                    <div className="grid grid-cols-2 gap-4">
+                            {mode === 'create' ? (
+                                <Tabs value={customerMode} onValueChange={(v) => setCustomerMode(v as 'existing' | 'new')} className="w-full">
+                                    <TabsList className="grid w-full grid-cols-2 mb-4">
+                                        <TabsTrigger value="new">New Customer</TabsTrigger>
+                                        <TabsTrigger value="existing">Existing</TabsTrigger>
+                                    </TabsList>
+
+                                    <TabsContent value="existing" className="space-y-4">
                                         <div className="space-y-2">
-                                            <Label htmlFor="new_name">Full Name</Label>
-                                            <Input id="new_name" name="new_name" required={customerMode === 'new'} placeholder="Client Name" />
+                                            <Label>Select Customer</Label>
+                                            <Select name="customerId" required={customerMode === 'existing'} defaultValue={booking?.customerId}>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Search Customer..." />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {customers.map(c => (
+                                                        <SelectItem key={c.id} value={c.id}>
+                                                            {c.name} ({c.phone})
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </TabsContent>
+
+                                    <TabsContent value="new" className="space-y-4">
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <div className="space-y-2">
+                                                <Label htmlFor="new_name">Full Name</Label>
+                                                <Input id="new_name" name="new_name" required={customerMode === 'new'} placeholder="Client Name" />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="new_phone">Phone</Label>
+                                                <Input id="new_phone" name="new_phone" required={customerMode === 'new'} placeholder="Contact Number" />
+                                            </div>
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="new_phone">Phone</Label>
-                                            <Input id="new_phone" name="new_phone" required={customerMode === 'new'} placeholder="Contact Number" />
+                                            <Label htmlFor="new_email">Email (Optional)</Label>
+                                            <Input id="new_email" name="new_email" type="email" placeholder="client@example.com" />
                                         </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="new_address">Address (Optional)</Label>
+                                            <Textarea id="new_address" name="new_address" placeholder="Residential Address..." className="h-24 resize-none" />
+                                        </div>
+                                    </TabsContent>
+                                </Tabs>
+                            ) : (
+                                <div className="p-4 border rounded-lg bg-muted/30">
+                                    <Label className="text-muted-foreground">Customer</Label>
+                                    <div className="text-lg font-medium mt-1">
+                                        {booking?.customer?.name || "Existing Customer"}
                                     </div>
+                                    <input type="hidden" name="customerId" value={booking?.customerId} />
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Right Column: Trip & Pay */}
+                        <div className="space-y-5">
+                            <h3 className="font-semibold text-lg flex items-center gap-2">
+                                <div className="h-6 w-1 bg-orange-500 rounded-full" />
+                                Trip Details
+                            </h3>
+
+                            <div className="space-y-3">
+                                <div className="space-y-2">
+                                    <Label htmlFor="title">Trip Title</Label>
+                                    <Input id="title" name="title" required defaultValue={booking?.title} placeholder="e.g. Kashmir Family Vacation" />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3">
                                     <div className="space-y-2">
-                                        <Label htmlFor="new_email">Email (Optional)</Label>
-                                        <Input id="new_email" name="new_email" type="email" placeholder="client@example.com" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="new_address">Address (Optional)</Label>
-                                        <Textarea id="new_address" name="new_address" placeholder="Address..." className="h-20" />
-                                    </div>
-                                </TabsContent>
-                            </Tabs>
-                        </div>
-                    ) : (
-                        <div className="space-y-2">
-                            <Label>Customer</Label>
-                            <div className="p-2 border rounded bg-muted/50 text-sm font-medium">
-                                {booking?.customer?.name || "Existing Customer"}
-                            </div>
-                            <input type="hidden" name="customerId" value={booking?.customerId} />
-                        </div>
-                    )}
-
-                    <div className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="title">Trip Title</Label>
-                            <Input id="title" name="title" required defaultValue={booking?.title} placeholder="e.g. Kashmir Family Vacation" />
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="travelDate">Travel Date</Label>
-                                <Input
-                                    id="travelDate"
-                                    name="travelDate"
-                                    type="date"
-                                    required
-                                    defaultValue={booking?.travelDate ? new Date(booking.travelDate).toISOString().split('T')[0] : ''}
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="duration">Duration</Label>
-                                <Input id="duration" name="duration" defaultValue={booking?.duration} placeholder="e.g. 5 Days" />
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-3 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="adults">Adults</Label>
-                                <Input id="adults" name="adults" type="number" min="1" defaultValue={booking?.adults || 2} required />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="kids">Kids</Label>
-                                <Input id="kids" name="kids" type="number" min="0" defaultValue={booking?.kids || 0} />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="totalAmount">Total Cost (₹)</Label>
-                                <Input
-                                    id="totalAmount"
-                                    name="totalAmount"
-                                    type="number"
-                                    min="0"
-                                    defaultValue={booking?.totalAmount}
-                                    required
-                                    onChange={(e) => setTotalAmount(parseInt(e.target.value) || 0)}
-                                />
-                            </div>
-                        </div>
-
-                        {mode === 'create' && (
-                            <div className="p-4 border rounded-lg bg-muted/50 space-y-4">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="initialPayment">Advance / Initial Payment (₹)</Label>
+                                        <Label htmlFor="travelDate">Travel Date</Label>
                                         <Input
-                                            id="initialPayment"
-                                            name="initialPayment"
-                                            type="number"
-                                            min="0"
-                                            placeholder="0"
-                                            onChange={(e) => setInitialPayment(parseInt(e.target.value) || 0)}
+                                            id="travelDate"
+                                            name="travelDate"
+                                            type="date"
+                                            required
+                                            defaultValue={booking?.travelDate ? new Date(booking.travelDate).toISOString().split('T')[0] : ''}
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label htmlFor="paymentMode">Payment Mode</Label>
-                                        <Select name="paymentMode" defaultValue="UPI" disabled={initialPayment <= 0}>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Mode" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="UPI">UPI / GPay</SelectItem>
-                                                <SelectItem value="CASH">Cash</SelectItem>
-                                                <SelectItem value="BANK_TRANSFER">Bank Transfer</SelectItem>
-                                            </SelectContent>
-                                        </Select>
+                                        <Label htmlFor="duration">Duration</Label>
+                                        <Input id="duration" name="duration" defaultValue={booking?.duration} placeholder="e.g. 5 Days" />
                                     </div>
                                 </div>
-                                <div className="flex justify-between items-center text-sm font-medium pt-2">
-                                    <span>Balance Pending:</span>
-                                    <span className={balance > 0 ? "text-orange-600" : "text-green-600"}>
-                                        ₹{balance.toLocaleString()}
-                                    </span>
+
+                                <div className="grid grid-cols-3 gap-3">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="adults">Adults</Label>
+                                        <Input id="adults" name="adults" type="number" min="1" defaultValue={booking?.adults || 2} required />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="kids">Kids</Label>
+                                        <Input id="kids" name="kids" type="number" min="0" defaultValue={booking?.kids || 0} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="totalAmount">Total Cost (₹)</Label>
+                                        <Input
+                                            id="totalAmount"
+                                            name="totalAmount"
+                                            type="number"
+                                            min="0"
+                                            defaultValue={booking?.totalAmount}
+                                            required
+                                            onChange={(e) => setTotalAmount(parseInt(e.target.value) || 0)}
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        )}
+
+                            {mode === 'create' && (
+                                <div className="pt-4 border-t">
+                                    <h3 className="font-semibold text-base mb-3">Initial Payment</h3>
+                                    <div className="p-4 border rounded-lg bg-orange-50/50 dark:bg-muted/10 space-y-4">
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <Label htmlFor="initialPayment">Advance (₹)</Label>
+                                                <Input
+                                                    id="initialPayment"
+                                                    name="initialPayment"
+                                                    type="number"
+                                                    min="0"
+                                                    placeholder="0"
+                                                    className="bg-background"
+                                                    onChange={(e) => setInitialPayment(parseInt(e.target.value) || 0)}
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="paymentMode">Payment Mode</Label>
+                                                <Select name="paymentMode" defaultValue="UPI" disabled={initialPayment <= 0}>
+                                                    <SelectTrigger className="bg-background">
+                                                        <SelectValue placeholder="Mode" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="UPI">UPI / GPay</SelectItem>
+                                                        <SelectItem value="CASH">Cash</SelectItem>
+                                                        <SelectItem value="BANK_TRANSFER">Bank Transfer</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-between items-center text-sm font-medium">
+                                            <span>Balance Pending:</span>
+                                            <Badge variant={balance > 0 ? "outline" : "default"} className={balance > 0 ? "text-orange-600 border-orange-200" : "bg-green-600"}>
+                                                ₹{balance.toLocaleString()}
+                                            </Badge>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
-                    <div className="flex justify-end gap-2 pt-4">
+                    <div className="flex justify-end gap-2 pt-6 mt-2 border-t">
                         <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
-                        <Button type="submit" disabled={loading}>
-                            {loading ? "Saving..." : (mode === 'create' ? "Create Booking" : "Save Changes")}
+                        <Button type="submit" disabled={loading} className="min-w-[150px]">
+                            {loading ? "Processing..." : (mode === 'create' ? "Create Booking" : "Save Changes")}
                         </Button>
                     </div>
                 </form>
