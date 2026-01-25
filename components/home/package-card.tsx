@@ -95,13 +95,13 @@ export function PackageCard({ packageData, index = 0 }: PackageCardProps) {
                             rel="noopener noreferrer"
                             className="flex-1"
                         >
-                            <Button variant="outline" className="w-full rounded-full border-[#25D366]/20 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all flex items-center justify-center gap-2 hover:[&_img]:brightness-0 hover:[&_img]:invert">
+                            <Button variant="outline" className="group w-full rounded-full border-[#25D366]/20 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all flex items-center justify-center gap-2">
                                 <Image
                                     src="/whatsapp_enquiry.png"
                                     alt="WhatsApp"
                                     width={20}
                                     height={20}
-                                    className="object-contain"
+                                    className="object-contain group-hover:brightness-0 group-hover:invert transition-all duration-200"
                                 />
                                 Enquire
                             </Button>
