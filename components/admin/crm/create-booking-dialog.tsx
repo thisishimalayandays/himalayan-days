@@ -30,6 +30,12 @@ export function BookingDialog({ mode = 'create', booking, trigger, open: control
     const [internalOpen, setInternalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [customers, setCustomers] = useState<{ id: string, name: string, phone: string }[]>([]);
+
+    // UI Logic State
+    const [totalAmount, setTotalAmount] = useState(0);
+    const [initialPayment, setInitialPayment] = useState(0);
+    const balance = totalAmount - initialPayment;
+
     const router = useRouter();
 
     const isControlled = typeof controlledOpen !== 'undefined';
@@ -62,6 +68,8 @@ export function BookingDialog({ mode = 'create', booking, trigger, open: control
             totalAmount: parseFloat(formData.get('totalAmount') as string),
             adults: parseInt(formData.get('adults') as string) || 2,
             kids: parseInt(formData.get('kids') as string) || 0,
+            initialPayment: parseFloat(formData.get('initialPayment') as string) || 0,
+            paymentMode: formData.get('paymentMode') as string,
         };
 
         let result;
@@ -149,9 +157,54 @@ export function BookingDialog({ mode = 'create', booking, trigger, open: control
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="totalAmount">Total Cost (₹)</Label>
-                            <Input id="totalAmount" name="totalAmount" type="number" min="0" defaultValue={booking?.totalAmount} required />
+                            <Input
+                                id="totalAmount"
+                                name="totalAmount"
+                                type="number"
+                                min="0"
+                                defaultValue={booking?.totalAmount}
+                                required
+                                onChange={(e) => setTotalAmount(parseInt(e.target.value) || 0)}
+                            />
                         </div>
                     </div>
+
+                    {mode === 'create' && (
+                        <div className="p-4 border rounded-lg bg-muted/50 space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="initialPayment">Advance / Initial Payment (₹)</Label>
+                                    <Input
+                                        id="initialPayment"
+                                        name="initialPayment"
+                                        type="number"
+                                        min="0"
+                                        placeholder="0"
+                                        onChange={(e) => setInitialPayment(parseInt(e.target.value) || 0)}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="paymentMode">Payment Mode</Label>
+                                    <Select name="paymentMode" defaultValue="UPI" disabled={initialPayment <= 0}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Mode" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="UPI">UPI / GPay</SelectItem>
+                                            <SelectItem value="CASH">Cash</SelectItem>
+                                            <SelectItem value="BANK_TRANSFER">Bank Transfer</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+                            <div className="flex justify-between items-center text-sm font-medium pt-2">
+                                <span>Balance Pending:</span>
+                                <span className={balance > 0 ? "text-orange-600" : "text-green-600"}>
+                                    ₹{balance.toLocaleString()}
+                                </span>
+                            </div>
+                        </div>
+                    )}
 
                     <div className="flex justify-end gap-2 pt-4">
                         <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>

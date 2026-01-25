@@ -80,9 +80,39 @@ export async function createBooking(data: {
         revalidatePath('/admin/bookings');
         revalidatePath(`/admin/customers/${data.customerId}`);
         return { success: true, booking };
+        await prisma.$transaction(async (tx) => {
+            const booking = await tx.booking.create({
+                data: {
+                    customerId: data.customerId,
+                    title: data.title,
+                    travelDate: data.travelDate,
+                    duration: data.duration,
+                    totalAmount: data.totalAmount,
+                    adults: data.adults,
+                    kids: data.kids,
+                    status: 'CONFIRMED',
+                }
+            });
+
+            if (data.initialPayment && data.initialPayment > 0) {
+                await tx.payment.create({
+                    data: {
+                        bookingId: booking.id,
+                        amount: data.initialPayment,
+                        method: data.paymentMode || 'CASH',
+                        date: new Date(),
+                        notes: 'Initial Advance'
+                    }
+                });
+            }
+        });
+
+        revalidatePath('/admin/bookings');
+        revalidatePath(`/admin/customers/${data.customerId}`); // Keep revalidating customer path
+        return { success: true };
     } catch (error) {
-        console.error('Create Booking Error:', error);
-        return { success: false, error: 'Failed to create booking' };
+        console.error('Create Booking Error:', error); // Corrected error message
+        return { success: false, error: 'Failed to create booking' }; // Corrected error message
     }
 }
 
