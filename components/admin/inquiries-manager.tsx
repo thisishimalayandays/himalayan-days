@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calendar } from '@/components/ui/calendar';
-import { Mail, Phone, Calendar as CalendarIcon, MapPin, Trash2, RefreshCcw, FileDown, Eye } from 'lucide-react';
+import { Mail, Phone, Calendar as CalendarIcon, MapPin, Trash2, RefreshCcw, FileDown, Eye, Users, Wallet, Clock } from 'lucide-react';
 import { softDeleteInquiry, restoreInquiry, permanentDeleteInquiry, markInquiryAsRead, updateInquiryStatus } from '@/app/actions/inquiries';
 import { useRouter } from 'next/navigation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -246,10 +246,35 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
                                             <span>{inquiry.destination}</span>
                                         </div>
                                     )}
-                                    {inquiry.message && (
-                                        <p className="text-xs bg-muted/50 p-2 rounded-md border border-border text-muted-foreground italic line-clamp-2" title={inquiry.message}>
-                                            "{inquiry.message}"
-                                        </p>
+                                    {(inquiry.message || inquiry.budget) && (
+                                        <div className="mt-2">
+                                            {inquiry.type === 'AI_WIZARD_LEAD' && inquiry.message ? (
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    {inquiry.message.split('\n').map((line, i) => {
+                                                        const parts = line.split(':');
+                                                        if (parts.length < 2) return null;
+                                                        const key = parts[0];
+                                                        const val = parts.slice(1).join(':').trim(); // Handle colons in value if any
+
+                                                        if (key.includes('Travel Type')) return <Badge key={i} variant="secondary" className="bg-indigo-50 text-indigo-700 border-indigo-100 hover:bg-indigo-100 font-normal px-2 py-0.5 h-6"><Users className="w-3 h-3 mr-1.5 opacity-70" /> {val}</Badge>;
+                                                        if (key.includes('Duration')) return <Badge key={i} variant="secondary" className="bg-blue-50 text-blue-700 border-blue-100 hover:bg-blue-100 font-normal px-2 py-0.5 h-6"><Clock className="w-3 h-3 mr-1.5 opacity-70" /> {val}</Badge>;
+                                                        if (key.includes('Season')) return <Badge key={i} variant="secondary" className="bg-amber-50 text-amber-700 border-amber-100 hover:bg-amber-100 font-normal px-2 py-0.5 h-6"><CalendarIcon className="w-3 h-3 mr-1.5 opacity-70" /> {val}</Badge>;
+                                                        return null;
+                                                    })}
+                                                    {inquiry.budget && (
+                                                        <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-100 font-normal px-2 py-0.5 h-6">
+                                                            <Wallet className="w-3 h-3 mr-1.5 opacity-70" /> {inquiry.budget}
+                                                        </Badge>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                inquiry.message && (
+                                                    <p className="text-xs bg-muted/50 p-2 rounded-md border border-border text-muted-foreground italic line-clamp-2" title={inquiry.message}>
+                                                        "{inquiry.message}"
+                                                    </p>
+                                                )
+                                            )}
+                                        </div>
                                     )}
                                 </div>
                             </TableCell>

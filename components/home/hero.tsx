@@ -4,15 +4,16 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { TripCustomizationModal } from './trip-customization-modal';
+import { AiTripWizard } from './ai-trip-wizard';
+import { Sparkles } from 'lucide-react';
 
 export function Hero() {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isAiWizardOpen, setIsAiWizardOpen] = useState(false);
 
     return (
         <section className="relative h-[120vh] w-full overflow-hidden flex items-center justify-center text-center">
             {/* Background Image */}
-            {/* Background Image */}
-            {/* Background Video */}
             <div className="absolute inset-0 z-0 select-none pointer-events-none overflow-hidden">
                 <div className="absolute inset-0 bg-black/40 z-10" /> {/* Overlay */}
                 <video
@@ -57,7 +58,15 @@ export function Hero() {
                     Discover the breathtaking beauty of Kashmir with our curated tour packages. From serene lakes to majestic mountains, we craft memories that last a lifetime.
                 </motion.p>
 
-                <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
+                <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6 flex-wrap">
+                    <button
+                        onClick={() => setIsAiWizardOpen(true)}
+                        className="inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:from-violet-700 hover:to-indigo-700 font-bold px-8 text-lg h-14 shadow-2xl shadow-indigo-500/30 hover:scale-105 duration-300 gap-2 border border-white/10"
+                    >
+                        <Sparkles className="w-5 h-5 animate-pulse" />
+                        AI Trip Planner
+                    </button>
+
                     <Link
                         href="/packages"
                         className="inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-orange-600 font-semibold px-8 text-lg h-14 shadow-2xl hover:shadow-orange-500/20 hover:scale-105 duration-300"
@@ -88,6 +97,7 @@ export function Hero() {
                 </div>
             </motion.div>
             <TripCustomizationModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+            <AiTripWizard isOpen={isAiWizardOpen} onClose={() => setIsAiWizardOpen(false)} />
         </section>
     );
 }
