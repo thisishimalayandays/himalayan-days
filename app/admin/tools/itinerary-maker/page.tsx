@@ -135,7 +135,7 @@ export default function ItineraryMakerPage() {
     // Mobile Tab State
     const [mobileTab, setMobileTab] = useState<'editor' | 'preview'>('editor');
     // Desktop Preview Toggle
-    const [showPreview, setShowPreview] = useState(true);
+    const [showPreview, setShowPreview] = useState(false);
 
     return (
         <div className="h-[calc(100vh-4rem)] flex flex-col md:flex-row overflow-hidden bg-background relative">
