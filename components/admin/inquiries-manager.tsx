@@ -31,6 +31,7 @@ interface Inquiry {
     destination: string | null;
     message: string | null;
     travelers: number | null;
+    budget: string | null;
     createdAt: Date;
     isDeleted: boolean;
     deletedAt: Date | null;
