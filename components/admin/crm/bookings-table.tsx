@@ -49,12 +49,13 @@ export function BookingsTable({ bookings }: { bookings: Booking[] }) {
                             <TableHead>Travel Date</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead className="text-right">Payment</TableHead>
+                            <TableHead className="w-[50px]"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {bookings.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
+                                <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
                                     No bookings found.
                                 </TableCell>
                             </TableRow>
@@ -97,6 +98,9 @@ export function BookingsTable({ bookings }: { bookings: Booking[] }) {
                                                 {isFullyPaid ? 'Fully Paid' : `Bal: ₹${balance.toLocaleString()}`}
                                             </div>
                                         </TableCell>
+                                        <TableCell>
+                                            <BookingActions booking={booking} />
+                                        </TableCell>
                                     </TableRow>
                                 );
                             })
@@ -105,5 +109,65 @@ export function BookingsTable({ bookings }: { bookings: Booking[] }) {
                 </Table>
             </CardContent>
         </Card>
+    );
+}
+
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { MoreHorizontal, Pencil, Trash } from "lucide-react";
+import { BookingDialog } from "./create-booking-dialog";
+import { useState } from "react";
+import { deleteBooking } from "@/app/actions/crm";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+
+function BookingActions({ booking }: { booking: Booking }) {
+    const [openEdit, setOpenEdit] = useState(false);
+    const router = useRouter();
+
+    const handleDelete = async () => {
+        if (confirm('Are you sure you want to delete this booking?')) {
+            const res = await deleteBooking(booking.id);
+            if (res.success) {
+                toast.success('Booking deleted');
+                router.refresh();
+            } else {
+                toast.error('Failed to delete');
+            }
+        }
+    };
+
+    return (
+        <>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                        <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuItem onClick={() => setOpenEdit(true)}>
+                        <Pencil className="mr-2 h-4 w-4" /> Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleDelete} className="text-red-600">
+                        <Trash className="mr-2 h-4 w-4" /> Delete
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+
+            <BookingDialog
+                mode="edit"
+                booking={booking}
+                open={openEdit}
+                onOpenChange={setOpenEdit}
+            />
+        </>
     );
 }

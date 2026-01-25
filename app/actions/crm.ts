@@ -41,6 +41,16 @@ export async function getCustomers() {
     }
 }
 
+export async function deleteCustomer(id: string) {
+    try {
+        await prisma.customer.delete({ where: { id } });
+        revalidatePath('/admin/customers');
+        return { success: true };
+    } catch (error) {
+        return { success: false, error: 'Failed to delete customer' };
+    }
+}
+
 // --- BOOKINGS ---
 
 export async function createBooking(data: {
@@ -76,6 +86,28 @@ export async function createBooking(data: {
     }
 }
 
+export async function updateBooking(id: string, data: any) {
+    try {
+        const booking = await prisma.booking.update({
+            where: { id },
+            data: {
+                customerId: data.customerId,
+                title: data.title,
+                travelDate: data.travelDate,
+                totalAmount: data.totalAmount,
+                adults: data.adults,
+                kids: data.kids,
+                duration: data.duration,
+            } // Simplified for now
+        });
+        revalidatePath('/admin/bookings');
+        return { success: true, booking };
+    } catch (error) {
+        console.error('Update Booking Error:', error);
+        return { success: false, error: 'Failed to update booking' };
+    }
+}
+
 export async function getBookings() {
     try {
         const bookings = await prisma.booking.findMany({
@@ -89,6 +121,16 @@ export async function getBookings() {
     } catch (error) {
         console.error('Get Bookings Error:', error);
         return { success: false, error: 'Failed to fetch bookings' };
+    }
+}
+
+export async function deleteBooking(id: string) {
+    try {
+        await prisma.booking.delete({ where: { id } });
+        revalidatePath('/admin/bookings');
+        return { success: true };
+    } catch (error) {
+        return { success: false, error: 'Failed to delete booking' };
     }
 }
 

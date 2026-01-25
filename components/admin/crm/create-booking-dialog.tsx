@@ -5,8 +5,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus } from "lucide-react";
-import { createBooking } from "@/app/actions/crm";
+import { Plus, Pencil } from "lucide-react";
+import { createBooking, updateBooking } from "@/app/actions/crm";
 import { toast } from "sonner";
 import { useRouter } from 'next/navigation';
 import {
@@ -18,30 +18,40 @@ import {
 } from "@/components/ui/select";
 import { getCustomers } from '@/app/actions/crm';
 
-export function CreateBookingDialog() {
-    const [open, setOpen] = useState(false);
+interface BookingDialogProps {
+    mode?: 'create' | 'edit';
+    booking?: any; // strict typing would be better but keeping it simple for now
+    trigger?: React.ReactNode;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
+}
+
+export function BookingDialog({ mode = 'create', booking, trigger, open: controlledOpen, onOpenChange }: BookingDialogProps) {
+    const [internalOpen, setInternalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [customers, setCustomers] = useState<{ id: string, name: string, phone: string }[]>([]);
     const router = useRouter();
 
+    const isControlled = typeof controlledOpen !== 'undefined';
+    const isOpen = isControlled ? controlledOpen : internalOpen;
+    const setIsOpen = isControlled ? onOpenChange! : setInternalOpen;
+
     // Fetch customers when dialog opens
     useEffect(() => {
-        if (open) {
+        if (isOpen) {
             getCustomers().then(res => {
                 if (res.success && res.data) {
                     setCustomers(res.data);
                 }
             });
         }
-    }, [open]);
+    }, [isOpen]);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
 
         const formData = new FormData(e.currentTarget);
-
-        // Basic calculation of travel date
         const travelDate = new Date(formData.get('travelDate') as string);
 
         const data = {
@@ -54,34 +64,45 @@ export function CreateBookingDialog() {
             kids: parseInt(formData.get('kids') as string) || 0,
         };
 
-        const result = await createBooking(data);
+        let result;
+        if (mode === 'create') {
+            result = await createBooking(data);
+        } else {
+            // TODO: Add updateBooking action call here
+            result = await updateBooking(booking.id, data);
+        }
+
         setLoading(false);
 
-        if (result.success) {
-            toast.success("Booking created successfully");
-            setOpen(false);
+        if (result?.success) {
+            toast.success(`Booking ${mode === 'create' ? 'created' : 'updated'} successfully`);
+            setIsOpen(false);
             router.refresh();
         } else {
-            toast.error(result.error || "Failed to create booking");
+            toast.error(result?.error || "Failed to save booking");
         }
     };
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                <Button>
-                    <Plus className="w-4 h-4 mr-2" />
-                    New Booking
-                </Button>
-            </DialogTrigger>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
+            {!trigger && mode === 'create' && (
+                <DialogTrigger asChild>
+                    <Button>
+                        <Plus className="w-4 h-4 mr-2" />
+                        New Booking
+                    </Button>
+                </DialogTrigger>
+            )}
+
             <DialogContent className="max-w-xl">
                 <DialogHeader>
-                    <DialogTitle>Create New Booking</DialogTitle>
+                    <DialogTitle>{mode === 'create' ? 'Create New Booking' : 'Edit Booking'}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-2">
                         <Label htmlFor="customerId">Customer</Label>
-                        <Select name="customerId" required>
+                        <Select name="customerId" required defaultValue={booking?.customerId}>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select Customer" />
                             </SelectTrigger>
@@ -93,46 +114,49 @@ export function CreateBookingDialog() {
                                 ))}
                             </SelectContent>
                         </Select>
-                        <p className="text-xs text-muted-foreground">
-                            Can't find customer? Add them in the Customers tab first.
-                        </p>
                     </div>
 
                     <div className="space-y-2">
                         <Label htmlFor="title">Trip Title</Label>
-                        <Input id="title" name="title" required placeholder="e.g. Kashmir Family Vacation" />
+                        <Input id="title" name="title" required defaultValue={booking?.title} placeholder="e.g. Kashmir Family Vacation" />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="travelDate">Travel Date</Label>
-                            <Input id="travelDate" name="travelDate" type="date" required />
+                            <Input
+                                id="travelDate"
+                                name="travelDate"
+                                type="date"
+                                required
+                                defaultValue={booking?.travelDate ? new Date(booking.travelDate).toISOString().split('T')[0] : ''}
+                            />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="duration">Duration</Label>
-                            <Input id="duration" name="duration" placeholder="e.g. 5 Days" />
+                            <Input id="duration" name="duration" defaultValue={booking?.duration} placeholder="e.g. 5 Days" />
                         </div>
                     </div>
 
                     <div className="grid grid-cols-3 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="adults">Adults</Label>
-                            <Input id="adults" name="adults" type="number" min="1" defaultValue="2" required />
+                            <Input id="adults" name="adults" type="number" min="1" defaultValue={booking?.adults || 2} required />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="kids">Kids</Label>
-                            <Input id="kids" name="kids" type="number" min="0" defaultValue="0" />
+                            <Input id="kids" name="kids" type="number" min="0" defaultValue={booking?.kids || 0} />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="totalAmount">Total Cost (₹)</Label>
-                            <Input id="totalAmount" name="totalAmount" type="number" min="0" required />
+                            <Input id="totalAmount" name="totalAmount" type="number" min="0" defaultValue={booking?.totalAmount} required />
                         </div>
                     </div>
 
                     <div className="flex justify-end gap-2 pt-4">
-                        <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+                        <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
                         <Button type="submit" disabled={loading}>
-                            {loading ? "Creating..." : "Create Booking"}
+                            {loading ? "Saving..." : (mode === 'create' ? "Create Booking" : "Save Changes")}
                         </Button>
                     </div>
                 </form>

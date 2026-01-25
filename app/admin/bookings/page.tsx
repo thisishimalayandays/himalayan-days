@@ -1,5 +1,5 @@
 import { getBookings } from "@/app/actions/crm";
-import { CreateBookingDialog } from "@/components/admin/crm/create-booking-dialog";
+import { BookingDialog } from "@/components/admin/crm/create-booking-dialog";
 import { BookingsTable } from "@/components/admin/crm/bookings-table";
 
 export const dynamic = 'force-dynamic';
@@ -14,7 +14,7 @@ export default async function BookingsPage() {
                     <h2 className="text-3xl font-bold tracking-tight">Bookings</h2>
                     <p className="text-muted-foreground">Manage trips and reservations</p>
                 </div>
-                <CreateBookingDialog />
+                <BookingDialog />
             </div>
 
             <BookingsTable bookings={bookings || []} />
