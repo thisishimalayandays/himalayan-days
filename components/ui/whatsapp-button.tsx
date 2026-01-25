@@ -1,11 +1,17 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { usePathname } from 'next/navigation';
 
 export function WhatsAppButton() {
+    const pathname = usePathname();
     const phoneNumber = '919103901803';
     const message = 'Hello! I am interested in planning a memorable trip to Kashmir with Himalayan Days. Could you please assist me with packages and details?';
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+
+    if (pathname?.startsWith('/admin')) {
+        return null;
+    }
 
     return (
         <motion.a
