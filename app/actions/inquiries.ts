@@ -110,9 +110,10 @@ export async function updateInquiryStatus(id: string, status: string) {
     try {
         await prisma.inquiry.update({
             where: { id },
-            data: { status },
+            data: { status, isRead: true },
         });
         revalidatePath('/admin/inquiries');
+        revalidatePath('/admin/layout');
         return { success: true };
     } catch (error) {
         console.error('Error updating inquiry status:', error);

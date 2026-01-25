@@ -188,7 +188,7 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
             <TableBody>
                 {data.length === 0 ? (
                     <TableRow>
-                        <TableCell colSpan={6} className="text-center py-12 text-gray-500">
+                        <TableCell colSpan={6} className="text-center py-12 text-muted-foreground">
                             {isTrash ? "Trash is empty" : "No active inquiries found"}
                         </TableCell>
                     </TableRow>
@@ -198,16 +198,16 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
                             key={inquiry.id}
                             className={`
                                 cursor-pointer transition-colors
-                                ${isTrash ? "opacity-75 bg-gray-50/50" : "hover:bg-gray-50"}
-                                ${!isTrash && !inquiry.isRead ? "bg-orange-50/30" : "opacity-90"}
+                                ${isTrash ? "opacity-75 bg-muted/30" : "hover:bg-muted/50"}
+                                ${!isTrash && !inquiry.isRead ? "bg-orange-50/10 dark:bg-orange-950/20" : "opacity-90"}
                             `}
                             onClick={() => !isTrash && handleMarkAsRead(inquiry.id, inquiry.isRead)}
                         >
                             <TableCell className="whitespace-nowrap w-[120px]">
-                                <div className={`font-medium ${!isTrash && !inquiry.isRead ? "text-gray-900 font-bold" : "text-gray-600"}`}>
+                                <div className={`font-medium ${!isTrash && !inquiry.isRead ? "text-foreground font-bold" : "text-muted-foreground"}`}>
                                     {new Date(inquiry.createdAt).toLocaleDateString('en-GB')}
                                 </div>
-                                <div className={`text-xs ${!isTrash && !inquiry.isRead ? "text-gray-700 font-semibold" : "text-gray-500"}`} suppressHydrationWarning>
+                                <div className={`text-xs ${!isTrash && !inquiry.isRead ? "text-foreground/80 font-semibold" : "text-muted-foreground"}`} suppressHydrationWarning>
                                     {new Date(inquiry.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                 </div>
                             </TableCell>
@@ -218,36 +218,36 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
                                 )}
                             </TableCell>
                             <TableCell className="min-w-[200px]">
-                                <div className={`font-semibold ${!isTrash && !inquiry.isRead ? "text-gray-900" : "text-gray-700"}`}>
+                                <div className={`font-semibold ${!isTrash && !inquiry.isRead ? "text-foreground" : "text-muted-foreground"}`}>
                                     {inquiry.name}
                                 </div>
                                 <div className="flex flex-col gap-1 mt-1">
-                                    <a href={`tel:${inquiry.phone}`} onClick={e => e.stopPropagation()} className="flex items-center gap-1.5 text-xs text-gray-600 hover:text-primary transition-colors">
+                                    <a href={`tel:${inquiry.phone}`} onClick={e => e.stopPropagation()} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
                                         <Phone className="w-3 h-3" /> {inquiry.phone}
                                     </a>
                                     {inquiry.email && (
-                                        <a href={`mailto:${inquiry.email}`} onClick={e => e.stopPropagation()} className="flex items-center gap-1.5 text-xs text-gray-600 hover:text-primary transition-colors">
+                                        <a href={`mailto:${inquiry.email}`} onClick={e => e.stopPropagation()} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
                                             <Mail className="w-3 h-3" /> {inquiry.email}
                                         </a>
                                     )}
                                 </div>
                             </TableCell>
                             <TableCell className="max-w-[300px]">
-                                <div className="space-y-1.5 text-sm text-gray-600">
+                                <div className="space-y-1.5 text-sm text-muted-foreground">
                                     {inquiry.startDate && (
                                         <div className="flex items-center gap-1.5">
-                                            <CalendarIcon className="w-3.5 h-3.5 text-gray-400" />
+                                            <CalendarIcon className="w-3.5 h-3.5 text-muted-foreground/70" />
                                             <span className="font-medium">Travel: {new Date(inquiry.startDate).toLocaleDateString('en-GB')}</span>
                                         </div>
                                     )}
                                     {inquiry.destination && (
                                         <div className="flex items-center gap-1.5">
-                                            <MapPin className="w-3.5 h-3.5 text-gray-400" />
+                                            <MapPin className="w-3.5 h-3.5 text-muted-foreground/70" />
                                             <span>{inquiry.destination}</span>
                                         </div>
                                     )}
                                     {inquiry.message && (
-                                        <p className="text-xs bg-gray-50 p-2 rounded-md border text-gray-700 italic line-clamp-2" title={inquiry.message}>
+                                        <p className="text-xs bg-muted/50 p-2 rounded-md border border-border text-muted-foreground italic line-clamp-2" title={inquiry.message}>
                                             "{inquiry.message}"
                                         </p>
                                     )}
@@ -315,14 +315,14 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
             </div>
 
             <Tabs defaultValue="active" className="w-full">
-                <TabsList className="grid w-full max-w-lg grid-cols-3 mb-6 bg-white border shadow-sm">
+                <TabsList className="grid w-full max-w-lg grid-cols-3 mb-6 bg-card border shadow-sm">
                     <TabsTrigger value="active">
                         Active ({initialInquiries.length})
                     </TabsTrigger>
                     <TabsTrigger value="calendar">
                         Calendar
                     </TabsTrigger>
-                    <TabsTrigger value="trash" className="data-[state=active]:bg-red-50 data-[state=active]:text-red-900">
+                    <TabsTrigger value="trash" className="data-[state=active]:bg-red-50 dark:data-[state=active]:bg-red-900/20 data-[state=active]:text-red-900 dark:data-[state=active]:text-red-400">
                         Trash ({trashedInquiries.length})
                     </TabsTrigger>
                 </TabsList>

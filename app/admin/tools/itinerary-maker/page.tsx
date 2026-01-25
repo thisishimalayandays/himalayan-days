@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
-import { Plus, Trash2, Download, RefreshCw, FileText } from 'lucide-react';
+import { Plus, Trash2, Download, RefreshCw, FileText, Eye } from 'lucide-react';
 // Imports
 import { ITINERARY_TEMPLATES, ItineraryTemplate } from './data/templates';
 import { ItineraryHTMLPreview } from '@/components/pdf/itinerary-preview';
@@ -134,6 +134,8 @@ export default function ItineraryMakerPage() {
 
     // Mobile Tab State
     const [mobileTab, setMobileTab] = useState<'editor' | 'preview'>('editor');
+    // Desktop Preview Toggle
+    const [showPreview, setShowPreview] = useState(true);
 
     return (
         <div className="h-[calc(100vh-4rem)] flex flex-col md:flex-row overflow-hidden bg-background relative">
@@ -158,12 +160,27 @@ export default function ItineraryMakerPage() {
             </div>
 
             {/* Left Panel: Builder Form */}
-            <div className={`w-full md:w-1/2 p-6 overflow-y-auto border-r border-gray-200 pt-16 md:pt-6 ${mobileTab === 'preview' ? 'hidden md:block' : 'block'}`}>
+            <div className={`
+                ${showPreview ? 'w-full md:w-1/2' : 'w-full max-w-5xl mx-auto'} 
+                p-6 overflow-y-auto border-r border-border pt-16 md:pt-6 transition-all duration-300
+                ${mobileTab === 'preview' ? 'hidden md:block' : 'block'}
+            `}>
                 <div className="flex items-center justify-between mb-6">
                     <h1 className="text-2xl font-bold text-foreground">Itinerary Builder</h1>
-                    <Button variant="outline" size="sm" onClick={() => window.location.reload()}>
-                        <RefreshCw className="w-4 h-4 mr-2" /> Reset
-                    </Button>
+                    <div className="flex gap-2">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setShowPreview(!showPreview)}
+                            className="hidden md:flex"
+                        >
+                            {showPreview ? <Eye className="w-4 h-4 mr-2" /> : <Eye className="w-4 h-4 mr-2" />}
+                            {showPreview ? 'Hide Preview' : 'Show Preview'}
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => window.location.reload()}>
+                            <RefreshCw className="w-4 h-4 mr-2" /> Reset
+                        </Button>
+                    </div>
                 </div>
 
                 {/* Template Selection Section */}
@@ -374,7 +391,11 @@ export default function ItineraryMakerPage() {
             </div>
 
             {/* Right Panel: Live Preview */}
-            <div className={`w-full md:w-1/2 bg-gray-900 border-l border-gray-800 flex flex-col pt-14 md:pt-0 ${mobileTab === 'editor' ? 'hidden md:flex' : 'flex'}`}>
+            <div className={`
+                w-full md:w-1/2 bg-gray-900 border-l border-gray-800 flex flex-col pt-14 md:pt-0 transition-all duration-300
+                ${mobileTab === 'editor' ? 'hidden' : 'flex'}
+                ${showPreview ? 'md:flex' : 'md:hidden'}
+            `}>
                 <div className="p-3 bg-gray-800 border-b border-gray-700 flex justify-between items-center text-white">
                     <div className="flex items-center gap-2">
                         <FileText className="w-4 h-4 text-primary" />
