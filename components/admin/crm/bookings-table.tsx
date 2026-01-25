@@ -160,7 +160,7 @@ function BookingActions({ booking }: { booking: Booking }) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem onClick={() => setOpenPayment(true)}>
+                    <DropdownMenuItem onClick={() => router.push(`/admin/bookings/${booking.id}/payment`)}>
                         <CreditCard className="mr-2 h-4 w-4" /> Add Payment
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => router.push(`/admin/bookings/${booking.id}`)}>
@@ -171,14 +171,6 @@ function BookingActions({ booking }: { booking: Booking }) {
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
-
-            {/* Dialog removed */}
-
-            <AddPaymentDialog
-                booking={booking}
-                open={openPayment}
-                onOpenChange={setOpenPayment}
-            />
         </>
     );
 }
