@@ -1,5 +1,7 @@
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 import { getBookings } from "@/app/actions/crm";
-import { BookingDialog } from "@/components/admin/crm/create-booking-dialog";
 import { BookingsTable } from "@/components/admin/crm/bookings-table";
 
 export const dynamic = 'force-dynamic';
@@ -14,7 +16,12 @@ export default async function BookingsPage() {
                     <h2 className="text-3xl font-bold tracking-tight">Bookings</h2>
                     <p className="text-muted-foreground">Manage trips and reservations</p>
                 </div>
-                <BookingDialog />
+                <Link href="/admin/bookings/new">
+                    <Button size="lg" className="shadow-md hover:shadow-lg transition-all">
+                        <Plus className="w-5 h-5 mr-2" />
+                        New Booking
+                    </Button>
+                </Link>
             </div>
 
             <BookingsTable bookings={bookings || []} />
