@@ -450,7 +450,7 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
                         </View>
                         {/* Dynamic QR Code: Using quickchart.io or similar reliable public API for simple text QR */}
                         <Image
-                            src={`https://quickchart.io/qr?text=upi://pay?pa=${data.upiId}&size=150`}
+                            src={`https://quickchart.io/qr?text=${encodeURIComponent(`upi://pay?pa=${data.upiId}&pn=Himalayan Days`)}&size=150`}
                             style={{ width: 80, height: 80 }}
                         />
                     </View>

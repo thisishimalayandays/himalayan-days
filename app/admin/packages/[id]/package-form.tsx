@@ -99,19 +99,19 @@ export default function PackageForm({ initialData, isNew }: { initialData?: Pack
     }
 
     return (
-        <form action={handleSubmit} className="bg-white p-8 rounded-xl shadow-sm border space-y-8">
+        <form action={handleSubmit} className="bg-card p-8 rounded-xl shadow-sm border space-y-8">
 
             {/* Basic Info Section */}
             <section className="space-y-6">
-                <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Basic Details</h3>
+                <h3 className="text-lg font-semibold text-foreground border-b pb-2">Basic Details</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Package Title</label>
+                        <label className="block text-sm font-medium text-muted-foreground mb-1">Package Title</label>
                         <input
                             name="title"
                             defaultValue={initialData?.title}
                             required
-                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border"
+                            className="w-full rounded-lg border-input bg-background shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border"
                             onChange={(e) => {
                                 const title = e.target.value;
                                 if (isNew) {
@@ -123,21 +123,21 @@ export default function PackageForm({ initialData, isNew }: { initialData?: Pack
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Slug (URL)</label>
-                        <input name="slug" defaultValue={initialData?.slug} required className="w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border" />
-                        <p className="text-xs text-gray-500 mt-1">Unique ID for the URL (e.g. majestic-kashmir)</p>
+                        <label className="block text-sm font-medium text-muted-foreground mb-1">Slug (URL)</label>
+                        <input name="slug" defaultValue={initialData?.slug} required className="w-full rounded-lg border-input bg-background shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border" />
+                        <p className="text-xs text-muted-foreground mt-1">Unique ID for the URL (e.g. majestic-kashmir)</p>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Price (₹)</label>
-                        <input name="price" type="number" defaultValue={initialData?.startingPrice} required className="w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border" />
+                        <label className="block text-sm font-medium text-muted-foreground mb-1">Price (₹)</label>
+                        <input name="price" type="number" defaultValue={initialData?.startingPrice} required className="w-full rounded-lg border-input bg-background shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border" />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Duration</label>
-                        <input name="duration" defaultValue={initialData?.duration} required className="w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border" placeholder="e.g. 5 Nights / 6 Days" />
+                        <label className="block text-sm font-medium text-muted-foreground mb-1">Duration</label>
+                        <input name="duration" defaultValue={initialData?.duration} required className="w-full rounded-lg border-input bg-background shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border" placeholder="e.g. 5 Nights / 6 Days" />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                        <select name="category" defaultValue={initialData?.category} className="w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border">
+                        <label className="block text-sm font-medium text-muted-foreground mb-1">Category</label>
+                        <select name="category" defaultValue={initialData?.category} className="w-full rounded-lg border-input bg-background shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border">
                             <option value="Honeymoon">Honeymoon</option>
                             <option value="Family">Family</option>
                             <option value="Adventure">Adventure</option>
@@ -145,7 +145,7 @@ export default function PackageForm({ initialData, isNew }: { initialData?: Pack
                         </select>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Main Image</label>
+                        <label className="block text-sm font-medium text-muted-foreground mb-1">Main Image</label>
                         <input type="hidden" name="image" value={image} />
                         <ImageUpload
                             value={image}
@@ -153,8 +153,8 @@ export default function PackageForm({ initialData, isNew }: { initialData?: Pack
                         />
                     </div>
                     <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Overview</label>
-                        <textarea name="overview" defaultValue={initialData?.overview} rows={3} className="w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border" />
+                        <label className="block text-sm font-medium text-muted-foreground mb-1">Overview</label>
+                        <textarea name="overview" defaultValue={initialData?.overview} rows={3} className="w-full rounded-lg border-input bg-background shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border" />
                     </div>
                 </div>
             </section>
@@ -169,11 +169,11 @@ export default function PackageForm({ initialData, isNew }: { initialData?: Pack
                 </div>
                 <div className="space-y-4">
                     {itinerary.map((item, index) => (
-                        <div key={index} className="flex gap-4 items-start bg-gray-50 p-4 rounded-lg border">
+                        <div key={index} className="flex gap-4 items-start bg-muted/50 p-4 rounded-lg border">
                             <div className="flex-none pt-2 cursor-grab text-gray-400"><GripVertical size={20} /></div>
                             <div className="flex-none w-16">
-                                <label className="text-xs font-bold text-gray-500 uppercase">Day</label>
-                                <input value={item.day} readOnly className="w-full bg-white border border-gray-300 rounded p-1 text-center font-bold" />
+                                <label className="text-xs font-bold text-muted-foreground uppercase">Day</label>
+                                <input value={item.day} readOnly className="w-full bg-background border border-input rounded p-1 text-center font-bold" />
                             </div>
                             <div className="flex-1 space-y-2">
                                 <input
@@ -277,8 +277,8 @@ export default function PackageForm({ initialData, isNew }: { initialData?: Pack
                 </section>
             </div>
 
-            <div className="pt-6 border-t flex justify-end gap-3 sticky bottom-0 bg-white/95 backdrop-blur py-4 -mb-8 -mx-8 px-8 border-t-gray-200">
-                <button type="button" onClick={() => router.back()} className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50">
+            <div className="pt-6 border-t flex justify-end gap-3 sticky bottom-0 bg-card/95 backdrop-blur py-4 -mb-8 -mx-8 px-8 border-t-border">
+                <button type="button" onClick={() => router.back()} className="px-4 py-2 border border-input rounded-lg text-foreground bg-background hover:bg-muted/50">
                     Cancel
                 </button>
                 <button disabled={isSubmitting} type="submit" className="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 shadow-sm flex items-center gap-2">

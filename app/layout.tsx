@@ -5,6 +5,7 @@ import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 import { Toaster } from "@/components/ui/toaster";
 import { Analytics } from "@vercel/analytics/react";
 import { ReCaptchaWrapper } from "@/components/providers/recaptcha-provider";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -46,15 +47,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${inter.variable} antialiased font-sans`}
       >
         <ReCaptchaWrapper>
-          {children}
-          <WhatsAppButton />
-          <Toaster />
-          <Analytics />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+            <WhatsAppButton />
+            <Toaster />
+            <Analytics />
+          </ThemeProvider>
         </ReCaptchaWrapper>
       </body>
     </html>

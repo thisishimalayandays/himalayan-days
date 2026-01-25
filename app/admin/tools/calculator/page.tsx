@@ -169,12 +169,12 @@ _Generated via Himalayan Days Admin_`;
                 <div className="lg:col-span-2 space-y-8">
                     {/* SECTION 1: HOTELS */}
                     <Card>
-                        <CardHeader className="bg-blue-50/50 pb-4 border-b">
+                        <CardHeader className="bg-blue-50/50 dark:bg-blue-950/20 pb-4 border-b">
                             <div className="flex items-center justify-between">
-                                <CardTitle className="text-blue-700 flex items-center gap-2">
-                                    <span className="bg-blue-100 p-2 rounded-lg">🏨</span> Hotels & Stays
+                                <CardTitle className="text-blue-700 dark:text-blue-400 flex items-center gap-2">
+                                    <span className="bg-blue-100 dark:bg-blue-900/40 p-2 rounded-lg">🏨</span> Hotels & Stays
                                 </CardTitle>
-                                <div className="text-sm font-semibold text-blue-700">
+                                <div className="text-sm font-semibold text-blue-700 dark:text-blue-400">
                                     Total: ₹{calculateHotelTotal().toLocaleString("en-IN")}
                                 </div>
                             </div>
@@ -255,12 +255,12 @@ _Generated via Himalayan Days Admin_`;
 
                     {/* SECTION 2: TRANSPORT */}
                     <Card>
-                        <CardHeader className="bg-orange-50/50 pb-4 border-b">
+                        <CardHeader className="bg-orange-50/50 dark:bg-orange-950/20 pb-4 border-b">
                             <div className="flex items-center justify-between">
-                                <CardTitle className="text-orange-700 flex items-center gap-2">
-                                    <span className="bg-orange-100 p-2 rounded-lg">🚖</span> Transport / Cab
+                                <CardTitle className="text-orange-700 dark:text-orange-400 flex items-center gap-2">
+                                    <span className="bg-orange-100 dark:bg-orange-900/40 p-2 rounded-lg">🚖</span> Transport / Cab
                                 </CardTitle>
-                                <div className="text-sm font-semibold text-orange-700">
+                                <div className="text-sm font-semibold text-orange-700 dark:text-orange-400">
                                     Total: ₹{calculateTransportTotal().toLocaleString("en-IN")}
                                 </div>
                             </div>
@@ -328,12 +328,12 @@ _Generated via Himalayan Days Admin_`;
 
                     {/* SECTION 3: ACTIVITIES */}
                     <Card>
-                        <CardHeader className="bg-purple-50/50 pb-4 border-b">
+                        <CardHeader className="bg-purple-50/50 dark:bg-purple-950/20 pb-4 border-b">
                             <div className="flex items-center justify-between">
-                                <CardTitle className="text-purple-700 flex items-center gap-2">
-                                    <span className="bg-purple-100 p-2 rounded-lg">🎿</span> Activities & Extras
+                                <CardTitle className="text-purple-700 dark:text-purple-400 flex items-center gap-2">
+                                    <span className="bg-purple-100 dark:bg-purple-900/40 p-2 rounded-lg">🎿</span> Activities & Extras
                                 </CardTitle>
-                                <div className="text-sm font-semibold text-purple-700">
+                                <div className="text-sm font-semibold text-purple-700 dark:text-purple-400">
                                     Total: ₹{calculateActivitiesTotal().toLocaleString("en-IN")}
                                 </div>
                             </div>
@@ -404,9 +404,9 @@ _Generated via Himalayan Days Admin_`;
                 <div className="lg:col-span-1">
                     <div className="sticky top-8 space-y-6">
                         {/* Commission Card */}
-                        <Card className="border-emerald-100 shadow-lg overflow-hidden">
-                            <CardHeader className="bg-emerald-50 border-b border-emerald-100">
-                                <CardTitle className="text-emerald-800">Final Pricing</CardTitle>
+                        <Card className="border-emerald-100 dark:border-emerald-900 shadow-lg overflow-hidden">
+                            <CardHeader className="bg-emerald-50 dark:bg-emerald-950/30 border-b border-emerald-100 dark:border-emerald-900/50">
+                                <CardTitle className="text-emerald-800 dark:text-emerald-400">Final Pricing</CardTitle>
                             </CardHeader>
                             <CardContent className="p-6 space-y-6">
 
@@ -427,7 +427,7 @@ _Generated via Himalayan Days Admin_`;
                                 {/* Grand Total */}
                                 <div className="text-center pt-2">
                                     <div className="text-sm text-gray-500 uppercase tracking-wider mb-1">Grand Total Price</div>
-                                    <div className="text-4xl font-bold text-gray-900 bg-gray-50 py-4 rounded-xl border border-gray-100">
+                                    <div className="text-4xl font-bold text-gray-900 dark:text-white bg-gray-50 dark:bg-muted/50 py-4 rounded-xl border border-gray-100 dark:border-border">
                                         ₹{grandTotal.toLocaleString("en-IN")}
                                     </div>
                                 </div>
@@ -448,7 +448,7 @@ _Generated via Himalayan Days Admin_`;
                         </Card>
 
                         {/* Quick Tips */}
-                        <div className="bg-blue-50 rounded-xl p-5 text-sm text-blue-700 space-y-2">
+                        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-5 text-sm text-blue-700 dark:text-blue-300 space-y-2">
                             <p className="font-semibold flex items-center gap-2">
                                 <Calculator className="w-4 h-4" /> Pro Tip:
                             </p>

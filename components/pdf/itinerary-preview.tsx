@@ -187,7 +187,7 @@ const ItineraryHTMLPreviewComponent = ({ data }: { data: ItineraryData }) => {
                         <p className="text-sm font-bold text-orange-600 font-mono">{data.upiId}</p>
                     </div>
                     <img
-                        src={`https://quickchart.io/qr?text=upi://pay?pa=${data.upiId}&size=150`}
+                        src={`https://quickchart.io/qr?text=${encodeURIComponent(`upi://pay?pa=${data.upiId}&pn=Himalayan Days`)}&size=150`}
                         alt="UPI QR"
                         className="w-24 h-24 border border-gray-200 p-1 rounded-sm"
                     />

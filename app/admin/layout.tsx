@@ -20,16 +20,16 @@ export default async function AdminLayout({
     const { pending: pendingInquiries } = await getInquiryStats();
 
     return (
-        <div className="flex h-screen bg-gray-100 font-sans overflow-hidden">
+        <div className="flex h-screen bg-muted/40 font-sans overflow-hidden">
             {/* Desktop Sidebar */}
-            <aside className="hidden md:flex w-64 bg-white shadow-md flex-col border-r h-full">
+            <aside className="hidden md:flex w-64 bg-background shadow-md flex-col border-r h-full">
                 <AdminSidebar pendingInquiries={pendingInquiries} />
             </aside>
 
             {/* Main Content Area */}
             <div className="flex-1 flex flex-col h-full overflow-hidden">
                 {/* Mobile Header with Hamburger */}
-                <header className="md:hidden bg-white border-b p-4 flex items-center justify-between sticky top-0 z-10">
+                <header className="md:hidden bg-background border-b p-4 flex items-center justify-between sticky top-0 z-10">
                     <h1 className="font-bold text-gray-800">Admin Panel</h1>
                     <Sheet>
                         <SheetTrigger asChild>

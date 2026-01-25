@@ -136,9 +136,9 @@ export default function ItineraryMakerPage() {
     const [mobileTab, setMobileTab] = useState<'editor' | 'preview'>('editor');
 
     return (
-        <div className="h-[calc(100vh-4rem)] flex flex-col md:flex-row overflow-hidden bg-gray-50 relative">
+        <div className="h-[calc(100vh-4rem)] flex flex-col md:flex-row overflow-hidden bg-background relative">
             {/* Mobile Tab Switcher */}
-            <div className="md:hidden flex border-b border-gray-200 bg-white p-2 gap-2 absolute top-0 left-0 right-0 z-20 h-14 items-center">
+            <div className="md:hidden flex border-b border-gray-200 bg-background p-2 gap-2 absolute top-0 left-0 right-0 z-20 h-14 items-center">
                 <Button
                     variant={mobileTab === 'editor' ? "default" : "secondary"}
                     className="flex-1 text-xs"
@@ -160,23 +160,23 @@ export default function ItineraryMakerPage() {
             {/* Left Panel: Builder Form */}
             <div className={`w-full md:w-1/2 p-6 overflow-y-auto border-r border-gray-200 pt-16 md:pt-6 ${mobileTab === 'preview' ? 'hidden md:block' : 'block'}`}>
                 <div className="flex items-center justify-between mb-6">
-                    <h1 className="text-2xl font-bold text-gray-800">Itinerary Builder</h1>
+                    <h1 className="text-2xl font-bold text-foreground">Itinerary Builder</h1>
                     <Button variant="outline" size="sm" onClick={() => window.location.reload()}>
                         <RefreshCw className="w-4 h-4 mr-2" /> Reset
                     </Button>
                 </div>
 
                 {/* Template Selection Section */}
-                <Card className="p-4 mb-6 bg-orange-50/50 border-orange-100">
-                    <Label className="text-orange-800 font-bold mb-3 block flex items-center gap-2">
+                <Card className="p-4 mb-6 bg-orange-50/50 dark:bg-orange-950/20 border-orange-100 dark:border-orange-900/50">
+                    <Label className="text-orange-800 dark:text-orange-400 font-bold mb-3 block flex items-center gap-2">
                         <FileText className="w-4 h-4" /> Select Itinerary Template
                     </Label>
                     <div className="flex flex-col gap-3">
                         <div className="grid grid-cols-2 gap-3">
                             <div>
-                                <Label className="text-xs text-gray-500 mb-1 block">1. Select Duration</Label>
+                                <Label className="text-xs text-muted-foreground mb-1 block">1. Select Duration</Label>
                                 <select
-                                    className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-orange-500"
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-orange-500"
                                     value={selectedDuration}
                                     onChange={(e) => {
                                         setSelectedDuration(e.target.value);
@@ -190,9 +190,9 @@ export default function ItineraryMakerPage() {
                                 </select>
                             </div>
                             <div>
-                                <Label className="text-xs text-gray-500 mb-1 block">2. Select Template</Label>
+                                <Label className="text-xs text-muted-foreground mb-1 block">2. Select Template</Label>
                                 <select
-                                    className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-orange-500"
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-orange-500"
                                     value={selectedTemplateId}
                                     onChange={(e) => setSelectedTemplateId(e.target.value)}
                                     disabled={!selectedDuration}
@@ -225,7 +225,7 @@ export default function ItineraryMakerPage() {
                             <Label>Client Name</Label>
                             <div className="flex gap-2">
                                 <select
-                                    className="flex h-10 w-20 rounded-md border border-gray-300 bg-white px-2 py-2 text-sm focus:ring-2 focus:ring-orange-500"
+                                    className="flex h-10 w-20 rounded-md border border-input bg-background px-2 py-2 text-sm focus:ring-2 focus:ring-orange-500"
                                     value={clientInfo.clientTitle}
                                     onChange={(e) => setClientInfo({ ...clientInfo, clientTitle: e.target.value })}
                                 >

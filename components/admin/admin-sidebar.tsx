@@ -5,6 +5,8 @@ import { Home, Map, Package, LogOut, MessageSquare, Mail, Calculator, FileText }
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
+import { ModeToggle } from "@/components/mode-toggle";
+
 interface AdminSidebarProps {
     pendingInquiries: number;
     className?: string;
@@ -26,10 +28,13 @@ export function AdminSidebar({ pendingInquiries, className, onItemClick }: Admin
     ];
 
     return (
-        <div className={cn("flex flex-col h-full bg-white", className)}>
-            <div className="p-6 border-b">
-                <h1 className="text-xl font-bold text-gray-800">Admin Panel</h1>
-                <p className="text-sm text-gray-500">Himalayan Days</p>
+        <div className={cn("flex flex-col h-full bg-sidebar border-r border-border", className)}>
+            <div className="p-6 border-b border-sidebar-border flex justify-between items-center">
+                <div>
+                    <h1 className="text-xl font-bold text-sidebar-foreground">Admin Panel</h1>
+                    <p className="text-sm text-muted-foreground">Himalayan Days</p>
+                </div>
+                <ModeToggle />
             </div>
             <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
                 {links.map((link) => (
@@ -40,8 +45,8 @@ export function AdminSidebar({ pendingInquiries, className, onItemClick }: Admin
                         className={cn(
                             "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
                             isActive(link.href) && link.href !== '/admin' || (link.href === '/admin' && pathname === '/admin')
-                                ? "bg-orange-50 text-orange-600 font-medium"
-                                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                                ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                                : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                         )}
                     >
                         <link.icon className="w-5 h-5" />
@@ -55,8 +60,8 @@ export function AdminSidebar({ pendingInquiries, className, onItemClick }: Admin
                     className={cn(
                         "flex items-center justify-between px-4 py-3 rounded-lg transition-colors",
                         isActive("/admin/inquiries")
-                            ? "bg-orange-50 text-orange-600 font-medium"
-                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                            ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                            : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                     )}
                 >
                     <div className="flex items-center gap-3">

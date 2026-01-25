@@ -42,16 +42,16 @@ export default function DestinationForm({ initialData, isNew }: { initialData?: 
     }
 
     return (
-        <form action={handleSubmit} className="bg-white p-8 rounded-xl shadow-sm border space-y-6">
+        <form action={handleSubmit} className="bg-card p-8 rounded-xl shadow-sm border space-y-6">
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Destination Name</label>
+                    <label className="block text-sm font-medium text-muted-foreground mb-1">Destination Name</label>
                     <input
                         name="name"
                         defaultValue={initialData?.name}
                         required
-                        className="w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border"
+                        className="w-full rounded-lg border-input bg-background shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border"
                         placeholder="e.g. Gulmarg"
                         onChange={(e) => {
                             const val = e.target.value;
@@ -64,13 +64,13 @@ export default function DestinationForm({ initialData, isNew }: { initialData?: 
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Slug (URL)</label>
-                    <input name="slug" defaultValue={initialData?.slug} required className="w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border" placeholder="e.g. gulmarg" />
+                    <label className="block text-sm font-medium text-muted-foreground mb-1">Slug (URL)</label>
+                    <input name="slug" defaultValue={initialData?.slug} required className="w-full rounded-lg border-input bg-background shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border" placeholder="e.g. gulmarg" />
                 </div>
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Destination Image</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Destination Image</label>
                 <input type="hidden" name="image" value={image} />
                 <ImageUpload
                     value={image}
@@ -79,28 +79,28 @@ export default function DestinationForm({ initialData, isNew }: { initialData?: 
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                <textarea name="description" defaultValue={initialData?.description} required rows={5} className="w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border" placeholder="About this place..." />
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Description</label>
+                <textarea name="description" defaultValue={initialData?.description} required rows={5} className="w-full rounded-lg border-input bg-background shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border" placeholder="About this place..." />
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Wikipedia / Explore URL</label>
-                <input name="wikipediaUrl" defaultValue={initialData?.wikipediaUrl || ''} className="w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border" placeholder="https://en.wikipedia.org/wiki/..." />
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Wikipedia / Explore URL</label>
+                <input name="wikipediaUrl" defaultValue={initialData?.wikipediaUrl || ''} className="w-full rounded-lg border-input bg-background shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border" placeholder="https://en.wikipedia.org/wiki/..." />
             </div>
 
             <div className="grid grid-cols-2 gap-6">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Rating (0-5)</label>
-                    <input name="rating" type="number" step="0.1" max="5" defaultValue={initialData?.rating || 4.5} className="w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border" />
+                    <label className="block text-sm font-medium text-muted-foreground mb-1">Rating (0-5)</label>
+                    <input name="rating" type="number" step="0.1" max="5" defaultValue={initialData?.rating || 4.5} className="w-full rounded-lg border-input bg-background shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border" />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Total Reviews</label>
-                    <input name="reviews" type="number" defaultValue={initialData?.reviews || 0} className="w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border" />
+                    <label className="block text-sm font-medium text-muted-foreground mb-1">Total Reviews</label>
+                    <input name="reviews" type="number" defaultValue={initialData?.reviews || 0} className="w-full rounded-lg border-input bg-background shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border" />
                 </div>
             </div>
 
             <div className="pt-4 border-t flex justify-end gap-3">
-                <button type="button" onClick={() => router.back()} className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50">
+                <button type="button" onClick={() => router.back()} className="px-4 py-2 border border-input rounded-lg text-foreground bg-background hover:bg-muted/50">
                     Cancel
                 </button>
                 <button disabled={isSubmitting} type="submit" className="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 shadow-sm flex items-center gap-2">
