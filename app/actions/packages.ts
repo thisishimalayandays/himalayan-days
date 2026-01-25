@@ -197,6 +197,8 @@ export async function getPackagesList() {
             category: true,
             location: true,
             features: true,
+            rating: true,
+            reviews: true,
             // Exclude heavy JSON fields: itinerary, gallery, inclusions, exclusions
         },
         orderBy: { createdAt: 'desc' }

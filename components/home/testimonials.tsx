@@ -154,7 +154,7 @@ export function Testimonials() {
                             transition={{
                                 repeat: Infinity,
                                 ease: "linear",
-                                duration: 25 // Adjust speed here
+                                duration: 60 // Adjust speed here
                             }}
                             style={{ width: "max-content" }}
                         >
