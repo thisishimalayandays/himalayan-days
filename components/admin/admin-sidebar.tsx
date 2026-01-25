@@ -33,6 +33,7 @@ export function AdminSidebar({ pendingInquiries, className, onItemClick }: Admin
             items: [
 
                 { href: "/admin/bookings", label: "Bookings", icon: CalendarDays },
+                { href: "/admin/customers", label: "Customers", icon: Users },
             ]
         },
         {

@@ -6,12 +6,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Pencil, User, Phone, Mail, MapPin, Calendar, Clock, CreditCard, Banknote, Users, Baby, ArrowLeft } from "lucide-react";
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"; // Removed
+import { Plus, Pencil, User, Phone, Mail, MapPin, Calendar, Clock, CreditCard, Banknote, Users, Baby, ArrowLeft, Download, LayoutList } from "lucide-react";
 import { createBooking, updateBooking, getCustomers } from "@/app/actions/crm";
 import { toast } from "sonner";
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import dynamic from "next/dynamic";
+import { BookingPDF } from "./booking-pdf";
+
+const PDFDownloadLink = dynamic(
+    () => import("@react-pdf/renderer").then((mod) => mod.PDFDownloadLink),
+    {
+        ssr: false,
+        loading: () => <Button variant="ghost" disabled>Loading PDF...</Button>,
+    }
+);
 
 interface BookingFormProps {
     mode?: 'create' | 'edit';
@@ -26,11 +36,11 @@ export function BookingForm({ mode = 'create', booking, onSuccess }: BookingForm
 
     // UI Logic State
     const [totalAmount, setTotalAmount] = useState(booking?.totalAmount || 0);
-    const [initialPayment, setInitialPayment] = useState(booking?.initialPayment || 0); // Note: Booking model might not have initialPayment strictly, typically payments are separate relation. But for "Create" flow helper it's fine.
-    // Actually existing booking might have payments sum. For now assume create mode primarily or simple edit.
+    const [initialPayment, setInitialPayment] = useState(booking?.initialPayment || 0);
+    const [customerMode, setCustomerMode] = useState<'existing' | 'new'>('new');
+    const [isEditingCustomer, setIsEditingCustomer] = useState(false); // NEW STATE
 
     const balance = totalAmount - initialPayment;
-    const [customerMode, setCustomerMode] = useState<'existing' | 'new'>('new');
 
     useEffect(() => {
         getCustomers().then(res => {
@@ -105,18 +115,35 @@ export function BookingForm({ mode = 'create', booking, onSuccess }: BookingForm
                                 <User className="w-4 h-4" /> Guest Information
                             </h3>
 
-                            {mode === 'create' ? (
-                                <Tabs value={customerMode} onValueChange={(v) => setCustomerMode(v as 'existing' | 'new')} className="w-full">
-                                    <TabsList className="grid w-full grid-cols-2 mb-6 bg-background/50 p-1 rounded-xl">
-                                        <TabsTrigger value="new" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">New Profile</TabsTrigger>
-                                        <TabsTrigger value="existing" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Existing</TabsTrigger>
-                                    </TabsList>
+                            {mode === 'create' || isEditingCustomer ? (
+                                <div className="space-y-6">
+                                    <div className="flex justify-end gap-2">
+                                        {mode === 'edit' && (
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => setIsEditingCustomer(false)}
+                                            >
+                                                Cancel Change
+                                            </Button>
+                                        )}
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            className="text-primary hover:text-primary/80 hover:bg-primary/5"
+                                            onClick={() => setCustomerMode(customerMode === 'new' ? 'existing' : 'new')}
+                                        >
+                                            {customerMode === 'new' ? 'Select Existing Customer' : 'Create New Profile'}
+                                        </Button>
+                                    </div>
 
-                                    <TabsContent value="existing" className="space-y-6">
-                                        <div className="space-y-3">
+                                    {customerMode === 'existing' ? (
+                                        <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
                                             <Label className="text-sm font-medium text-muted-foreground">Search Customer</Label>
                                             <Select name="customerId" required={customerMode === 'existing'} defaultValue={booking?.customerId}>
-                                                <SelectTrigger className="h-12 border-muted-foreground/20 focus:ring-0 focus:border-primary bg-white">
+                                                <SelectTrigger className="h-12 border-input focus:ring-0 focus:border-primary bg-background">
                                                     <SelectValue placeholder="Select from database..." />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -128,102 +155,156 @@ export function BookingForm({ mode = 'create', booking, onSuccess }: BookingForm
                                                 </SelectContent>
                                             </Select>
                                         </div>
-                                    </TabsContent>
-
-                                    <TabsContent value="new" className="space-y-5">
-                                        <div className="space-y-5">
+                                    ) : (
+                                        <div className="space-y-5 animate-in fade-in slide-in-from-top-2 duration-300">
+                                            {/* ... new customer inputs ... */}
                                             <div className="relative group">
                                                 <User className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground/50 group-focus-within:text-primary transition-colors" />
-                                                <Input id="new_name" name="new_name" required={customerMode === 'new'} placeholder="Full Name" className="pl-10 h-12 border-muted-foreground/20 focus-visible:ring-0 focus-visible:border-primary bg-white transition-all shadow-sm" />
+                                                <Input id="new_name" name="new_name" required={customerMode === 'new'} placeholder="Full Name" className="pl-10 h-12 border-input focus-visible:ring-0 focus-visible:border-primary bg-background transition-all shadow-sm" />
                                             </div>
                                             <div className="relative group">
                                                 <Phone className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground/50 group-focus-within:text-primary transition-colors" />
-                                                <Input id="new_phone" name="new_phone" required={customerMode === 'new'} placeholder="Phone Number" className="pl-10 h-12 border-muted-foreground/20 focus-visible:ring-0 focus-visible:border-primary bg-white transition-all shadow-sm" />
+                                                <Input id="new_phone" name="new_phone" required={customerMode === 'new'} placeholder="Phone Number" className="pl-10 h-12 border-input focus-visible:ring-0 focus-visible:border-primary bg-background transition-all shadow-sm" />
                                             </div>
                                             <div className="relative group">
                                                 <Mail className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground/50 group-focus-within:text-primary transition-colors" />
-                                                <Input id="new_email" name="new_email" type="email" placeholder="Email Address" className="pl-10 h-12 border-muted-foreground/20 focus-visible:ring-0 focus-visible:border-primary bg-white transition-all shadow-sm" />
+                                                <Input id="new_email" name="new_email" type="email" placeholder="Email Address" className="pl-10 h-12 border-input focus-visible:ring-0 focus-visible:border-primary bg-background transition-all shadow-sm" />
                                             </div>
                                             <div className="relative group">
                                                 <MapPin className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground/50 group-focus-within:text-primary transition-colors" />
-                                                <Textarea id="new_address" name="new_address" placeholder="Residential Address" className="pl-10 py-3 resize-none min-h-[100px] border-muted-foreground/20 focus-visible:ring-0 focus-visible:border-primary bg-white shadow-sm" />
+                                                <Textarea id="new_address" name="new_address" placeholder="Residential Address" className="pl-10 py-3 resize-none min-h-[100px] border-input focus-visible:ring-0 focus-visible:border-primary bg-background shadow-sm" />
                                             </div>
                                         </div>
-                                    </TabsContent>
-                                </Tabs>
+                                    )}
+                                </div>
                             ) : (
-                                <div className="p-6 border rounded-2xl bg-white shadow-sm flex items-start gap-4">
-                                    <div className="p-3 bg-primary/10 rounded-full">
-                                        <User className="w-6 h-6 text-primary" />
-                                    </div>
-                                    <div>
-                                        <div className="text-sm text-muted-foreground font-medium mb-1">Customer</div>
-                                        <div className="text-xl font-bold text-foreground">
-                                            {booking?.customer?.name || "Existing Customer"}
+                                <div className="p-6 border border-border rounded-2xl bg-card shadow-sm flex items-center justify-between gap-4">
+                                    <div className="flex items-center gap-4">
+                                        <div className="p-3 bg-primary/10 rounded-full">
+                                            <User className="w-6 h-6 text-primary" />
                                         </div>
-                                        <input type="hidden" name="customerId" value={booking?.customerId} />
+                                        <div>
+                                            <div className="text-sm text-muted-foreground font-medium mb-1">Customer</div>
+                                            <div className="text-xl font-bold text-foreground">
+                                                {booking?.customer?.name || "Existing Customer"}
+                                            </div>
+                                            <input type="hidden" name="customerId" value={booking?.customerId} />
+                                        </div>
                                     </div>
+                                    <Button type="button" variant="ghost" size="sm" onClick={() => setIsEditingCustomer(true)}>
+                                        <Pencil className="w-4 h-4 text-muted-foreground" />
+                                    </Button>
                                 </div>
                             )}
                         </div>
                     </div>
 
-                    {/* Right Section: Trip Details */}
+                    {/* Right Section: Booking Details */}
                     <div className="lg:col-span-7 space-y-8">
                         <div>
                             <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-6 flex items-center gap-2">
-                                <MapPin className="w-4 h-4" /> Trip Details
+                                <Banknote className="w-4 h-4" /> Booking Details
                             </h3>
 
                             <div className="space-y-6">
-                                <div className="space-y-2">
-                                    <Label htmlFor="title" className="text-muted-foreground text-xs uppercase font-semibold pl-1">Trip Title</Label>
-                                    <Input id="title" name="title" required defaultValue={booking?.title} placeholder="e.g. Kashmir Family Vacation" className="text-lg font-medium h-14 border-muted-foreground/20 focus-visible:ring-0 focus-visible:border-primary shadow-sm" />
-                                </div>
+                                {/* Hidden Defaults */}
+                                <input type="hidden" name="adults" value="1" />
+                                <input type="hidden" name="kids" value="0" />
 
-                                <div className="grid grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     <div className="space-y-2">
-                                        <Label className="text-muted-foreground text-xs uppercase font-semibold pl-1">Dates</Label>
+                                        <Label className="text-muted-foreground text-xs uppercase font-semibold pl-1">Package Name</Label>
                                         <div className="relative group">
-                                            <Calendar className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground/50 group-focus-within:text-primary" />
+                                            <LayoutList className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground/50 group-focus-within:text-primary z-10" />
+                                            <Input
+                                                name="title"
+                                                defaultValue={booking?.title}
+                                                // If we want auto-update, we might need state control, but defaultValue with key change or just let user type is safer.
+                                                // Actually, let's just make it required and let user type or select duration to fill it (via JS or just separate).
+                                                // Enhancing: Let's use state for title to sync with duration.
+                                                // But I need to add state to the component first.
+                                                // Since I cannot rewrite the whole component easily, I will just add the Input.
+                                                // User can type "5 Days Package".
+                                                required
+                                                placeholder="e.g. Kashmir Family Tour"
+                                                className="pl-10 h-14 border-input focus:ring-0 focus:border-primary text-base font-medium shadow-sm bg-background"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label className="text-muted-foreground text-xs uppercase font-semibold pl-1">Duration</Label>
+                                        <div className="relative group">
+                                            <Clock className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground/50 group-focus-within:text-primary z-10" />
+                                            <Select name="duration" defaultValue={booking?.duration || "1 Day 0 Nights"} onValueChange={(val) => {
+                                                const PACKAGE_NAMES: Record<string, string> = {
+                                                    "1 Days 0 Nights": "Srinagar Heritage Day Tour",
+                                                    "2 Days 1 Nights": "Kashmir Quick Escape",
+                                                    "3 Days 2 Nights": "Magical Kashmir Weekend",
+                                                    "4 Days 3 Nights": "Luxury Kashmir Retreat",
+                                                    "5 Days 4 Nights": "Heaven on Earth Experience",
+                                                    "6 Days 5 Nights": "Royal Kashmir Expedition",
+                                                    "7 Days 6 Nights": "Ultimate Kashmir Diaries",
+                                                    "8 Days 7 Nights": "Grand Himalayan Odyssey",
+                                                    "9 Days 8 Nights": "Mystic Kashmir Discovery",
+                                                    "10 Days 9 Nights": "Kashmir Unveiled: The Full Circle",
+                                                    "11 Days 10 Nights": "The Grand Kashmir Experience",
+                                                    "12 Days 11 Nights": "Spectacular Kashmir & Ladakh Fusion",
+                                                    "13 Days 12 Nights": "The Himalayan Dream: Complete Saga"
+                                                };
+
+                                                const titleInput = document.querySelector('input[name="title"]') as HTMLInputElement;
+                                                // Only auto-fill if the user hasn't typed a custom name (optional check), 
+                                                // or just aggressively help them. Given the request, I'll update it.
+                                                if (titleInput) {
+                                                    titleInput.value = PACKAGE_NAMES[val] || `${val} Package`;
+                                                }
+                                            }}>
+                                                <SelectTrigger className="pl-10 h-14 border-input focus:ring-0 focus:border-primary text-base font-medium shadow-sm bg-background">
+                                                    <SelectValue placeholder="Select Duration" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {Array.from({ length: 13 }, (_, i) => {
+                                                        const days = i + 1;
+                                                        const nights = days - 1;
+                                                        const label = `${days} Days ${nights} Nights`;
+                                                        return (
+                                                            <SelectItem key={label} value={label}>
+                                                                {label}
+                                                            </SelectItem>
+                                                        );
+                                                    })}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label className="text-muted-foreground text-xs uppercase font-semibold pl-1">Booking Date</Label>
+                                        <div className="relative group">
+                                            <Calendar className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground/50 group-focus-within:text-primary z-10 pointer-events-none" />
                                             <Input
                                                 id="travelDate"
                                                 name="travelDate"
                                                 type="date"
                                                 required
-                                                defaultValue={booking?.travelDate ? new Date(booking.travelDate).toISOString().split('T')[0] : ''}
-                                                className="pl-10 h-12 border-muted-foreground/20 focus-visible:ring-0 focus-visible:border-primary shadow-sm"
+                                                defaultValue={booking?.travelDate ? new Date(booking.travelDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]}
+                                                className="pl-12 h-14 border-input focus-visible:ring-0 focus-visible:border-primary shadow-sm text-base bg-background w-full cursor-pointer"
+                                                onClick={(e) => {
+                                                    try {
+                                                        (e.target as HTMLInputElement).showPicker();
+                                                    } catch (err) {
+                                                        // Fallback or ignore if not supported
+                                                    }
+                                                }}
                                             />
                                         </div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-muted-foreground text-xs uppercase font-semibold pl-1">Duration</Label>
-                                        <div className="relative group">
-                                            <Clock className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground/50 group-focus-within:text-primary" />
-                                            <Input id="duration" name="duration" defaultValue={booking?.duration} placeholder="e.g. 5 Days" className="pl-10 h-12 border-muted-foreground/20 focus-visible:ring-0 focus-visible:border-primary shadow-sm" />
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <div className="grid grid-cols-3 gap-6">
                                     <div className="space-y-2">
-                                        <Label className="text-muted-foreground text-xs uppercase font-semibold pl-1">Adults</Label>
-                                        <div className="relative">
-                                            <Input id="adults" name="adults" type="number" min="1" defaultValue={booking?.adults || 2} required className="h-12 border-muted-foreground/20 focus-visible:ring-0 focus-visible:border-primary text-center font-medium shadow-sm" />
-                                            <span className="absolute right-3 top-3.5 text-sm text-muted-foreground pointer-events-none">Pax</span>
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-muted-foreground text-xs uppercase font-semibold pl-1">Kids</Label>
-                                        <div className="relative">
-                                            <Input id="kids" name="kids" type="number" min="0" defaultValue={booking?.kids || 0} className="h-12 border-muted-foreground/20 focus-visible:ring-0 focus-visible:border-primary text-center font-medium shadow-sm" />
-                                            <span className="absolute right-3 top-3.5 text-sm text-muted-foreground pointer-events-none">Pax</span>
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-green-600 text-xs uppercase font-bold pl-1">Total Cost</Label>
+                                        <Label className="text-green-600 dark:text-green-400 text-xs uppercase font-bold pl-1">Total Amount</Label>
                                         <div className="relative group">
-                                            <Banknote className="absolute left-3 top-3.5 h-5 w-5 text-green-600" />
+                                            <Banknote className="absolute left-3 top-3.5 h-5 w-5 text-green-600 dark:text-green-400" />
                                             <Input
                                                 id="totalAmount"
                                                 name="totalAmount"
@@ -231,7 +312,7 @@ export function BookingForm({ mode = 'create', booking, onSuccess }: BookingForm
                                                 min="0"
                                                 defaultValue={booking?.totalAmount}
                                                 required
-                                                className="pl-10 h-12 border-green-200 focus-visible:ring-0 focus-visible:border-green-500 font-bold text-green-700 bg-green-50/50 shadow-sm"
+                                                className="pl-10 h-14 border-green-200 dark:border-green-800 focus-visible:ring-0 focus-visible:border-green-500 font-bold text-green-700 dark:text-green-300 bg-green-50/50 dark:bg-green-900/20 shadow-sm text-base"
                                                 onChange={(e) => setTotalAmount(parseInt(e.target.value) || 0)}
                                             />
                                         </div>
@@ -241,7 +322,7 @@ export function BookingForm({ mode = 'create', booking, onSuccess }: BookingForm
                         </div>
 
                         {mode === 'create' && (
-                            <div className="pt-8 border-t border-dashed">
+                            <div className="pt-8 border-t border-dashed border-border">
                                 <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-6 flex items-center gap-2">
                                     <CreditCard className="w-4 h-4" /> Payment Status
                                 </h3>
@@ -258,14 +339,14 @@ export function BookingForm({ mode = 'create', booking, onSuccess }: BookingForm
                                                     type="number"
                                                     min="0"
                                                     placeholder="0"
-                                                    className="pl-8 h-12 border-muted-foreground/20 focus-visible:ring-0 focus-visible:border-primary font-medium shadow-sm"
+                                                    className="pl-8 h-12 border-input focus-visible:ring-0 focus-visible:border-primary font-medium shadow-sm bg-background"
                                                     onChange={(e) => setInitialPayment(parseInt(e.target.value) || 0)}
                                                 />
                                             </div>
                                         </div>
                                         <div className="space-y-2">
                                             <Select name="paymentMode" defaultValue="UPI" disabled={initialPayment <= 0}>
-                                                <SelectTrigger className="h-12 border-muted-foreground/20 shadow-sm">
+                                                <SelectTrigger className="h-12 border-input shadow-sm bg-background">
                                                     <SelectValue placeholder="Payment Mode" />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -293,12 +374,14 @@ export function BookingForm({ mode = 'create', booking, onSuccess }: BookingForm
 
             {/* Footer Action Bar */}
             <div className="p-4 bg-background border-t shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] sticky bottom-0 z-10 flex justify-between items-center px-8">
-                <Link href="/admin/bookings">
-                    <Button type="button" variant="ghost" className="h-12 px-6 hover:bg-muted">
-                        <ArrowLeft className="w-4 h-4 mr-2" />
-                        Cancel
-                    </Button>
-                </Link>
+                <div className="flex items-center gap-3">
+                    <Link href="/admin/bookings">
+                        <Button type="button" variant="ghost" className="h-12 px-6 hover:bg-muted">
+                            <ArrowLeft className="w-4 h-4 mr-2" />
+                            Cancel
+                        </Button>
+                    </Link>
+                </div>
                 <Button type="submit" disabled={loading} className="h-12 px-10 text-base shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90 transition-all rounded-full">
                     {loading ? "Processing..." : (mode === 'create' ? "Confirm Booking" : "Save Changes")}
                 </Button>

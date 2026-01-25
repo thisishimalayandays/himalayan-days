@@ -43,11 +43,46 @@ export async function getCustomers() {
 
 export async function deleteCustomer(id: string) {
     try {
-        await prisma.customer.delete({ where: { id } });
+        await prisma.$transaction(async (tx) => {
+            // 1. Unlink Inquiries (optional, or delete them? Usually unlink is safer / inquire history)
+            await tx.inquiry.updateMany({
+                where: { customerId: id },
+                data: { customerId: null }
+            });
+
+            // 2. Find all bookings to delete their payments
+            const bookings = await tx.booking.findMany({
+                where: { customerId: id },
+                select: { id: true }
+            });
+
+            const bookingIds = bookings.map(b => b.id);
+
+            // 3. Delete Payments
+            if (bookingIds.length > 0) {
+                await tx.payment.deleteMany({
+                    where: { bookingId: { in: bookingIds } }
+                });
+            }
+
+            // 4. Delete Bookings (Hard delete to allow customer delete)
+            // Note: If we wanted to keep them as "Trash", we couldn't delete the customer easily without unlinking.
+            // Assumption: Delete Customer = Wipe Data
+            if (bookingIds.length > 0) {
+                await tx.booking.deleteMany({
+                    where: { customerId: id }
+                });
+            }
+
+            // 5. Delete Customer
+            await tx.customer.delete({ where: { id } });
+        });
+
         revalidatePath('/admin/customers');
         return { success: true };
     } catch (error) {
-        return { success: false, error: 'Failed to delete customer' };
+        console.error('Delete Customer Error:', error);
+        return { success: false, error: 'Failed to delete customer. Ensure no other constraints exist.' };
     }
 }
 
