@@ -2,8 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { getInquiryStats, getInquiryAnalytics } from "@/app/actions/inquiries";
 import { getDashboardCRMStats } from "@/app/actions/crm";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Overview } from "@/components/admin/overview";
-import { RecentInquiries } from "@/components/admin/recent-inquiries";
+import { AnalyticsChart as Overview } from "@/components/admin/dashboard/analytics-chart";
+import { RecentActivity as RecentInquiries } from "@/components/admin/dashboard/recent-activity";
 import { UpcomingTrips } from "@/components/admin/upcoming-trips";
 
 export default async function AdminDashboard() {
