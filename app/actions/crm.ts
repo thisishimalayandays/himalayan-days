@@ -54,76 +54,77 @@ export async function deleteCustomer(id: string) {
 // --- BOOKINGS ---
 
 export async function createBooking(data: {
-    customerId: string;
+    customerId?: string; // Made optional
+    newCustomer?: {
+        name: string;
+        phone: string;
+        email?: string;
+        address?: string;
+    };
     title: string;
     travelDate: Date;
+    duration: string;
     totalAmount: number;
     adults: number;
     kids: number;
-    duration?: string;
-    vehicleType?: string; // We didn't add this to schema yet, let's stick to schema
-    status?: string;
+    initialPayment?: number;
+    paymentMode?: string;
 }) {
     try {
-        const booking = await prisma.booking.create({
-            data: {
-                customerId: data.customerId,
-                title: data.title,
-                travelDate: data.travelDate,
-                totalAmount: data.totalAmount,
-                await prisma.$transaction(async (tx) => {
-                    let customerId = data.customerId;
+        await prisma.$transaction(async (tx) => {
+            let customerId = data.customerId;
 
-                    // Create new customer if details provided and no ID
-                    if (!customerId && data.newCustomer) {
-                        const customer = await tx.customer.create({
-                            data: {
-                                name: data.newCustomer.name,
-                                phone: data.newCustomer.phone,
-                                email: data.newCustomer.email || null,
-                                address: data.newCustomer.address || null,
-                            }
-                        });
-                        customerId = customer.id;
-                    }
-
-                    if (!customerId) {
-                        throw new Error("Customer is required");
-                    }
-
-                    const booking = await tx.booking.create({
-                        data: {
-                            customerId: customerId,
-                            title: data.title,
-                            travelDate: data.travelDate,
-                            duration: data.duration,
-                            totalAmount: data.totalAmount,
-                            adults: data.adults,
-                            kids: data.kids,
-                            status: 'CONFIRMED',
-                        }
-                    });
-
-                    if (data.initialPayment && data.initialPayment > 0) {
-                        await tx.payment.create({
-                            data: {
-                                bookingId: booking.id,
-                                amount: data.initialPayment,
-                                method: data.paymentMode || 'CASH',
-                                date: new Date(),
-                                notes: 'Initial Advance'
-                            }
-                        });
+            // Create new customer if details provided and no ID
+            if (!customerId && data.newCustomer) {
+                const customer = await tx.customer.create({
+                    data: {
+                        name: data.newCustomer.name,
+                        phone: data.newCustomer.phone,
+                        email: data.newCustomer.email || null,
+                        address: data.newCustomer.address || null,
                     }
                 });
+                customerId = customer.id;
+            }
 
-                revalidatePath('/admin/bookings');
-        revalidatePath(`/admin/customers/${data.customerId
-            }`); // Keep revalidating customer path
+            if (!customerId) {
+                throw new Error("Customer is required");
+            }
+
+            const booking = await tx.booking.create({
+                data: {
+                    customerId: customerId,
+                    title: data.title,
+                    travelDate: data.travelDate,
+                    duration: data.duration,
+                    totalAmount: data.totalAmount,
+                    adults: data.adults,
+                    kids: data.kids,
+                    status: 'CONFIRMED',
+                }
+            });
+
+            if (data.initialPayment && data.initialPayment > 0) {
+                await tx.payment.create({
+                    data: {
+                        bookingId: booking.id,
+                        amount: data.initialPayment,
+                        method: data.paymentMode || 'CASH',
+                        date: new Date(),
+                        notes: 'Initial Advance'
+                    }
+                });
+            }
+        });
+
+        revalidatePath('/admin/bookings');
+        if (data.customerId) {
+            revalidatePath(`/admin/customers/${data.customerId}`);
+        }
         return { success: true };
     } catch (error) {
-        console.error('Create Booking Error:', error); // Corrected error message
-        return { success: false, error: 'Failed to create booking' }; // Corrected error message
+        console.error('Create Booking Error:', error);
+        return { success: false, error: 'Failed to create booking' };
     }
 }
 
