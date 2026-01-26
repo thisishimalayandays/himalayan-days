@@ -1,6 +1,7 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 
 export function Intro() {
@@ -34,16 +35,27 @@ export function Intro() {
                 <div className="relative">
                     <div className="absolute -inset-4 bg-orange-100 rounded-3xl transform rotate-3" />
                     <div className="absolute -inset-4 bg-emerald-50 rounded-3xl transform -rotate-2 scale-95" />
-                    <div className="relative rounded-2xl shadow-2xl w-full h-[500px] overflow-hidden bg-gray-100">
-                        <video
-                            src="/WelcomeScreen.mp4"
-                            autoPlay={true}
-                            muted={true}
-                            loop={true}
-                            playsInline={true}
-                            poster="/Destinations/Pahalgham.jpeg"
-                            className="w-full h-full object-cover scale-110 will-change-transform"
+                    <div className="relative rounded-2xl shadow-2xl w-full h-[500px] overflow-hidden bg-gray-100 flex items-center justify-center group">
+                        {/* Background Image */}
+                        <Image
+                            src="/Destinations/Pahalgham.jpeg"
+                            alt="Background"
+                            fill
+                            className="object-cover transition-transform duration-700 group-hover:scale-110"
                         />
+
+                        {/* Overlay for contrast */}
+                        <div className="absolute inset-0 bg-black/20" />
+
+                        {/* Centered Logo */}
+                        <div className="relative w-64 h-64 opacity-90 transition-transform duration-500 group-hover:scale-105">
+                            <Image
+                                src="/Himalayan Days Logo.png"
+                                alt="Himalayan Days Logo"
+                                fill
+                                className="object-contain drop-shadow-2xl"
+                            />
+                        </div>
                     </div>
 
                     {/* Floating Badge */}
