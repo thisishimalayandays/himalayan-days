@@ -39,6 +39,7 @@ export function Header() {
                             src="/Himalayan Days Logo.png"
                             alt="Himalayan Days"
                             fill
+                            sizes="160px"
                             className="object-contain object-left"
                             priority
                         />

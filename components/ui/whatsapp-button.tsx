@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 import * as analytics from '@/lib/analytics';
 
 export function WhatsAppButton() {
@@ -27,11 +28,15 @@ export function WhatsAppButton() {
             className="fixed bottom-6 right-6 z-50 flex items-center justify-center transition-transform duration-300 hover:scale-110 active:scale-95"
             aria-label="Chat on WhatsApp"
         >
-            <img
-                src="/whatsappicon.png"
-                alt="WhatsApp"
-                className="w-14 h-14 md:w-16 md:h-16 drop-shadow-2xl"
-            />
+            <div className="relative w-14 h-14 md:w-16 md:h-16">
+                <Image
+                    src="/whatsappicon.png"
+                    alt="WhatsApp"
+                    fill
+                    sizes="64px"
+                    className="object-contain drop-shadow-2xl"
+                />
+            </div>
             <span className="absolute right-full mr-4 bg-white text-gray-800 px-3 py-1.5 rounded-lg text-sm font-semibold shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none hidden md:block">
                 Chat with us
             </span>

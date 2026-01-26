@@ -17,6 +17,7 @@ export function Footer() {
                             src="/Himalayan Days Logo.png"
                             alt="Himalayan Days"
                             fill
+                            sizes="192px"
                             className="object-contain"
                         />
                     </Link>
