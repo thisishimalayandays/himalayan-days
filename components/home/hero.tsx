@@ -82,20 +82,7 @@ export function Hero() {
                 </div>
             </div>
 
-            {/* Scroll indicator */}
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1, y: [0, 10, 0] }}
-                transition={{ delay: 1, duration: 2, repeat: Infinity }}
-                className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 text-white/50"
-            >
-                <div className="flex flex-col items-center gap-2">
-                    <span className="text-xs uppercase tracking-widest text-white/60">Scroll</span>
-                    <div className="w-5 h-8 border-2 border-white/30 rounded-full flex justify-center pt-1.5">
-                        <div className="w-1 h-2 bg-white/70 rounded-full animate-bounce" />
-                    </div>
-                </div>
-            </motion.div>
+
             <TripCustomizationModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
             <AiTripWizard isOpen={isAiWizardOpen} onClose={() => setIsAiWizardOpen(false)} />
         </section>
