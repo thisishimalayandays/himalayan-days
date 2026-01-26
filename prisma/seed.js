@@ -585,6 +585,152 @@ async function main() {
             ],
             inclusions: ["Transport", "Guide", "Stay"],
             exclusions: ["Camera Gear"]
+        },
+        {
+            slug: "gulmarg-skiing-course",
+            title: "Gulmarg Skiing Course",
+            duration: "6 Nights / 7 Days",
+            startingPrice: 25000,
+            image: "/gulmarg-skiing-course/image(1).jpeg",
+            rating: 4.9,
+            reviews: 124,
+            gallery: [
+                "/gulmarg-skiing-course/image(1).jpeg",
+                "/gulmarg-skiing-course/image(2).jpeg",
+                "/gulmarg-skiing-course/image(3).jpeg",
+                "/gulmarg-skiing-course/image(4).jpeg",
+                "/gulmarg-skiing-course/image(5).jpeg",
+                "/gulmarg-skiing-course/image(6).jpeg"
+            ],
+            category: "Adventure",
+            location: "Gulmarg",
+            features: ["Professional Instructor", "Equipment Included", "Certification"],
+            overview: "Learn to ski in one of the world's best skiing destinations. This course is designed for beginners to intermediates, offering professional guidance on the powder slopes of Gulmarg.",
+            itinerary: [
+                { day: 1, title: "Arrival & Gear Check", desc: "Arrival in Gulmarg. Check-in. Meeting with the instructor. Fitting of ski boots and skis." },
+                { day: 2, title: "Basics on Baby Slopes", desc: "Introduction to equipment. Learning balance, walking on skis, and basic sliding on gentle slopes." },
+                { day: 3, title: "Snow Plough & Stopping", desc: "Learning the 'Pizza' technique for speed control and stopping. Practice turns." },
+                { day: 4, title: "Intermediate Slopes", desc: "Moving to slightly steeper gradients. Linking turns and controlling speed." },
+                { day: 5, title: "Phase 1 Skiing", desc: "Taking the Gondola to Phase 1. Guided run down the 3km designated track (depending on progress)." },
+                { day: 6, title: "Final Run & Aprés Ski", desc: "Morning practice. Certificate distribution. Celebration dinner." },
+                { day: 7, title: "Departure", desc: "Transfer to airport." }
+            ],
+            inclusions: ["Instructor", " Ski Equipment", "Lift Pass", "Hotel", "Meals"],
+            exclusions: ["Personal Clothing (Jackets/Gloves)"]
+        },
+        {
+            slug: "heritage-arts-kashmir",
+            title: "Heritage & Arts of Kashmir",
+            duration: "5 Nights / 6 Days",
+            startingPrice: 18500,
+            image: "/heritage-arts-kashmir/image(1).jpeg",
+            rating: 4.7,
+            reviews: 89,
+            gallery: [
+                "/heritage-arts-kashmir/image(1).jpeg",
+                "/heritage-arts-kashmir/image(2).jpeg",
+                "/heritage-arts-kashmir/image(3).jpeg",
+                "/heritage-arts-kashmir/image(4).jpeg"
+            ],
+            category: "Culture",
+            location: "Srinagar, Budgam",
+            features: ["Artisan Visits", "History", "Cultural Immersion"],
+            overview: "A deep dive into the rich artistic heritage of Kashmir. Visit workshops of master craftsmen making Pashmina, Carpets, Walnut Wood carvings, and Papier Mache.",
+            itinerary: [
+                { day: 1, title: "Arrival in the City of Crafts", desc: "Arrival. Stay in a Heritage Houseboat. Evening lecture on Kashmir's history by a local historian." },
+                { day: 2, title: "Pashmina & Carpets", desc: "Visit a shawl weaving unit in Downtown. See the intricate Kani shawl weaving. Visit a carpet loom to see the 'Talim' (music-like code) reading process." },
+                { day: 3, title: "Papier Mache & Wood Carving", desc: "Visit the Zadibal area for Papier Mache workshops. Visit a walnut wood carving factory. Try your hand at painting a small box." },
+                { day: 4, title: "Srinagar Heritage Walk", desc: "Walk through the 500-year-old markets. Visit the Rozabal shrine and the Khanqah-e-Moula." },
+                { day: 5, title: "Copperware & Spices", desc: "Visit the Nallah Mar road for Copper utensils manufacturing. Visit the spice market for Saffron and dry fruits." },
+                { day: 6, title: "Departure", desc: "Airport transfer." }
+            ],
+            inclusions: ["Guide", "Workshop Entries", "Transport", "Stay"],
+            exclusions: ["Purchases"]
+        },
+        {
+            slug: "anglers-paradise-trout-fishing",
+            title: "Angler's Paradise - Trout Fishing",
+            duration: "4 Nights / 5 Days",
+            startingPrice: 19500,
+            image: "/anglers-paradise-trout-fishing/image(1).jpeg",
+            rating: 4.8,
+            reviews: 56,
+            gallery: [
+                "/anglers-paradise-trout-fishing/image(1).jpeg",
+                "/anglers-paradise-trout-fishing/image(2).jpeg",
+                "/anglers-paradise-trout-fishing/image(3).jpeg"
+            ],
+            category: "Hobby",
+            location: "Pahalgam, Kokernag",
+            features: ["Fishing Permit", "Expert Guide", "Peaceful"],
+            overview: "Kashmir offers some of the best Brown and Rainbow Trout fishing in the world. Cast your line in the crystal clear glacial streams of Lidder and Bringi.",
+            itinerary: [
+                { day: 1, title: "Arrival & Gear Up", desc: "Arrival. Transfer to Pahalgam. Check gear. Briefing on fishing beats." },
+                { day: 2, title: "Upper Lidder Fishing", desc: "Full day fishing at the Upper Lidder beat. Packed lunch by the river. Evening BBQ of the catch (if permitted size)." },
+                { day: 3, title: "Kokernag Springs", desc: "Drive to Kokernag. It has the largest trout farm in Asia. Fishing in the Bringi stream." },
+                { day: 4, title: "Daksum Solitude", desc: "Fishing at Daksum, a quiet retreat in the forest. Return to Srinagar in evening." },
+                { day: 5, title: "Departure", desc: "Transfer to airport." }
+            ],
+            inclusions: ["Fishing Permits", "Ghillie (Guide)", "Transport", "Stay"],
+            exclusions: ["Fishing Rods (Rental available)"]
+        },
+        {
+            slug: "unexplored-bangus-valley",
+            title: "Unexplored Bangus Valley",
+            duration: "3 Nights / 4 Days",
+            startingPrice: 13500,
+            image: "/unexplored-bangus-valley/image(1).jpeg",
+            rating: 4.6,
+            reviews: 32,
+            gallery: [
+                "/unexplored-bangus-valley/image(1).jpeg",
+                "/unexplored-bangus-valley/image(2).jpeg",
+                "/unexplored-bangus-valley/image(3).jpeg",
+                "/unexplored-bangus-valley/image(4).jpeg",
+                "/unexplored-bangus-valley/image(5).jpeg",
+                "/unexplored-bangus-valley/image(6).jpeg"
+            ],
+            category: "Offbeat",
+            location: "Kupwara, Bangus",
+            features: ["Virgin Nature", "Meadows", "Adventure"],
+            overview: "Visit a destination that recently opened to tourists. Bangus is a vast biosphere with lush meadows, arguably more beautiful than Gulmarg, and completely untouched.",
+            itinerary: [
+                { day: 1, title: "Srinagar to Handwara", desc: "Drive towards North Kashmir via the apple town of Sopore. Stay at a guest house in Handwara/Reshwari." },
+                { day: 2, title: "Bangus Valley Excursion", desc: "Drive to the Bangus valley. It is divided into Bod (Big) Bangus and Lokut (Small) Bangus. Walk barefoot on the velvet grass. Zero crowds." },
+                { day: 3, title: "Lolab Valley", desc: "Visit the nearby Lolab valley, known as the Land of Love and Beauty. Return to Srinagar." },
+                { day: 4, title: "Departure", desc: "Transfer to airport." }
+            ],
+            inclusions: ["Transport", "Guest House", "Meals"],
+            exclusions: ["Luxury amenities"]
+        },
+        {
+            slug: "short-romantic-getaway",
+            title: "Short Romantic Getaway",
+            duration: "3 Nights / 4 Days",
+            startingPrice: 14500,
+            image: "/short-romantic-getaway/image(1).jpeg",
+            rating: 4.9,
+            reviews: 215,
+            gallery: [
+                "/short-romantic-getaway/image(1).jpeg",
+                "/short-romantic-getaway/image(2).jpeg",
+                "/short-romantic-getaway/image(3).jpeg",
+                "/short-romantic-getaway/image(4).jpeg",
+                "/short-romantic-getaway/image(5).jpeg",
+                "/short-romantic-getaway/image(6).jpeg"
+            ],
+            category: "Honeymoon",
+            location: "Srinagar, Gulmarg",
+            features: ["Candlelight Dinner", "Short Trip", "Luxury"],
+            overview: "Short on time but big on romance? This quick getaway covers the romantic essentials of Kashmir - Houseboat and Gulmarg.",
+            itinerary: [
+                { day: 1, title: "Houseboat Romance", desc: "Arrival. Private transfer to a decorated houseboat. Sunset Shikara ride with flowers. Candlelight dinner." },
+                { day: 2, title: "Gulmarg Day Trip", desc: "Private car to Gulmarg. Hold hands on the Gondola ride. Coffee in the mountains. Return to Srinagar hotel." },
+                { day: 3, title: "Mughal Gardens Photoshoot", desc: "Morning professional photoshoot session in traditional dress at Mughal Gardens. Evening free." },
+                { day: 4, title: "Departure", desc: "Transfer to airport." }
+            ],
+            inclusions: ["Honeymoon Inclusions", "Photoshoot", "Stay", "Meals"],
+            exclusions: ["Flights"]
         }
     ];
 
@@ -596,6 +742,8 @@ async function main() {
                 duration: pkg.duration,
                 startingPrice: pkg.startingPrice,
                 image: pkg.image,
+                rating: pkg.rating,
+                reviews: pkg.reviews,
                 gallery: JSON.stringify(pkg.gallery),
                 category: pkg.category,
                 location: pkg.location,
@@ -611,6 +759,8 @@ async function main() {
                 duration: pkg.duration,
                 startingPrice: pkg.startingPrice,
                 image: pkg.image,
+                rating: pkg.rating,
+                reviews: pkg.reviews,
                 gallery: JSON.stringify(pkg.gallery),
                 category: pkg.category,
                 location: pkg.location,

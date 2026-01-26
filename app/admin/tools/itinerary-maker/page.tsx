@@ -161,7 +161,7 @@ export default function ItineraryMakerPage() {
 
             {/* Left Panel: Builder Form */}
             <div className={`
-                ${showPreview ? 'w-full md:w-1/2' : 'w-full max-w-5xl mx-auto'} 
+                ${showPreview ? 'w-full md:w-1/2' : 'w-full'} 
                 p-6 overflow-y-auto border-r border-border pt-16 md:pt-6 transition-all duration-300
                 ${mobileTab === 'preview' ? 'hidden md:block' : 'block'}
             `}>

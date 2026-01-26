@@ -5,6 +5,7 @@ import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
+import { prisma } from "@/lib/prisma";
 
 export default async function AdminLayout({
     children,
@@ -18,12 +19,15 @@ export default async function AdminLayout({
     }
 
     const { pending: pendingInquiries } = await getInquiryStats();
+    const unreadSubscribers = await prisma.subscriber.count({
+        where: { isRead: false }
+    });
 
     return (
         <div className="flex h-screen bg-muted/40 font-sans overflow-hidden">
             {/* Desktop Sidebar */}
             <aside className="hidden md:flex w-64 bg-background shadow-md flex-col border-r h-full">
-                <AdminSidebar pendingInquiries={pendingInquiries} />
+                <AdminSidebar pendingInquiries={pendingInquiries} pendingSubscribers={unreadSubscribers} />
             </aside>
 
             {/* Main Content Area */}
@@ -40,7 +44,7 @@ export default async function AdminLayout({
                         <SheetContent side="left" className="p-0 w-72">
                             {/* Pass a dummy onClick to close sheet? No, simple link navigation usually works but better to use a client wrapper if we want auto-close. 
                                 For now, default link behavior + standard Sheet is fine. */}
-                            <AdminSidebar pendingInquiries={pendingInquiries} />
+                            <AdminSidebar pendingInquiries={pendingInquiries} pendingSubscribers={unreadSubscribers} />
                         </SheetContent>
                     </Sheet>
                 </header>

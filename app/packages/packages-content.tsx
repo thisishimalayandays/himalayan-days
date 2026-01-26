@@ -32,7 +32,8 @@ const locations = ["Srinagar", "Gulmarg", "Pahalgam", "Sonmarg", "Gurez"];
 
 export function PackagesContent({ packages }: { packages: Package[] }) {
     const searchParams = useSearchParams();
-    const initialCategory = searchParams.get('category') || "All";
+    const paramCategory = searchParams.get('category');
+    const initialCategory = categories.find(c => c.toLowerCase() === paramCategory?.toLowerCase()) || "All";
     const [selectedCategory, setSelectedCategory] = useState(initialCategory);
     const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
 

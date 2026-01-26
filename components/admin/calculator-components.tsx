@@ -1,0 +1,346 @@
+"use client";
+
+import { Plus, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+
+// --- Types ---
+export interface HotelItem {
+    id: string;
+    name: string;
+    rate: number;
+    rooms: number;
+    nights: number;
+}
+
+export interface TransportItem {
+    id: string;
+    type: string;
+    rate: number;
+    days: number;
+}
+
+export interface ActivityItem {
+    id: string;
+    name: string;
+    rate: number;
+    quantity: number;
+}
+
+// --- Helper Input ---
+export const CurrencyInput = ({
+    value,
+    onChange,
+    placeholder = "0",
+    className,
+}: {
+    value: number;
+    onChange: (val: number) => void;
+    placeholder?: string;
+    className?: string;
+}) => (
+    <div className={`relative ${className}`}>
+        <span className="absolute left-3 top-2.5 text-muted-foreground">₹</span>
+        <Input
+            type="number"
+            min="0"
+            value={value || ""}
+            onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
+            className="pl-7"
+            placeholder={placeholder}
+        />
+    </div>
+);
+
+// --- Section Components ---
+
+export function HotelCalculator({
+    items,
+    setItems,
+    total,
+}: {
+    items: HotelItem[];
+    setItems: (items: HotelItem[]) => void;
+    total: number;
+}) {
+    const addRow = () => {
+        setItems([...items, { id: Date.now().toString(), name: "", rate: 0, rooms: 1, nights: 1 }]);
+    };
+
+    const removeRow = (id: string) => {
+        setItems(items.filter((item) => item.id !== id));
+    };
+
+    const updateRow = (index: number, field: keyof HotelItem, value: any) => {
+        const newItems = [...items];
+        (newItems[index] as any)[field] = value;
+        setItems(newItems);
+    };
+
+    return (
+        <Card className="border-border/50 shadow-sm">
+            <CardHeader className="bg-muted/30 pb-4 border-b">
+                <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg font-semibold flex items-center gap-2 text-foreground">
+                        <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 p-2 rounded-lg text-lg">🏨</span>
+                        Hotels & Stays
+                    </CardTitle>
+                    <div className="text-sm font-medium px-3 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-full border border-blue-100 dark:border-blue-900/50">
+                        ₹{total.toLocaleString("en-IN")}
+                    </div>
+                </div>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4">
+                <div className="grid grid-cols-12 gap-3 text-xs uppercase tracking-wider font-semibold text-muted-foreground mb-2 px-1">
+                    <div className="col-span-4">Property Name</div>
+                    <div className="col-span-3">Rate (₹)</div>
+                    <div className="col-span-2">Rooms</div>
+                    <div className="col-span-2">Nights</div>
+                    <div className="col-span-1"></div>
+                </div>
+
+                {items.map((item, index) => (
+                    <div key={item.id} className="grid grid-cols-12 gap-3 items-center group">
+                        <div className="col-span-4">
+                            <Input
+                                placeholder="e.g. Radisson"
+                                value={item.name}
+                                onChange={(e) => updateRow(index, "name", e.target.value)}
+                                className="bg-background"
+                            />
+                        </div>
+                        <div className="col-span-3">
+                            <CurrencyInput
+                                value={item.rate}
+                                onChange={(val) => updateRow(index, "rate", val)}
+                            />
+                        </div>
+                        <div className="col-span-2">
+                            <Input
+                                type="number"
+                                min="1"
+                                value={item.rooms}
+                                onChange={(e) => updateRow(index, "rooms", parseInt(e.target.value) || 1)}
+                            />
+                        </div>
+                        <div className="col-span-2">
+                            <Input
+                                type="number"
+                                min="1"
+                                value={item.nights}
+                                onChange={(e) => updateRow(index, "nights", parseInt(e.target.value) || 1)}
+                            />
+                        </div>
+                        <div className="col-span-1 text-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20"
+                                onClick={() => removeRow(item.id)}
+                            >
+                                <Trash2 className="w-4 h-4" />
+                            </Button>
+                        </div>
+                    </div>
+                ))}
+
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={addRow}
+                    className="w-full border border-dashed border-border text-muted-foreground hover:text-blue-600 hover:border-blue-500/50 hover:bg-blue-50/50 dark:hover:bg-blue-950/20"
+                >
+                    <Plus className="w-4 h-4 mr-2" /> Add Hotel
+                </Button>
+            </CardContent>
+        </Card>
+    );
+}
+
+export function TransportCalculator({
+    items,
+    setItems,
+    total,
+}: {
+    items: TransportItem[];
+    setItems: (items: TransportItem[]) => void;
+    total: number;
+}) {
+    const addRow = () => {
+        setItems([...items, { id: Date.now().toString(), type: "", rate: 0, days: 1 }]);
+    };
+
+    const removeRow = (id: string) => {
+        setItems(items.filter((item) => item.id !== id));
+    };
+
+    const updateRow = (index: number, field: keyof TransportItem, value: any) => {
+        const newItems = [...items];
+        (newItems[index] as any)[field] = value;
+        setItems(newItems);
+    };
+
+    return (
+        <Card className="border-border/50 shadow-sm">
+            <CardHeader className="bg-muted/30 pb-4 border-b">
+                <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg font-semibold flex items-center gap-2 text-foreground">
+                        <span className="bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 p-2 rounded-lg text-lg">🚖</span>
+                        Transport & Cabs
+                    </CardTitle>
+                    <div className="text-sm font-medium px-3 py-1 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 rounded-full border border-orange-100 dark:border-orange-900/50">
+                        ₹{total.toLocaleString("en-IN")}
+                    </div>
+                </div>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4">
+                <div className="grid grid-cols-12 gap-3 text-xs uppercase tracking-wider font-semibold text-muted-foreground mb-2 px-1">
+                    <div className="col-span-5">Vehicle Type</div>
+                    <div className="col-span-3">Rate/Day (₹)</div>
+                    <div className="col-span-3">Days</div>
+                    <div className="col-span-1"></div>
+                </div>
+
+                {items.map((item, index) => (
+                    <div key={item.id} className="grid grid-cols-12 gap-3 items-center group">
+                        <div className="col-span-5">
+                            <Input
+                                placeholder="e.g. Innova Crysta"
+                                value={item.type}
+                                onChange={(e) => updateRow(index, "type", e.target.value)}
+                            />
+                        </div>
+                        <div className="col-span-3">
+                            <CurrencyInput
+                                value={item.rate}
+                                onChange={(val) => updateRow(index, "rate", val)}
+                            />
+                        </div>
+                        <div className="col-span-3">
+                            <Input
+                                type="number"
+                                min="1"
+                                value={item.days}
+                                onChange={(e) => updateRow(index, "days", parseInt(e.target.value) || 1)}
+                            />
+                        </div>
+                        <div className="col-span-1 text-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20"
+                                onClick={() => removeRow(item.id)}
+                            >
+                                <Trash2 className="w-4 h-4" />
+                            </Button>
+                        </div>
+                    </div>
+                ))}
+
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={addRow}
+                    className="w-full border border-dashed border-border text-muted-foreground hover:text-orange-600 hover:border-orange-500/50 hover:bg-orange-50/50 dark:hover:bg-orange-950/20"
+                >
+                    <Plus className="w-4 h-4 mr-2" /> Add Vehicle
+                </Button>
+            </CardContent>
+        </Card>
+    );
+}
+
+export function ActivityCalculator({
+    items,
+    setItems,
+    total,
+}: {
+    items: ActivityItem[];
+    setItems: (items: ActivityItem[]) => void;
+    total: number;
+}) {
+    const addRow = () => {
+        setItems([...items, { id: Date.now().toString(), name: "", rate: 0, quantity: 1 }]);
+    };
+
+    const removeRow = (id: string) => {
+        setItems(items.filter((item) => item.id !== id));
+    };
+
+    const updateRow = (index: number, field: keyof ActivityItem, value: any) => {
+        const newItems = [...items];
+        (newItems[index] as any)[field] = value;
+        setItems(newItems);
+    };
+
+    return (
+        <Card className="border-border/50 shadow-sm">
+            <CardHeader className="bg-muted/30 pb-4 border-b">
+                <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg font-semibold flex items-center gap-2 text-foreground">
+                        <span className="bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 p-2 rounded-lg text-lg">🎿</span>
+                        Activities & Extras
+                    </CardTitle>
+                    <div className="text-sm font-medium px-3 py-1 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded-full border border-purple-100 dark:border-purple-900/50">
+                        ₹{total.toLocaleString("en-IN")}
+                    </div>
+                </div>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4">
+                <div className="grid grid-cols-12 gap-3 text-xs uppercase tracking-wider font-semibold text-muted-foreground mb-2 px-1">
+                    <div className="col-span-5">Activity</div>
+                    <div className="col-span-3">Rate (₹)</div>
+                    <div className="col-span-3">Quantity</div>
+                    <div className="col-span-1"></div>
+                </div>
+
+                {items.map((item, index) => (
+                    <div key={item.id} className="grid grid-cols-12 gap-3 items-center group">
+                        <div className="col-span-5">
+                            <Input
+                                placeholder="e.g. Shikara Ride"
+                                value={item.name}
+                                onChange={(e) => updateRow(index, "name", e.target.value)}
+                            />
+                        </div>
+                        <div className="col-span-3">
+                            <CurrencyInput
+                                value={item.rate}
+                                onChange={(val) => updateRow(index, "rate", val)}
+                            />
+                        </div>
+                        <div className="col-span-3">
+                            <Input
+                                type="number"
+                                min="1"
+                                value={item.quantity}
+                                onChange={(e) => updateRow(index, "quantity", parseInt(e.target.value) || 1)}
+                            />
+                        </div>
+                        <div className="col-span-1 text-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20"
+                                onClick={() => removeRow(item.id)}
+                            >
+                                <Trash2 className="w-4 h-4" />
+                            </Button>
+                        </div>
+                    </div>
+                ))}
+
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={addRow}
+                    className="w-full border border-dashed border-border text-muted-foreground hover:text-purple-600 hover:border-purple-500/50 hover:bg-purple-50/50 dark:hover:bg-purple-950/20"
+                >
+                    <Plus className="w-4 h-4 mr-2" /> Add Activity
+                </Button>
+            </CardContent>
+        </Card>
+    );
+}

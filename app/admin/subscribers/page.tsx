@@ -7,12 +7,19 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Trash2, Copy, Mail } from "lucide-react";
 import { SubscribersClient } from "./subscribers-client";
+import { prisma } from "@/lib/prisma";
 
 export default async function SubscribersPage() {
     const session = await auth();
     if (!session?.user) redirect("/api/auth/signin");
 
     const { data: subscribers = [] } = await getSubscribers();
+
+    // Mark all as read when viewing the list
+    await prisma.subscriber.updateMany({
+        where: { isRead: false },
+        data: { isRead: true }
+    });
 
     return (
         <div className="space-y-6">
@@ -22,7 +29,7 @@ export default async function SubscribersPage() {
                     <p className="text-muted-foreground mt-1">Manage your newsletter audience.</p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="bg-white px-4 py-2 rounded-lg border shadow-sm text-sm font-medium">
+                    <div className="bg-card text-card-foreground px-4 py-2 rounded-lg border shadow-sm text-sm font-medium">
                         Total: {subscribers.length}
                     </div>
                 </div>

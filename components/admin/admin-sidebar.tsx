@@ -7,13 +7,15 @@ import { cn } from "@/lib/utils";
 
 import { ModeToggle } from "@/components/mode-toggle";
 
+
 interface AdminSidebarProps {
     pendingInquiries: number;
+    pendingSubscribers?: number;
     className?: string;
     onItemClick?: () => void;
 }
 
-export function AdminSidebar({ pendingInquiries, className, onItemClick }: AdminSidebarProps) {
+export function AdminSidebar({ pendingInquiries, pendingSubscribers = 0, className, onItemClick }: AdminSidebarProps) {
     const pathname = usePathname();
 
     const isActive = (path: string) => pathname === path || pathname?.startsWith(`${path}/`);
@@ -25,13 +27,23 @@ export function AdminSidebar({ pendingInquiries, className, onItemClick }: Admin
                 { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
                 { href: "/admin/packages", label: "Packages", icon: Package },
                 { href: "/admin/destinations", label: "Destinations", icon: MapPin },
-                { href: "/admin/subscribers", label: "Subscribers", icon: Mail },
+                {
+                    href: "/admin/subscribers",
+                    label: "Subscribers",
+                    icon: Mail,
+                    badge: pendingSubscribers > 0 ? pendingSubscribers : undefined
+                },
             ]
         },
         {
             label: "CRM",
             items: [
-
+                {
+                    href: "/admin/inquiries",
+                    label: "Inquiries",
+                    icon: MessageSquare,
+                    badge: pendingInquiries > 0 ? pendingInquiries : undefined
+                },
                 { href: "/admin/bookings", label: "Bookings", icon: CalendarDays },
                 { href: "/admin/customers", label: "Customers", icon: Users },
             ]
@@ -68,39 +80,25 @@ export function AdminSidebar({ pendingInquiries, className, onItemClick }: Admin
                                 href={link.href}
                                 onClick={onItemClick}
                                 className={cn(
-                                    "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
+                                    "flex items-center justify-between px-4 py-2 rounded-lg transition-colors",
                                     isActive(link.href) && link.href !== '/admin' || (link.href === '/admin' && pathname === '/admin')
                                         ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
                                         : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                                 )}
                             >
-                                <link.icon className="w-5 h-5" />
-                                {link.label}
+                                <div className="flex items-center gap-3">
+                                    <link.icon className="w-5 h-5" />
+                                    {link.label}
+                                </div>
+                                {link.badge && (
+                                    <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold text-white bg-red-500 rounded-full">
+                                        {link.badge}
+                                    </span>
+                                )}
                             </Link>
                         ))}
                     </div>
                 ))}
-
-                <Link
-                    href="/admin/inquiries"
-                    onClick={onItemClick}
-                    className={cn(
-                        "flex items-center justify-between px-4 py-3 rounded-lg transition-colors",
-                        isActive("/admin/inquiries")
-                            ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                            : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                    )}
-                >
-                    <div className="flex items-center gap-3">
-                        <MessageSquare className="w-5 h-5" />
-                        Inquiries
-                    </div>
-                    {pendingInquiries > 0 && (
-                        <span className="flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">
-                            {pendingInquiries}
-                        </span>
-                    )}
-                </Link>
             </nav>
             <div className="p-4 border-t">
                 <Link href="/api/auth/signout" className="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors">

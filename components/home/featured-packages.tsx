@@ -1,59 +1,82 @@
 'use client';
-import { useState } from 'react';
-import { PackageCard } from './package-card';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import Link from 'next/link';
+import { PackageCard } from './package-card';
+import { ArrowRight } from 'lucide-react';
 
-
-const categories = ["All", "Honeymoon", "Family", "Adventure", "Luxury"];
+const sections = [
+    {
+        id: "popular",
+        title: "Traveler Favorites",
+        subtitle: "Most loved experiences by our guests",
+        filter: (pkg: any) => pkg.reviews > 100 || pkg.category === 'Bestseller',
+        limit: 12
+    },
+    {
+        id: "honeymoon",
+        title: "Romantic Getaways",
+        subtitle: "Crafted for love, privacy, and unforgettable moments",
+        filter: (pkg: any) => pkg.category === 'Honeymoon',
+        limit: 12
+    },
+    {
+        id: "adventure",
+        title: "Adventure & Thrills",
+        subtitle: "Skiing, Trekking, and more for the adrenaline seekers",
+        filter: (pkg: any) => pkg.category === 'Adventure',
+        limit: 12
+    },
+    {
+        id: "offbeat",
+        title: "Hidden Gems & Culture",
+        subtitle: "Explore the unexplored and rich heritage of Kashmir",
+        filter: (pkg: any) => ['Offbeat', 'Culture', 'Religious'].includes(pkg.category),
+        limit: 12
+    }
+];
 
 export function FeaturedPackages({ packages }: { packages: any[] }) {
-    const [activeTab, setActiveTab] = useState("All");
-
-    const filteredPackages = activeTab === "All"
-        ? packages
-        : packages.filter(pkg => pkg.category === activeTab || (activeTab === "Luxury" && pkg.startingPrice > 20000));
-
     return (
-        <section className="py-24 bg-gray-50">
-            <div className="container mx-auto px-4">
-                <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-                    <span className="text-primary font-bold tracking-wider uppercase text-sm bg-orange-50 px-4 py-1.5 rounded-full border border-orange-100">Handpicked Collections</span>
-                    <h2 className="text-4xl md:text-5xl font-bold text-gray-900 tracking-tight">Trending Tour Packages</h2>
-                    <p className="text-gray-600 text-lg leading-relaxed">Choose from our most popular Kashmir holiday packages, customized for your perfect vacation.</p>
-                </div>
+        <div className="py-20 space-y-24 bg-gray-50/30">
+            {sections.map((section) => {
+                const filteredPackages = packages.filter(section.filter).slice(0, section.limit);
 
-                {/* Tabs */}
-                <div className="flex flex-wrap justify-center gap-3 mb-16">
-                    {categories.map((cat) => (
-                        <button
-                            key={cat}
-                            onClick={() => setActiveTab(cat)}
-                            className={cn(
-                                "px-8 py-3 rounded-full text-sm font-semibold transition-all duration-300 border",
-                                activeTab === cat
-                                    ? "bg-primary text-white border-primary shadow-lg shadow-orange-500/25 scale-105 transform"
-                                    : "bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:bg-gray-50"
-                            )}
-                        >
-                            {cat}
-                        </button>
-                    ))}
-                </div>
+                if (filteredPackages.length === 0) return null;
 
-                {/* Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {filteredPackages.map((pkg, index) => (
-                        <PackageCard key={pkg.id} packageData={pkg} index={index} />
-                    ))}
-                </div>
+                return (
+                    <section key={section.id} className="container mx-auto px-4">
+                        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+                            <div className="space-y-2 max-w-2xl">
+                                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
+                                    {section.title}
+                                </h2>
+                                <p className="text-gray-600 text-lg">
+                                    {section.subtitle}
+                                </p>
+                            </div>
+                            <Link href={`/packages?category=${section.id === 'popular' ? '' : section.id}`} className="hidden md:block">
+                                <Button variant="outline" className="rounded-full border-primary/20 hover:bg-primary hover:text-white transition-colors">
+                                    View All {section.id !== 'popular' ? section.title : 'Packages'}
+                                </Button>
+                            </Link>
+                        </div>
 
-                <div className="mt-16 text-center">
-                    <Button size="lg" variant="outline" className="px-10 py-6 text-lg border-gray-300 hover:bg-gray-50 text-gray-700 rounded-full hover:border-primary hover:text-primary transition-all duration-300">
-                        View All Packages
-                    </Button>
-                </div>
-            </div>
-        </section>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {filteredPackages.map((pkg, index) => (
+                                <PackageCard key={pkg.id} packageData={pkg} index={index} />
+                            ))}
+                        </div>
+
+                        <div className="mt-12 md:hidden text-center">
+                            <Link href={`/packages?category=${section.id === 'popular' ? '' : section.id}`} className="block w-full">
+                                <Button variant="outline" className="w-full rounded-full">
+                                    View All {section.id !== 'popular' ? section.title : 'Packages'}
+                                </Button>
+                            </Link>
+                        </div>
+                    </section>
+                );
+            })}
+        </div>
     );
 }
