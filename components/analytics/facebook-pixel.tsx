@@ -2,25 +2,26 @@
 
 import { usePathname } from 'next/navigation';
 import Script from 'next/script';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import * as analytics from '@/lib/analytics';
 
 export function FacebookPixel() {
-    const [loaded, setLoaded] = useState(false);
     const pathname = usePathname();
 
     useEffect(() => {
-        if (!loaded) return;
-        analytics.pageview();
-    }, [pathname, loaded]);
+        // Track pageview on route change
+        // We use a small timeout to ensure title/url are updated
+        const handlePageView = () => {
+            analytics.pageview();
+        }
+        handlePageView();
+    }, [pathname]);
 
     return (
         <div>
             <Script
                 id="fb-pixel"
-                src="/scripts/pixel.js"
                 strategy="afterInteractive"
-                onLoad={() => setLoaded(true)}
                 onError={(e) => console.error('FB Pixel Script failed to load', e)}
                 dangerouslySetInnerHTML={{
                     __html: `
@@ -33,6 +34,7 @@ export function FacebookPixel() {
             s.parentNode.insertBefore(t,s)}(window, document,'script',
             'https://connect.facebook.net/en_US/fbevents.js');
             fbq('init', '${analytics.FB_PIXEL_ID}');
+            fbq('track', 'PageView');
           `,
                 }}
             />
