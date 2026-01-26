@@ -4,9 +4,13 @@ import { useActionState } from 'react';
 import { authenticate } from './actions';
 import { Loader2 } from 'lucide-react';
 
-export default function LoginForm() {
+export default function LoginForm({
+    callbackUrl,
+}: {
+    callbackUrl?: string;
+}) {
     const [errorMessage, formAction, isPending] = useActionState(
-        authenticate,
+        authenticate.bind(null, callbackUrl),
         undefined,
     );
 
