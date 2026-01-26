@@ -13,7 +13,7 @@ export function Hero() {
     const [isAiWizardOpen, setIsAiWizardOpen] = useState(false);
 
     return (
-        <section className="relative h-[120vh] w-full overflow-hidden flex items-center justify-center text-center">
+        <section className="relative h-[100vh] w-full overflow-hidden flex items-center justify-center text-center">
             {/* Background Image - Optimized for Speed */}
             <div className="absolute inset-0 z-0 select-none pointer-events-none overflow-hidden">
                 <div className="absolute inset-0 bg-black/40 z-10" /> {/* Overlay */}
@@ -23,7 +23,9 @@ export function Hero() {
                     fill
                     className="object-cover"
                     priority
-                    quality={90}
+                    quality={80}
+                    placeholder="blur"
+                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAAEAAYDAREAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAr/xAAfEAABAgYDAAAAAAAAAAAAAAABAgMEAAUGEiExQf/EABUBAQEAAAAAAAAAAAAAAAAAAAIH/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECERIxQf/aAAwDAQACEQMRAD8AQ2h1k9s0C26dNa1Y0uRneP/Z"
                 />
             </div>
 
