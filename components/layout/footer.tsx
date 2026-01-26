@@ -14,7 +14,7 @@ export function Footer() {
                     {/* <h3 className="text-2xl font-bold text-white">Himalayan<span className="text-primary">Days</span></h3> */}
                     <Link href="/" className="inline-block relative h-16 w-48">
                         <Image
-                            src="/Himalayan Days Logo.png"
+                            src="/logo.png"
                             alt="Himalayan Days"
                             fill
                             sizes="192px"

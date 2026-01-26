@@ -17,7 +17,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Himalayan Days - Experience Kashmir",
+    default: "Himalayan Days | Best Kashmir Tour Packages",
     template: "%s | Himalayan Days"
   },
   metadataBase: new URL('https://himalayandays.in'),
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_IN',
     url: 'https://himalayandays.in',
-    title: 'Himalayan Days - Experience Heaven on Earth',
+    title: 'Himalayan Days | Best Kashmir Tour Packages',
     description: 'Premier travel agency in Kashmir offering curated tour packages, luxury houseboats, and adventure trips.',
     siteName: 'Himalayan Days',
     images: [
@@ -40,13 +40,13 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Himalayan Days - Kashmir Travel Experts',
+    title: 'Himalayan Days | Best Kashmir Tour Packages',
     description: 'Plan your perfect Kashmir trip with Himalayan Days. Trusted local experts.',
     creator: '@himalayandays',
     images: ['/Destinations/Gulmarg.jpeg'],
   },
   icons: {
-    icon: '/Himalayan%20Days%20Logo.png',
+    icon: '/logo.png',
   },
   verification: {
     google: 'C9b0QmnsuBqPEFcDsZvPCCX_6zGN9pUoyBvI4FkPvtM',

@@ -51,7 +51,7 @@ export function Intro() {
                         {/* Centered Logo */}
                         <div className="relative w-64 h-64 opacity-90 transition-transform duration-500 group-hover:scale-105">
                             <Image
-                                src="/Himalayan Days Logo.png"
+                                src="/logo.png"
                                 alt="Himalayan Days Logo"
                                 fill
                                 sizes="256px"

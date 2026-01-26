@@ -36,7 +36,7 @@ export function Header() {
                 <Link href="/" className="flex items-center md:justify-self-start">
                     <div className="relative h-12 w-40">
                         <Image
-                            src="/Himalayan Days Logo.png"
+                            src="/logo.png"
                             alt="Himalayan Days"
                             fill
                             sizes="160px"
