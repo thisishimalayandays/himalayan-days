@@ -4,6 +4,7 @@ import "./globals.css";
 import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 import { Toaster } from "@/components/ui/toaster";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import { ReCaptchaWrapper } from "@/components/providers/recaptcha-provider";
 import { DynamicThemeProvider } from "@/components/providers/dynamic-theme-provider";
 
@@ -62,6 +63,7 @@ export default function RootLayout({
             <WhatsAppButton />
             <Toaster />
             <Analytics />
+            <SpeedInsights />
           </DynamicThemeProvider>
         </ReCaptchaWrapper>
       </body>
