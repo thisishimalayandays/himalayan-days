@@ -51,10 +51,10 @@ export default async function Home() {
         }}
       />
       <Hero />
-      <Intro />
-      <WhyChooseUs />
       <PopularDestinations destinations={destinations} />
       <FeaturedPackages packages={packages} />
+      <Intro />
+      <WhyChooseUs />
       <StatsSection />
       <Testimonials />
       <FaqSection />
