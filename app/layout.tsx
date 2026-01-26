@@ -28,12 +28,21 @@ export const metadata: Metadata = {
     title: 'Himalayan Days - Experience Heaven on Earth',
     description: 'Premier travel agency in Kashmir offering curated tour packages, luxury houseboats, and adventure trips.',
     siteName: 'Himalayan Days',
+    images: [
+      {
+        url: '/Destinations/Gulmarg.jpeg',
+        width: 1200,
+        height: 630,
+        alt: 'Himalayan Days - Experience Heaven on Earth',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Himalayan Days - Kashmir Travel Experts',
     description: 'Plan your perfect Kashmir trip with Himalayan Days. Trusted local experts.',
     creator: '@himalayandays',
+    images: ['/Destinations/Gulmarg.jpeg'],
   },
   icons: {
     icon: '/Himalayan%20Days%20Logo.png',
