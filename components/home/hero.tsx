@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { TripCustomizationModal } from './trip-customization-modal';
 import { AiTripWizard } from './ai-trip-wizard';
 import { Sparkles } from 'lucide-react';
@@ -13,20 +14,17 @@ export function Hero() {
 
     return (
         <section className="relative h-[120vh] w-full overflow-hidden flex items-center justify-center text-center">
-            {/* Background Image */}
+            {/* Background Image - Optimized for Speed */}
             <div className="absolute inset-0 z-0 select-none pointer-events-none overflow-hidden">
                 <div className="absolute inset-0 bg-black/40 z-10" /> {/* Overlay */}
-                <video
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    poster="/Destinations/Gulmarg.jpeg"
-                    className="absolute top-1/2 left-1/2 w-full h-full object-cover -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-                >
-                    <source src="/Hero_Video_Trimmed.mp4" type="video/mp4" />
-                    Your browser does not support the video tag.
-                </video>
+                <Image
+                    src="/Destinations/Gulmarg.jpeg"
+                    alt="Experience Heaven on Earth in Kashmir"
+                    fill
+                    className="object-cover"
+                    priority
+                    quality={90}
+                />
             </div>
 
             {/* Content */}
