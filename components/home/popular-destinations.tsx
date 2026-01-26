@@ -20,7 +20,7 @@ export function PopularDestinations({ destinations }: PopularDestinationsProps) 
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
                     {destinations.map((dest) => (
                         <div
                             key={dest.id}
