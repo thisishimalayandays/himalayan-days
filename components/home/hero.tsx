@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { TripCustomizationModal } from './trip-customization-modal';
 import { AiTripWizard } from './ai-trip-wizard';
 import { Sparkles } from 'lucide-react';
+import Snowfall from 'react-snowfall';
 
 export function Hero() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,6 +29,20 @@ export function Hero() {
                     blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAAEAAYDAREAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAr/xAAfEAABAgYDAAAAAAAAAAAAAAABAgMEAAUGEiExQf/EABUBAQEAAAAAAAAAAAAAAAAAAAIH/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECERIxQf/aAAwDAQACEQMRAD8AQ2h1k9s0C26dNa1Y0uRneP/Z"
                 />
             </div>
+
+            <Snowfall
+                style={{
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    zIndex: 20
+                }}
+                snowflakeCount={150}
+                radius={[0.5, 2.5]}
+                speed={[0.5, 2.0]}
+                wind={[-0.5, 1.0]}
+                opacity={[0.4, 0.8]}
+            />
 
             {/* Content */}
             <div className="relative z-10 container px-4 space-y-8 max-w-5xl mx-auto">
