@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
     ],
   },
   reactStrictMode: false,
+  compress: true,
+  poweredByHeader: false,
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'recharts', 'framer-motion', '@radix-ui/react-icons', 'date-fns'],
+  },
 };
 
 export default nextConfig;
