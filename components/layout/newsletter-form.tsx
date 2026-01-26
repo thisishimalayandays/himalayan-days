@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { subscribeToNewsletter } from '@/app/actions/newsletter';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
+import * as analytics from '@/lib/analytics';
 
 export function NewsletterForm() {
     const [isLoading, setIsLoading] = useState(false);
@@ -22,6 +23,12 @@ export function NewsletterForm() {
                     variant: "default",
                     className: "bg-green-600 text-white border-none"
                 });
+
+                // Track Registration
+                analytics.event('CompleteRegistration', {
+                    content_name: 'Newsletter Signup'
+                });
+
                 // Reset form
                 (document.getElementById('newsletter-form') as HTMLFormElement)?.reset();
             } else {

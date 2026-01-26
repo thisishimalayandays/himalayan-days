@@ -7,6 +7,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { ReCaptchaWrapper } from "@/components/providers/recaptcha-provider";
 import { DynamicThemeProvider } from "@/components/providers/dynamic-theme-provider";
+import { FacebookPixel } from "@/components/analytics/facebook-pixel";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -64,6 +65,7 @@ export default function RootLayout({
             <Toaster />
             <Analytics />
             <SpeedInsights />
+            <FacebookPixel />
           </DynamicThemeProvider>
         </ReCaptchaWrapper>
       </body>

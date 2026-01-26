@@ -7,6 +7,7 @@ import { X, Calendar, User, Phone, Wallet, Map, Clock, Plane } from 'lucide-reac
 import { Button } from '@/components/ui/button';
 import { createInquiry, InquiryInput } from '@/app/actions/inquiries';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import * as analytics from '@/lib/analytics';
 
 interface TripCustomizationModalProps {
     isOpen: boolean;
@@ -73,6 +74,13 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
         } catch (error) {
             console.error("Failed to save inquiry", error);
         }
+
+        // Track Lead Event
+        analytics.event('Lead', {
+            content_name: 'Trip Customization',
+            value: 0, // Or estimated value
+            currency: 'INR'
+        });
 
         // 2. Construct WhatsApp Message
         const message = `*New Trip Enquiry via Website* \n\n` +

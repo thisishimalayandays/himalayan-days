@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
+import * as analytics from '@/lib/analytics';
 
 export function WhatsAppButton() {
     const pathname = usePathname();
@@ -18,6 +19,7 @@ export function WhatsAppButton() {
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => analytics.event('Contact', { content_name: 'WhatsApp Button' })}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             whileHover={{ scale: 1.1 }}
