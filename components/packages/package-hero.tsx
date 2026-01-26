@@ -10,7 +10,13 @@ interface PackageHeroProps {
     price: number;
 }
 
+import Snowfall from 'react-snowfall';
+
 export function PackageHero({ title, image, duration, location, price }: PackageHeroProps) {
+    const isWinter = ['winter', 'snow', 'ski', 'gulmarg', 'frozen'].some(keyword =>
+        title.toLowerCase().includes(keyword)
+    );
+
     return (
         <section className="relative h-[60vh] md:h-[70vh] w-full overflow-hidden flex items-end pb-12 md:pb-24">
             {/* Background Image */}
@@ -23,6 +29,21 @@ export function PackageHero({ title, image, duration, location, price }: Package
                     priority
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+
+                {isWinter && (
+                    <Snowfall
+                        style={{
+                            position: 'absolute',
+                            width: '100%',
+                            height: '100%',
+                            zIndex: 10
+                        }}
+                        snowflakeCount={100}
+                        radius={[0.5, 2.0]}
+                        speed={[0.5, 1.5]}
+                        opacity={[0.4, 0.8]}
+                    />
+                )}
             </div>
 
             {/* Content */}
