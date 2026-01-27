@@ -25,6 +25,7 @@ export function PackageHero({ title, image, duration, location, price }: Package
                     src={image}
                     alt={title}
                     fill
+                    sizes="100vw"
                     className="object-cover brightness-75"
                     priority
                 />

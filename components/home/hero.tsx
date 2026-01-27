@@ -22,6 +22,7 @@ export function Hero() {
                     src="/Destinations/Gulmarg.jpeg"
                     alt="Experience Heaven on Earth in Kashmir"
                     fill
+                    sizes="100vw"
                     className="object-cover"
                     priority
                     quality={80}

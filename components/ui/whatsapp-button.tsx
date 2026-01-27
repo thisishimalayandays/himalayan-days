@@ -15,8 +15,8 @@ export function WhatsAppButton() {
     const [showTooltip, setShowTooltip] = useState(false);
 
     useEffect(() => {
-        // Show tooltip after 5 seconds
-        const timer = setTimeout(() => setShowTooltip(true), 5000);
+        // Show tooltip after 15 seconds
+        const timer = setTimeout(() => setShowTooltip(true), 15000);
         return () => clearTimeout(timer);
     }, []);
 
