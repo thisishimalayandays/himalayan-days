@@ -39,7 +39,25 @@ export function FeaturedPackages({ packages }: { packages: any[] }) {
     return (
         <div className="py-20 space-y-24 bg-gray-50/30">
             {sections.map((section) => {
-                const filteredPackages = packages.filter(section.filter).slice(0, section.limit);
+                let filteredPackages = packages.filter(section.filter);
+
+                // Sort 'Popular' section to prioritize Winter packages
+                if (section.id === 'popular') {
+                    filteredPackages.sort((a, b) => {
+                        const isWinterA = ['winter', 'snow', 'ski', 'gulmarg', 'frozen', 'gurez'].some(k =>
+                            a.title.toLowerCase().includes(k) || a.category.toLowerCase().includes(k)
+                        );
+                        const isWinterB = ['winter', 'snow', 'ski', 'gulmarg', 'frozen', 'gurez'].some(k =>
+                            b.title.toLowerCase().includes(k) || b.category.toLowerCase().includes(k)
+                        );
+
+                        if (isWinterA && !isWinterB) return -1;
+                        if (!isWinterA && isWinterB) return 1;
+                        return 0;
+                    });
+                }
+
+                filteredPackages = filteredPackages.slice(0, section.limit);
 
                 if (filteredPackages.length === 0) return null;
 
