@@ -5,6 +5,8 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 
+import Snowfall from 'react-snowfall';
+
 interface PackageCardProps {
     packageData: {
         id: string;
@@ -26,6 +28,12 @@ export function PackageCard({ packageData, index = 0 }: PackageCardProps) {
     const rating = packageData.rating || 4.8;
     const reviews = packageData.reviews || 0;
 
+    // Check for winter keywords
+    const isWinter = ['winter', 'snow', 'ski', 'gulmarg', 'frozen', 'gurez'].some(keyword =>
+        packageData.title.toLowerCase().includes(keyword) ||
+        packageData.category.toLowerCase().includes(keyword)
+    );
+
     return (
         <div
             className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 flex flex-col h-full"
@@ -39,6 +47,22 @@ export function PackageCard({ packageData, index = 0 }: PackageCardProps) {
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
+
+                {isWinter && (
+                    <Snowfall
+                        style={{
+                            position: 'absolute',
+                            width: '100%',
+                            height: '100%',
+                            zIndex: 5
+                        }}
+                        snowflakeCount={40}
+                        radius={[0.5, 1.5]}
+                        speed={[0.5, 1.0]}
+                        opacity={[0.4, 0.8]}
+                    />
+                )}
+
                 <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-full text-xs font-bold text-primary uppercase tracking-wide shadow-sm z-10">
                     {packageData.category}
                 </div>

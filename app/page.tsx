@@ -51,8 +51,8 @@ export default async function Home() {
         }}
       />
       <Hero />
-      <PopularDestinations destinations={destinations} />
       <FeaturedPackages packages={packages} />
+      <PopularDestinations destinations={destinations} />
       <Intro />
       <WhyChooseUs />
       <StatsSection />

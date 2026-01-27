@@ -120,17 +120,17 @@ export function HotelCalculator({
                         <div className="col-span-2">
                             <Input
                                 type="number"
-                                min="1"
-                                value={item.rooms}
-                                onChange={(e) => updateRow(index, "rooms", parseInt(e.target.value) || 1)}
+                                min="0"
+                                value={item.rooms || ""}
+                                onChange={(e) => updateRow(index, "rooms", parseInt(e.target.value) || 0)}
                             />
                         </div>
                         <div className="col-span-2">
                             <Input
                                 type="number"
-                                min="1"
-                                value={item.nights}
-                                onChange={(e) => updateRow(index, "nights", parseInt(e.target.value) || 1)}
+                                min="0"
+                                value={item.nights || ""}
+                                onChange={(e) => updateRow(index, "nights", parseInt(e.target.value) || 0)}
                             />
                         </div>
                         <div className="col-span-1 text-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -221,9 +221,9 @@ export function TransportCalculator({
                         <div className="col-span-3">
                             <Input
                                 type="number"
-                                min="1"
-                                value={item.days}
-                                onChange={(e) => updateRow(index, "days", parseInt(e.target.value) || 1)}
+                                min="0"
+                                value={item.days || ""}
+                                onChange={(e) => updateRow(index, "days", parseInt(e.target.value) || 0)}
                             />
                         </div>
                         <div className="col-span-1 text-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -314,9 +314,9 @@ export function ActivityCalculator({
                         <div className="col-span-3">
                             <Input
                                 type="number"
-                                min="1"
-                                value={item.quantity}
-                                onChange={(e) => updateRow(index, "quantity", parseInt(e.target.value) || 1)}
+                                min="0"
+                                value={item.quantity || ""}
+                                onChange={(e) => updateRow(index, "quantity", parseInt(e.target.value) || 0)}
                             />
                         </div>
                         <div className="col-span-1 text-center opacity-0 group-hover:opacity-100 transition-opacity">
