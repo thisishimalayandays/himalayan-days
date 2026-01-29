@@ -173,14 +173,7 @@ export default async function PackagePage({ params }: { params: Promise<{ slug: 
             </div>
 
             <SimilarPackages currentId={pkg.id} duration={pkg.duration} />
-            <MobileBookingBar
-                price={pkg.startingPrice}
-                onBook={() => {
-                    // Scroll to booking form
-                    const form = document.querySelector('form');
-                    form?.scrollIntoView({ behavior: 'smooth' });
-                }}
-            />
+            <MobileBookingBar price={pkg.startingPrice} />
             <Footer />
         </main>
     );
