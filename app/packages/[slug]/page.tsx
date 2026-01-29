@@ -11,6 +11,7 @@ import { SimilarPackages } from "@/components/packages/similar-packages";
 import { TrustBadges } from '@/components/packages/trust-badges';
 import { WinterFAQ } from '@/components/packages/winter-faq';
 import { MobileBookingBar } from '@/components/packages/mobile-booking-bar';
+import { ViewContent } from '@/components/analytics/view-content';
 
 // generateStaticParams removed to allow build on empty database
 
@@ -172,6 +173,11 @@ export default async function PackagePage({ params }: { params: Promise<{ slug: 
 
             <SimilarPackages currentId={pkg.id} duration={pkg.duration} />
             <MobileBookingBar price={pkg.startingPrice} />
+            <ViewContent
+                id={pkg.id}
+                name={pkg.title}
+                price={pkg.startingPrice}
+            />
             <Footer />
         </main>
     );

@@ -1,9 +1,14 @@
 'use client';
+import * as analytics from '@/lib/analytics';
 
 export function MobileBookingBar({ price }: { price: number }) {
     if (!price) return null;
 
     const handleBook = () => {
+        analytics.event('InitiateCheckout', {
+            value: price,
+            currency: 'INR'
+        });
         const form = document.querySelector('form');
         if (form) {
             form.scrollIntoView({ behavior: 'smooth', block: 'start' });

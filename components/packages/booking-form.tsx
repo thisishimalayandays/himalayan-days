@@ -5,6 +5,7 @@ import { Phone, CheckCircle2 } from 'lucide-react';
 import { useState } from 'react';
 import { createInquiry, InquiryInput } from '@/app/actions/inquiries';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import * as analytics from '@/lib/analytics';
 
 export function BookingForm({ packageTitle, packageId }: { packageTitle?: string, packageId?: string }) {
     const { executeRecaptcha } = useGoogleReCaptcha();
@@ -112,6 +113,15 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
         // 2. WhatsApp Redirect
         const packageNameText = packageTitle ? `\nPackage: *${packageTitle}*` : '';
         const message = `Hello, I am interested in booking a package.${packageNameText}\n\nName: ${formData.name}\nPhone: ${fullPhone}\nDate: ${formData.date}\nGuests: ${formData.guests}`;
+
+        // Track Lead Event
+        analytics.event('Lead', {
+            content_name: packageTitle || 'General Inquiry',
+            content_category: 'Booking',
+            value: 0, // Or potential value
+            currency: 'INR'
+        });
+
         const whatsappUrl = `https://wa.me/919103901803?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, '_blank');
         setIsSubmitting(false);
