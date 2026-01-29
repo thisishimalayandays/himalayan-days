@@ -37,7 +37,7 @@ export default function AboutPage() {
                     </div>
                     <div className="relative h-[400px] rounded-2xl overflow-hidden shadow-2xl bg-white p-12">
                         <Image
-                            src="/Himalayan Days Logo.png"
+                            src="/logo.png"
                             alt="Himalayan Days Logo"
                             fill
                             className="object-contain"
