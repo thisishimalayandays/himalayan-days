@@ -1,7 +1,6 @@
-'use client';
 import Image from 'next/image';
 import { MapPin, Clock } from 'lucide-react';
-
+import { SnowEffect } from '@/components/ui/snow-effect';
 
 interface PackageHeroProps {
     title: string;
@@ -11,8 +10,6 @@ interface PackageHeroProps {
     price: number;
     priceRange?: string; // Added prop
 }
-
-import Snowfall from 'react-snowfall';
 
 export function PackageHero({ title, image, duration, location, price, priceRange }: PackageHeroProps) {
     const isWinter = ['winter', 'snow', 'ski', 'gulmarg', 'frozen'].some(keyword =>
@@ -27,26 +24,14 @@ export function PackageHero({ title, image, duration, location, price, priceRang
                     src={image}
                     alt={title}
                     fill
-                    sizes="100vw"
+                    sizes="(max-width: 768px) 100vw, 100vw"
                     className="object-cover brightness-75"
                     priority
+                    quality={85}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
-                {isWinter && (
-                    <Snowfall
-                        style={{
-                            position: 'absolute',
-                            width: '100%',
-                            height: '100%',
-                            zIndex: 10
-                        }}
-                        snowflakeCount={100}
-                        radius={[0.5, 2.0]}
-                        speed={[0.5, 1.5]}
-                        opacity={[0.4, 0.8]}
-                    />
-                )}
+                {isWinter && <SnowEffect />}
             </div>
 
             {/* Content */}
