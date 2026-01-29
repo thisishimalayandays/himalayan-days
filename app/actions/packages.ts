@@ -192,6 +192,7 @@ export async function getPackagesList() {
             title: true,
             slug: true,
             startingPrice: true,
+            priceRange: true, // Added field
             duration: true,
             image: true,
             category: true,

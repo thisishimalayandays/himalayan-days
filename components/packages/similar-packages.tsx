@@ -23,7 +23,8 @@ export async function SimilarPackages({ currentId, duration }: { currentId: stri
                                 image: pkg.image,
                                 category: pkg.category,
                                 location: pkg.location || "Kashmir",
-                                features: JSON.parse(pkg.features)
+                                features: JSON.parse(pkg.features),
+                                priceRange: pkg.priceRange || undefined
                             }}
                         />
                     ))}

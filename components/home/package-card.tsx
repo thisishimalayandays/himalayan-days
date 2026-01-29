@@ -18,6 +18,7 @@ interface PackageCardProps {
         category: string;
         location: string;
         features: string[];
+        priceRange?: string;
         rating?: number;
         reviews?: number;
     };
@@ -108,8 +109,14 @@ export function PackageCard({ packageData, index = 0 }: PackageCardProps) {
                     <div>
                         <span className="text-xs text-gray-400 font-medium uppercase tracking-wider block mb-0.5">Starting from</span>
                         <div className="flex items-baseline gap-1">
-                            <span className="text-lg font-bold text-primary">₹{packageData.startingPrice.toLocaleString()}</span>
-                            <span className="text-xs text-gray-400">/ person</span>
+                            {packageData.priceRange ? (
+                                <span className="text-lg font-bold text-primary">{packageData.priceRange}</span>
+                            ) : (
+                                <>
+                                    <span className="text-lg font-bold text-primary">₹{packageData.startingPrice.toLocaleString()}</span>
+                                    <span className="text-xs text-gray-400">/ person</span>
+                                </>
+                            )}
                         </div>
                     </div>
                     <div className="flex gap-3">

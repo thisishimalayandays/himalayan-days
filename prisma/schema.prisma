@@ -25,6 +25,7 @@ model Package {
   title         String
   duration      String
   startingPrice Int
+  priceRange    String?
   image         String
   gallery       String // JSON stringified array of URLs
   category      String

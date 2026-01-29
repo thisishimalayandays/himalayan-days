@@ -2,17 +2,19 @@
 import Image from 'next/image';
 import { MapPin, Clock } from 'lucide-react';
 
+
 interface PackageHeroProps {
     title: string;
     image: string;
     duration: string;
     location: string;
     price: number;
+    priceRange?: string; // Added prop
 }
 
 import Snowfall from 'react-snowfall';
 
-export function PackageHero({ title, image, duration, location, price }: PackageHeroProps) {
+export function PackageHero({ title, image, duration, location, price, priceRange }: PackageHeroProps) {
     const isWinter = ['winter', 'snow', 'ski', 'gulmarg', 'frozen'].some(keyword =>
         title.toLowerCase().includes(keyword)
     );
@@ -66,7 +68,11 @@ export function PackageHero({ title, image, duration, location, price }: Package
 
                     <div className="flex items-end gap-2">
                         <span className="text-lg md:text-xl text-gray-300 mb-1">Starting from</span>
-                        <span className="text-3xl md:text-5xl font-bold text-primary">₹{price.toLocaleString()}</span>
+                        {priceRange ? (
+                            <span className="text-3xl md:text-5xl font-bold text-primary">{priceRange}</span>
+                        ) : (
+                            <span className="text-3xl md:text-5xl font-bold text-primary">₹{price.toLocaleString()}</span>
+                        )}
                         <span className="text-sm md:text-base text-gray-400 mb-2">/ person *</span>
                     </div>
                 </div>

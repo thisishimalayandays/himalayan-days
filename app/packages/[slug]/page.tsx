@@ -88,6 +88,7 @@ export default async function PackagePage({ params }: { params: Promise<{ slug: 
                 duration={pkg.duration}
                 location={pkg.location}
                 price={pkg.startingPrice}
+                priceRange={pkg.priceRange || undefined}
             />
 
             <div className="container mx-auto px-4 py-16">
