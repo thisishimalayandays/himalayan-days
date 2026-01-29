@@ -8,6 +8,9 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Check, X } from 'lucide-react';
 import { SimilarPackages } from "@/components/packages/similar-packages";
+import { TrustBadges } from '@/components/packages/trust-badges';
+import { WinterFAQ } from '@/components/packages/winter-faq';
+import { MobileBookingBar } from '@/components/packages/mobile-booking-bar';
 
 // generateStaticParams removed to allow build on empty database
 
@@ -52,6 +55,7 @@ export default async function PackagePage({ params }: { params: Promise<{ slug: 
         itinerary: JSON.parse(pkgRaw.itinerary) as { day: number; title: string; desc: string }[],
         inclusions: JSON.parse(pkgRaw.inclusions) as string[],
         exclusions: JSON.parse(pkgRaw.exclusions) as string[],
+        priceRange: (pkgRaw as any).priceRange as string | null // Explicit cast to avoid type error if client out of sync
     };
 
     return (
@@ -96,6 +100,12 @@ export default async function PackagePage({ params }: { params: Promise<{ slug: 
                     {/* Main Content */}
                     <div className="lg:col-span-2 space-y-12">
 
+
+                        {/* Trust Badges */}
+                        {pkg.title.toLowerCase().includes('winter') && (
+                            <TrustBadges />
+                        )}
+
                         {/* Overview */}
                         <section>
                             <h2 className="text-2xl font-bold text-gray-900 mb-4">Tour Overview</h2>
@@ -118,6 +128,11 @@ export default async function PackagePage({ params }: { params: Promise<{ slug: 
                             <h2 className="text-2xl font-bold text-gray-900 mb-6">Detailed Itinerary</h2>
                             <ItineraryTimeline days={pkg.itinerary} />
                         </section>
+
+                        {/* Winter FAQ */}
+                        {pkg.title.toLowerCase().includes('winter') && (
+                            <WinterFAQ />
+                        )}
 
                         {/* Inclusions & Exclusions */}
                         <section className="grid md:grid-cols-2 gap-8 p-8 bg-gray-50 rounded-2xl">
@@ -158,6 +173,14 @@ export default async function PackagePage({ params }: { params: Promise<{ slug: 
             </div>
 
             <SimilarPackages currentId={pkg.id} duration={pkg.duration} />
+            <MobileBookingBar
+                price={pkg.startingPrice}
+                onBook={() => {
+                    // Scroll to booking form
+                    const form = document.querySelector('form');
+                    form?.scrollIntoView({ behavior: 'smooth' });
+                }}
+            />
             <Footer />
         </main>
     );
