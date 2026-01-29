@@ -102,9 +102,7 @@ export default async function PackagePage({ params }: { params: Promise<{ slug: 
 
 
                         {/* Trust Badges */}
-                        {pkg.title.toLowerCase().includes('winter') && (
-                            <TrustBadges />
-                        )}
+                        <TrustBadges />
 
                         {/* Overview */}
                         <section>
