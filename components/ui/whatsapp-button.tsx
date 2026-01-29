@@ -24,8 +24,10 @@ export function WhatsAppButton() {
         return null;
     }
 
+    const isPackageDetail = pathname?.startsWith('/packages/') && pathname !== '/packages';
+
     return (
-        <div className="fixed bottom-6 right-6 z-50 flex items-end justify-end gap-3 pointer-events-none">
+        <div className={`fixed right-6 z-50 flex items-end justify-end gap-3 pointer-events-none ${isPackageDetail ? 'bottom-24 md:bottom-6' : 'bottom-6'}`}>
             <AnimatePresence>
                 {showTooltip && (
                     <motion.div
@@ -43,9 +45,9 @@ export function WhatsAppButton() {
                                     e.preventDefault();
                                     setShowTooltip(false);
                                 }}
-                                className="text-gray-400 hover:text-gray-600 transition-colors"
+                                className="text-gray-500 hover:text-gray-700 transition-colors -mr-1 -mt-1 p-1"
                             >
-                                <X size={14} />
+                                <X size={18} />
                             </button>
                         </div>
                         <p className="text-xs text-gray-500 leading-relaxed">

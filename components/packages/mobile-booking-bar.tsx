@@ -21,7 +21,7 @@ export function MobileBookingBar({ price }: { price: number }) {
             </div>
             <button
                 onClick={handleBook}
-                className="bg-primary hover:bg-orange-600 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm flex-1 mr-20 text-sm"
+                className="bg-primary hover:bg-orange-600 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm flex-1 text-sm"
             >
                 Book Now
             </button>
