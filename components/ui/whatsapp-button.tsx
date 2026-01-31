@@ -18,6 +18,7 @@ export function WhatsAppButton() {
     const [isOpen, setIsOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({ name: '', phone: '' });
+
     const [showTooltip, setShowTooltip] = useState(false);
 
     // Initial nudge
@@ -45,7 +46,7 @@ export function WhatsAppButton() {
                 name: formData.name,
                 phone: formData.phone,
                 message: "Started Quick Chat via WhatsApp Button",
-                type: "WHATSAPP_START",
+                type: "GENERAL",
                 captchaToken: token
             });
 
