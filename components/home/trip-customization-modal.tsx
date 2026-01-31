@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { createInquiry, InquiryInput } from '@/app/actions/inquiries';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import * as analytics from '@/lib/analytics';
+import { useToast } from '@/hooks/use-toast';
 
 interface TripCustomizationModalProps {
     isOpen: boolean;
@@ -26,6 +27,7 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
         budget: 'Standard',
         type: 'Family'
     });
+    const { toast } = useToast();
 
     useEffect(() => {
         setMounted(true);
@@ -63,40 +65,51 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
                 type: "PLAN_MY_TRIP",
                 // Construct a message with extra details not directly mapped
                 message: `Duration: ${formData.duration} days, Type: ${formData.type}`,
-                travelers: undefined, // Not explicitly asked in this form, maybe infer or leave blank
+                travelers: undefined,
                 captchaToken: token
             };
 
-            // We don't await this to block the user, or maybe we should? 
-            // Better to try save, but ensure redirect happens regardless.
-            await createInquiry(inquiryData);
+            const result = await createInquiry(inquiryData);
+
+            if (!result.success) {
+                toast({
+                    variant: "destructive",
+                    title: "Submission Failed",
+                    description: result.error || "Spam detected. Please try again."
+                });
+                setIsSubmitting(false);
+                return;
+            }
+
+            // Track Lead Event
+            analytics.event('Lead', {
+                content_name: 'Trip Customization',
+                value: 0,
+                currency: 'INR'
+            });
+
+            // Success - No Redirect
+            toast({
+                title: "Trip Request Sent! ✈️",
+                description: "Our experts are reviewing your plan. Expect a call shortly!",
+                className: "bg-green-50 border-green-200 text-green-800"
+            });
+
+            setFormData({
+                name: '', phone: '', date: '', duration: '', budget: 'Standard', type: 'Family'
+            });
+            onClose();
 
         } catch (error) {
             console.error("Failed to save inquiry", error);
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Something went wrong."
+            });
+        } finally {
+            setIsSubmitting(false);
         }
-
-        // Track Lead Event
-        analytics.event('Lead', {
-            content_name: 'Trip Customization',
-            value: 0, // Or estimated value
-            currency: 'INR'
-        });
-
-        // 2. Construct WhatsApp Message
-        const message = `*New Trip Enquiry via Website* \n\n` +
-            `*Name:* ${formData.name}\n` +
-            `*Phone:* ${formData.phone}\n` +
-            `*Travel Date:* ${formData.date}\n` +
-            `*Duration:* ${formData.duration} Days\n` +
-            `*Budget:* ${formData.budget}\n` +
-            `*Trip Type:* ${formData.type}\n\n` +
-            `Please provide a quote.`;
-
-        const encodedMessage = encodeURIComponent(message);
-        window.open(`https://wa.me/919103901803?text=${encodedMessage}`, '_blank');
-
-        setIsSubmitting(false);
-        onClose();
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -271,10 +284,10 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
                                 <Button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold h-12 rounded-xl shadow-lg hover:shadow-xl hover:shadow-[#25D366]/20 transition-all text-lg flex items-center justify-center gap-2 mt-2"
+                                    className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold h-12 rounded-xl shadow-lg hover:shadow-xl hover:shadow-orange-600/20 transition-all text-lg flex items-center justify-center gap-2 mt-2"
                                 >
-                                    <Phone className="w-5 h-5 fill-current" />
-                                    {isSubmitting ? 'Processing...' : 'Get Quote on WhatsApp'}
+                                    <Plane className="w-5 h-5 fill-current" />
+                                    {isSubmitting ? 'Processing...' : 'Submit Trip Request'}
                                 </Button>
 
                                 <p className="text-xs text-center text-gray-400 mt-2">

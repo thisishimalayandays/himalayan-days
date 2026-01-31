@@ -7,6 +7,7 @@ import { X, MessageCircle, Phone, Send, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createInquiry } from '@/app/actions/inquiries';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { useToast } from '@/hooks/use-toast';
 
 interface EnquiryModalProps {
     isOpen: boolean;
@@ -23,6 +24,7 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
 
     const { executeRecaptcha } = useGoogleReCaptcha();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const { toast } = useToast();
 
     useEffect(() => {
         setMounted(true);
@@ -51,29 +53,44 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
             const token = await executeRecaptcha('enquiry_modal_submit');
 
             // 1. Save to Database
-            await createInquiry({
+            const result = await createInquiry({
                 name: formData.name,
                 phone: formData.phone,
                 message: formData.message || "General Enquiry via Website Header",
                 type: "GENERAL",
                 captchaToken: token
             });
+
+            if (!result.success) {
+                toast({
+                    variant: "destructive",
+                    title: "Submission Failed",
+                    description: result.error || "Spam detected. Please try again."
+                });
+                setIsSubmitting(false);
+                return;
+            }
+
+            // Success - No Redirect
+            toast({
+                title: "Enquiry Sent! ✅",
+                description: "We have received your message. Our team will contact you shortly.",
+                className: "bg-green-50 border-green-200 text-green-800"
+            });
+
+            setFormData({ name: '', phone: '', message: '' });
+            onClose();
+
         } catch (error) {
             console.error("Failed to save enquiry", error);
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Something went wrong. Please try again."
+            });
+        } finally {
+            setIsSubmitting(false);
         }
-
-        // 2. WhatsApp Redirect
-        const message = `*Quick Enquiry from Website* \n\n` +
-            `*Name:* ${formData.name}\n` +
-            `*Phone:* ${formData.phone}\n` +
-            `*Message:* ${formData.message || "I have a query regarding a package."}\n\n` +
-            `Please connect with me.`;
-
-        const encodedMessage = encodeURIComponent(message);
-        window.open(`https://wa.me/919103901803?text=${encodedMessage}`, '_blank');
-
-        setIsSubmitting(false);
-        onClose();
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
