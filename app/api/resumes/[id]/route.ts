@@ -22,10 +22,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         const type = app.resumeType || 'application/pdf'
         const filename = app.resumeName || 'resume.pdf'
 
-        // Convert Buffer to Uint8Array/ArrayBuffer if needed, or pass directly
-        // Update: Prisma Bytes is Buffer. Next Response init body accepts Buffer.
+        // Fix: Convert Uint8Array/Buffer to Blob for NextResponse
+        const fileBuffer = app.resumeData
 
-        return new NextResponse(buffer, {
+        return new NextResponse(fileBuffer as any, {
             status: 200,
             headers: {
                 'Content-Type': type,
