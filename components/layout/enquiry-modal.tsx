@@ -3,11 +3,10 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, MessageCircle, Phone, Send, User, CheckCircle2 } from 'lucide-react';
+import { X, MessageCircle, Phone, Send, User, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createInquiry } from '@/app/actions/inquiries';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
-import { useToast } from '@/hooks/use-toast';
 
 interface EnquiryModalProps {
     isOpen: boolean;
@@ -22,16 +21,17 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
         message: ''
     });
     const [isSuccess, setIsSuccess] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const { executeRecaptcha } = useGoogleReCaptcha();
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const { toast } = useToast();
 
     useEffect(() => {
         setMounted(true);
         if (isOpen) {
             document.body.style.overflow = 'hidden';
-            setIsSuccess(false); // Reset to form on open
+            setIsSuccess(false);
+            setErrorMessage(null);
         } else {
             document.body.style.overflow = 'unset';
             setIsSubmitting(false);
@@ -43,9 +43,10 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setErrorMessage(null);
 
         if (!executeRecaptcha) {
-            console.error("ReCAPTCHA not ready");
+            setErrorMessage("ReCAPTCHA not ready. Please check your connection.");
             return;
         }
 
@@ -64,33 +65,26 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
             });
 
             if (!result.success) {
-                toast({
-                    variant: "destructive",
-                    title: "Submission Failed",
-                    description: result.error || "Spam detected. Please try again."
-                });
+                setErrorMessage(result.error || "Spam detected. Please try again.");
                 setIsSubmitting(false);
                 return;
             }
 
             // Success - Show In-Modal Success
             setIsSuccess(true);
+            setErrorMessage(null);
             setFormData({ name: '', phone: '', message: '' });
-            // Notification toast is optional now since we show meaningful UI
 
         } catch (error) {
             console.error("Failed to save enquiry", error);
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: "Something went wrong. Please try again."
-            });
+            setErrorMessage("Connection failed. Please try again.");
             setIsSubmitting(false);
         }
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+        if (errorMessage) setErrorMessage(null);
     };
 
     if (!mounted) return null;
@@ -187,6 +181,13 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
                                                 />
                                             </div>
                                         </div>
+
+                                        {errorMessage && (
+                                            <div className="flex items-center gap-2 text-red-600 bg-red-50 p-3 rounded-lg text-sm border border-red-100 animate-in fade-in slide-in-from-top-1">
+                                                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                                                <p>{errorMessage}</p>
+                                            </div>
+                                        )}
 
                                         <Button
                                             type="submit"
