@@ -78,57 +78,66 @@ export function AiTripWizard({ isOpen, onClose }: AiTripWizardProps) {
         const isLuxury = budget.includes('Luxury');
         const isShort = duration.includes('Short');
         const isLong = duration.includes('Long');
+        const isCouple = travelers === 'Couple';
 
-        // 1. Long Trips -> Upsell the Grand Tour
+        // 1. Long Trips (8+ Days) -> Complete Kashmir Tour
         if (isLong) {
             return {
-                title: "The Grand Kashmir Experience",
-                duration: "11 Days 10 Nights",
-                price: "Starts ₹45,000/person",
-                desc: "The ultimate itinerary covering every hidden gem. Why settle for less?",
-                slug: "the-grand-kashmir-experience"
+                title: "Complete Kashmir Tour",
+                duration: "7 Nights / 8 Days",
+                price: "Starts ₹32,000/person",
+                desc: "The ultimate itinerary covering Srinagar, Gulmarg, Pahalgam & Sonmarg.",
+                slug: "complete-kashmir-tour"
             };
         }
 
-        // 2. Short Trips
+        // 2. Short Trips (3-4 Days)
         if (isShort) {
-            // Upsell Couples to Luxury
-            if (travelers === 'Couple' || isLuxury) {
+            if (isLuxury) {
                 return {
-                    title: "Luxury Kashmir Retreat",
-                    duration: "4 Days 3 Nights",
+                    title: "Luxury Houseboat Retreat",
+                    duration: "3 Nights / 4 Days",
                     price: "Starts ₹18,000/person",
-                    desc: "Premium houseboats, private shikara rides, and 5-star comfort.",
-                    slug: "luxury-kashmir-retreat"
+                    desc: "Stay in premium houseboats with private shikara rides.",
+                    slug: "luxury-houseboat-retreat"
+                };
+            }
+            if (isCouple) {
+                return {
+                    title: "Short Romantic Getaway",
+                    duration: "3 Nights / 4 Days",
+                    price: "Starts ₹14,500/person",
+                    desc: "A quick, romantic escape to the mountains.",
+                    slug: "short-romantic-getaway"
                 };
             }
             return {
-                title: "Magical Kashmir Weekend",
-                duration: "3 Days 2 Nights",
+                title: "Unexplored Bangus Valley",
+                duration: "3 Nights / 4 Days",
                 price: "Starts ₹12,500/person",
-                desc: "A quick but unforgettable escape to Srinagar and Gulmarg.",
-                slug: "magical-kashmir-weekend"
+                desc: "Discover the hidden gems of Kashmir in a short trip.",
+                slug: "unexplored-bangus-valley"
             };
         }
 
-        // 3. Medium (Standard/Fallback) -> The Bestsellers
-        if (isLuxury || travelers === 'Family') {
+        // 3. Medium (5-7 Days)
+        if (isCouple) {
             return {
-                title: "Royal Kashmir Expedition",
-                duration: "6 Days 5 Nights",
+                title: "Snow-Kissed Kashmir Honeymoon",
+                duration: "6 Nights / 7 Days",
                 price: "Starts ₹28,000/person",
-                desc: "Our most premium 6-day itinerary perfect for families seeking comfort.",
-                slug: "royal-kashmir-expedition"
+                desc: "Romantic candle-light dinners and snow activities.",
+                slug: "snow-kissed-kashmir-honeymoon"
             };
         }
 
-        // Default Bestseller
+        // Default / Family / Winter
         return {
-            title: "Heaven on Earth Experience",
-            duration: "5 Days 4 Nights",
+            title: "Winter Family Fun in Kashmir",
+            duration: "5 Nights / 6 Days",
             price: "Starts ₹22,500/person",
-            desc: "The classic Kashmir tour. Covers all major destinations at the best price.",
-            slug: "heaven-on-earth-experience"
+            desc: "Perfect for families. Snowman building, skiing, and fun.",
+            slug: "winter-family-fun-kashmir"
         };
     };
 
