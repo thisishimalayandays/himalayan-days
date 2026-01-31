@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import * as analytics from '@/lib/analytics';
-import { X, Loader2, MessageCircle } from 'lucide-react';
+import { X, Loader2, MessageCircle, AlertCircle } from 'lucide-react';
 import { createInquiry } from '@/app/actions/inquiries';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { Input } from '@/components/ui/input';
@@ -18,6 +18,7 @@ export function WhatsAppButton() {
     const [isOpen, setIsOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({ name: '', phone: '' });
+    const [errors, setErrors] = useState({ name: '', phone: '' });
     const [showTooltip, setShowTooltip] = useState(false);
 
     // Initial nudge
@@ -32,8 +33,37 @@ export function WhatsAppButton() {
 
     const isPackageDetail = pathname?.startsWith('/packages/') && pathname !== '/packages';
 
+    const validate = () => {
+        let isValid = true;
+        const newErrors = { name: '', phone: '' };
+
+        // Name Validation
+        if (formData.name.trim().length < 2) {
+            newErrors.name = "Name is too short";
+            isValid = false;
+        } else if (/\d/.test(formData.name)) {
+            newErrors.name = "Name cannot contain numbers";
+            isValid = false;
+        }
+
+        // Phone Validation (Strip spaces/dashes)
+        const cleanPhone = formData.phone.replace(/\D/g, '');
+        if (cleanPhone.length < 10 || cleanPhone.length > 15) {
+            newErrors.phone = "Enter a valid phone number (10-15 digits)";
+            isValid = false;
+        }
+
+        setErrors(newErrors);
+        return isValid;
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Clear previous errors
+        setErrors({ name: '', phone: '' });
+
+        if (!validate()) return;
         if (!executeRecaptcha) return;
 
         setIsSubmitting(true);
@@ -96,25 +126,39 @@ export function WhatsAppButton() {
 
                         {isOpen ? (
                             <form onSubmit={handleSubmit} className="flex flex-col gap-3 mt-1">
-                                <Input
-                                    placeholder="Your Name"
-                                    className="h-9 text-sm"
-                                    required
-                                    autoComplete="name"
-                                    value={formData.name}
-                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                />
-                                <Input
-                                    placeholder="Phone Number"
-                                    className="h-9 text-sm"
-                                    type="tel"
-                                    inputMode="numeric"
-                                    pattern="[0-9]*"
-                                    autoComplete="tel"
-                                    required
-                                    value={formData.phone}
-                                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                />
+                                <div>
+                                    <Input
+                                        placeholder="Your Name"
+                                        className={`h-9 text-sm ${errors.name ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                                        required
+                                        autoComplete="name"
+                                        value={formData.name}
+                                        onChange={(e) => {
+                                            setFormData({ ...formData, name: e.target.value });
+                                            if (errors.name) setErrors({ ...errors, name: '' });
+                                        }}
+                                    />
+                                    {errors.name && <p className="text-[10px] text-red-500 mt-1 ml-1">{errors.name}</p>}
+                                </div>
+
+                                <div>
+                                    <Input
+                                        placeholder="Phone Number"
+                                        className={`h-9 text-sm ${errors.phone ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                                        type="tel"
+                                        inputMode="numeric"
+                                        pattern="[0-9]*"
+                                        autoComplete="tel"
+                                        required
+                                        value={formData.phone}
+                                        onChange={(e) => {
+                                            setFormData({ ...formData, phone: e.target.value });
+                                            if (errors.phone) setErrors({ ...errors, phone: '' });
+                                        }}
+                                    />
+                                    {errors.phone && <p className="text-[10px] text-red-500 mt-1 ml-1">{errors.phone}</p>}
+                                </div>
+
                                 <Button
                                     type="submit"
                                     disabled={isSubmitting}
