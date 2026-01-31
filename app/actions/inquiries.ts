@@ -26,24 +26,30 @@ export async function createInquiry(data: InquiryInput) {
         const validated = InquirySchema.parse(data);
 
         // Verify ReCAPTCHA if token is provided (or enforce it if you want strict security)
+        // Verify ReCAPTCHA if token is provided (or enforce it if you want strict security)
         if (validated.captchaToken) {
-            try {
-                const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({
-                        secret: process.env.RECAPTCHA_SECRET_KEY!,
-                        response: validated.captchaToken,
-                    }),
-                });
-                const data = await response.json();
-                if (!data.success || (data.score !== undefined && data.score < 0.5)) {
-                    console.error("Spam detected:", data);
-                    return { success: false, error: "Spam detected. Please try again later." };
+            // Bypass for Development/Localhost to prevent "Spam Detected" during testing
+            if (process.env.NODE_ENV === 'development') {
+                console.log("⚠️ Development Mode: Skipping ReCaptcha Verification");
+            } else {
+                try {
+                    const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: new URLSearchParams({
+                            secret: process.env.RECAPTCHA_SECRET_KEY!,
+                            response: validated.captchaToken,
+                        }),
+                    });
+                    const data = await response.json();
+                    if (!data.success || (data.score !== undefined && data.score < 0.5)) {
+                        console.error("Spam detected:", data);
+                        return { success: false, error: "Spam detected. Please try again later." };
+                    }
+                } catch (error) {
+                    console.error("Captcha verification failed:", error);
+                    return { success: false, error: "Security check failed." };
                 }
-            } catch (error) {
-                console.error("Captcha verification failed:", error);
-                return { success: false, error: "Security check failed." };
             }
         } else {
             // Optional: Return error if you want to force captcha for all inquiries
