@@ -3,12 +3,13 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, User, Phone, Wallet, Map, Clock, Plane } from 'lucide-react';
+import { X, Calendar, User, Phone, Wallet, Map, Clock, Plane, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createInquiry, InquiryInput } from '@/app/actions/inquiries';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import * as analytics from '@/lib/analytics';
 import { useToast } from '@/hooks/use-toast';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface TripCustomizationModalProps {
     isOpen: boolean;
@@ -19,6 +20,7 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
     const { executeRecaptcha } = useGoogleReCaptcha();
     const [mounted, setMounted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [countryIso, setCountryIso] = useState('IN');
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
@@ -29,6 +31,63 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
     });
     const [errors, setErrors] = useState<{ name?: string, phone?: string }>({});
     const { toast } = useToast();
+
+    const countryCodes = [
+        { code: '+91', iso: 'IN', label: 'India' },
+        { code: '+1', iso: 'US', label: 'USA' },
+        { code: '+44', iso: 'GB', label: 'UK' },
+        { code: '+971', iso: 'AE', label: 'UAE' },
+        { code: '+61', iso: 'AU', label: 'Australia' },
+        { code: '+1', iso: 'CA', label: 'Canada' },
+        { code: '+65', iso: 'SG', label: 'Singapore' },
+        { code: '+60', iso: 'MY', label: 'Malaysia' },
+        { code: '+81', iso: 'JP', label: 'Japan' },
+        { code: '+49', iso: 'DE', label: 'Germany' },
+        { code: '+33', iso: 'FR', label: 'France' },
+        { code: '+966', iso: 'SA', label: 'Saudi Arabia' },
+        { code: '+974', iso: 'QA', label: 'Qatar' },
+        { code: '+965', iso: 'KW', label: 'Kuwait' },
+        { code: '+968', iso: 'OM', label: 'Oman' },
+        { code: '+973', iso: 'BH', label: 'Bahrain' },
+        { code: '+880', iso: 'BD', label: 'Bangladesh' },
+        { code: '+94', iso: 'LK', label: 'Sri Lanka' },
+        { code: '+977', iso: 'NP', label: 'Nepal' },
+        { code: '+66', iso: 'TH', label: 'Thailand' },
+        { code: '+62', iso: 'ID', label: 'Indonesia' },
+        { code: '+63', iso: 'PH', label: 'Philippines' },
+        { code: '+84', iso: 'VN', label: 'Vietnam' },
+        { code: '+86', iso: 'CN', label: 'China' },
+        { code: '+852', iso: 'HK', label: 'Hong Kong' },
+        { code: '+82', iso: 'KR', label: 'South Korea' },
+        { code: '+39', iso: 'IT', label: 'Italy' },
+        { code: '+34', iso: 'ES', label: 'Spain' },
+        { code: '+31', iso: 'NL', label: 'Netherlands' },
+        { code: '+41', iso: 'CH', label: 'Switzerland' },
+        { code: '+46', iso: 'SE', label: 'Sweden' },
+        { code: '+47', iso: 'NO', label: 'Norway' },
+        { code: '+45', iso: 'DK', label: 'Denmark' },
+        { code: '+353', iso: 'IE', label: 'Ireland' },
+        { code: '+32', iso: 'BE', label: 'Belgium' },
+        { code: '+43', iso: 'AT', label: 'Austria' },
+        { code: '+48', iso: 'PL', label: 'Poland' },
+        { code: '+351', iso: 'PT', label: 'Portugal' },
+        { code: '+30', iso: 'GR', label: 'Greece' },
+        { code: '+90', iso: 'TR', label: 'Turkey' },
+        { code: '+7', iso: 'RU', label: 'Russia' },
+        { code: '+20', iso: 'EG', label: 'Egypt' },
+        { code: '+27', iso: 'ZA', label: 'South Africa' },
+        { code: '+254', iso: 'KE', label: 'Kenya' },
+        { code: '+55', iso: 'BR', label: 'Brazil' },
+        { code: '+52', iso: 'MX', label: 'Mexico' },
+        { code: '+54', iso: 'AR', label: 'Argentina' },
+        { code: '+64', iso: 'NZ', label: 'New Zealand' },
+        { code: '+93', iso: 'AF', label: 'Afghanistan' },
+        { code: '+95', iso: 'MM', label: 'Myanmar' },
+        { code: '+960', iso: 'MV', label: 'Maldives' },
+        { code: '+975', iso: 'BT', label: 'Bhutan' },
+        { code: '+98', iso: 'IR', label: 'Iran' },
+        { code: '+964', iso: 'IQ', label: 'Iraq' },
+    ];
 
     useEffect(() => {
         setMounted(true);
@@ -60,9 +119,20 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
 
         // Phone Validation
         const cleanPhone = formData.phone.replace(/\D/g, '');
-        if (cleanPhone.length < 10 || cleanPhone.length > 15) {
-            newErrors.phone = "Enter valid phone (10-15 digits)";
-            isValid = false;
+
+        if (countryIso === 'IN') {
+            if (cleanPhone.length !== 10) {
+                newErrors.phone = "Indian numbers must be exactly 10 digits";
+                isValid = false;
+            } else if (!/^[6-9]/.test(cleanPhone)) {
+                newErrors.phone = "Invalid Indian mobile number";
+                isValid = false;
+            }
+        } else {
+            if (cleanPhone.length < 10 || cleanPhone.length > 15) {
+                newErrors.phone = "Enter valid phone (10-15 digits)";
+                isValid = false;
+            }
         }
 
         setErrors(newErrors);
@@ -82,13 +152,17 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
 
         setIsSubmitting(true);
 
+        const selectedCountry = countryCodes.find(c => c.iso === countryIso);
+        const code = selectedCountry?.code || '+91';
+        const fullPhone = `${code} ${formData.phone}`;
+
         try {
             const token = await executeRecaptcha('trip_customization_submit');
 
             // 1. Save to Database
             const inquiryData: InquiryInput = {
                 name: formData.name,
-                phone: formData.phone,
+                phone: fullPhone,
                 startDate: formData.date ? new Date(formData.date).toISOString() : undefined,
                 budget: formData.budget,
                 type: "PLAN_MY_TRIP",
@@ -142,7 +216,12 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+        if (e.target.name === 'phone') {
+            const val = e.target.value.replace(/\D/g, '');
+            setFormData(prev => ({ ...prev, phone: val }));
+        } else {
+            setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+        }
         // Clear error on type
         if (errors[e.target.name as keyof typeof errors]) {
             setErrors(prev => ({ ...prev, [e.target.name]: undefined }));
@@ -212,18 +291,43 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
                                         <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
                                             <Phone className="w-4 h-4 text-primary" /> Phone
                                         </label>
-                                        <input
-                                            required
-                                            type="tel"
-                                            name="phone"
-                                            inputMode="numeric"
-                                            pattern="[0-9]*"
-                                            value={formData.phone}
-                                            onChange={handleChange}
-                                            placeholder="Phone Number"
-                                            autoComplete="tel"
-                                            className={`w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-gray-400 ${errors.phone ? 'border-red-500 focus:ring-red-500/20' : ''}`}
-                                        />
+                                        <div className="flex gap-3">
+                                            <Select value={countryIso} onValueChange={setCountryIso}>
+                                                <SelectTrigger className="w-[110px] px-3 h-[46px] border border-gray-200 rounded-xl bg-white focus:ring-1 focus:ring-primary/20">
+                                                    <SelectValue placeholder="Code" />
+                                                </SelectTrigger>
+                                                <SelectContent className="max-h-[250px] z-[10000]">
+                                                    {countryCodes.map((c) => (
+                                                        <SelectItem key={c.iso} value={c.iso}>
+                                                            <div className="flex items-center gap-2">
+                                                                <img
+                                                                    src={`https://flagcdn.com/w20/${c.iso.toLowerCase()}.png`}
+                                                                    srcSet={`https://flagcdn.com/w40/${c.iso.toLowerCase()}.png 2x`}
+                                                                    width="20"
+                                                                    alt={c.iso}
+                                                                    className="object-contain"
+                                                                />
+                                                                <span className="text-xs text-muted-foreground">{c.code}</span>
+                                                            </div>
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            <div className="flex-1 relative">
+                                                <input
+                                                    required
+                                                    type="tel"
+                                                    name="phone"
+                                                    inputMode="numeric"
+                                                    pattern="[0-9]*"
+                                                    value={formData.phone}
+                                                    onChange={handleChange}
+                                                    placeholder="Phone Number"
+                                                    autoComplete="tel"
+                                                    className={`w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-gray-400 ${errors.phone ? 'border-red-500 focus:ring-red-500/20' : ''}`}
+                                                />
+                                            </div>
+                                        </div>
                                         {errors.phone && <p className="text-xs text-red-500">{errors.phone}</p>}
                                     </div>
 

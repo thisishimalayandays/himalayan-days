@@ -134,6 +134,7 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
             'INTERESTED': 'bg-purple-100 text-purple-800 border-purple-200',
             'BOOKED': 'bg-green-100 text-green-800 border-green-200',
             'CLOSED': 'bg-gray-100 text-gray-800 border-gray-200',
+            'SPAM': 'bg-red-100 text-red-800 border-red-200',
         };
 
         return (
@@ -148,6 +149,7 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
                         <SelectItem value="INTERESTED">Interested</SelectItem>
                         <SelectItem value="BOOKED">Booked</SelectItem>
                         <SelectItem value="CLOSED">Closed/Lost</SelectItem>
+                        <SelectItem value="SPAM">Spam</SelectItem>
                     </SelectContent>
                 </Select>
             </div>

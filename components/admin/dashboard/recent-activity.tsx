@@ -31,8 +31,8 @@ export function RecentActivity({
                             <User className="h-5 w-5" />
                         </div>
                         <div>
-                            <p className="font-medium text-sm text-gray-900">{item.name}</p>
-                            <p className="text-xs text-gray-500 flex items-center gap-1">
+                            <p className="font-medium text-sm text-foreground">{item.name}</p>
+                            <p className="text-xs text-muted-foreground flex items-center gap-1">
                                 {item.type.replace(/_/g, " ")}
                                 <span>•</span>
                                 <span className="flex items-center gap-0.5">
@@ -47,7 +47,7 @@ export function RecentActivity({
                             {item.status}
                         </Badge>
                         <Link href={`/admin/inquiries?id=${item.id}`} className="block">
-                            <ArrowUpRight className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                            <ArrowUpRight className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
                         </Link>
                     </div>
                 </div>

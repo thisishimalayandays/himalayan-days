@@ -95,11 +95,22 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
             isValid = false;
         }
 
-        // Phone Validation (10 digits for India usually, but allow 10-15 generally)
+        // Phone Validation
         const cleanPhone = formData.phone.replace(/\D/g, '');
-        if (cleanPhone.length < 10 || cleanPhone.length > 15) {
-            newErrors.phone = "Enter valid phone (10-15 digits)";
-            isValid = false;
+
+        if (countryIso === 'IN') {
+            if (cleanPhone.length !== 10) {
+                newErrors.phone = "Indian numbers must be exactly 10 digits";
+                isValid = false;
+            } else if (!/^[6-9]/.test(cleanPhone)) {
+                newErrors.phone = "Invalid Indian mobile number";
+                isValid = false;
+            }
+        } else {
+            if (cleanPhone.length < 10 || cleanPhone.length > 15) {
+                newErrors.phone = "Enter valid phone (10-15 digits)";
+                isValid = false;
+            }
         }
 
         // Guests

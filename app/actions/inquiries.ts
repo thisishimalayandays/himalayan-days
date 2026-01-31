@@ -26,7 +26,6 @@ export async function createInquiry(data: InquiryInput) {
         const validated = InquirySchema.parse(data);
 
         // Verify ReCAPTCHA if token is provided (or enforce it if you want strict security)
-        // Verify ReCAPTCHA if token is provided (or enforce it if you want strict security)
         if (validated.captchaToken) {
             // Bypass for Development/Localhost to prevent "Spam Detected" during testing
             if (process.env.NODE_ENV === 'development') {
@@ -51,9 +50,6 @@ export async function createInquiry(data: InquiryInput) {
                     return { success: false, error: "Security check failed." };
                 }
             }
-        } else {
-            // Optional: Return error if you want to force captcha for all inquiries
-            // return { success: false, error: "Security check missing." };
         }
 
         const inquiryData = {
@@ -69,7 +65,19 @@ export async function createInquiry(data: InquiryInput) {
             packageId: validated.packageId
         };
 
-        // Rate Limiting Removed
+        // Anti-Spam: Check for duplicate inquiries from same phone in last 15 minutes
+        const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
+        const existingInquiry = await prisma.inquiry.findFirst({
+            where: {
+                phone: validated.phone,
+                createdAt: { gte: fifteenMinutesAgo },
+                isDeleted: false
+            }
+        });
+
+        if (existingInquiry) {
+            return { success: false, error: "You have already submitted a request recently. We will contact you soon!" };
+        }
 
         const inquiry = await prisma.inquiry.create({
             data: inquiryData,

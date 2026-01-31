@@ -7,6 +7,7 @@ import { X, MessageCircle, Phone, Send, User, CheckCircle2, AlertCircle } from '
 import { Button } from '@/components/ui/button';
 import { createInquiry } from '@/app/actions/inquiries';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface EnquiryModalProps {
     isOpen: boolean;
@@ -15,6 +16,7 @@ interface EnquiryModalProps {
 
 export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
     const [mounted, setMounted] = useState(false);
+    const [countryIso, setCountryIso] = useState('IN');
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
@@ -26,6 +28,63 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
 
     const { executeRecaptcha } = useGoogleReCaptcha();
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const countryCodes = [
+        { code: '+91', iso: 'IN', label: 'India' },
+        { code: '+1', iso: 'US', label: 'USA' },
+        { code: '+44', iso: 'GB', label: 'UK' },
+        { code: '+971', iso: 'AE', label: 'UAE' },
+        { code: '+61', iso: 'AU', label: 'Australia' },
+        { code: '+1', iso: 'CA', label: 'Canada' },
+        { code: '+65', iso: 'SG', label: 'Singapore' },
+        { code: '+60', iso: 'MY', label: 'Malaysia' },
+        { code: '+81', iso: 'JP', label: 'Japan' },
+        { code: '+49', iso: 'DE', label: 'Germany' },
+        { code: '+33', iso: 'FR', label: 'France' },
+        { code: '+966', iso: 'SA', label: 'Saudi Arabia' },
+        { code: '+974', iso: 'QA', label: 'Qatar' },
+        { code: '+965', iso: 'KW', label: 'Kuwait' },
+        { code: '+968', iso: 'OM', label: 'Oman' },
+        { code: '+973', iso: 'BH', label: 'Bahrain' },
+        { code: '+880', iso: 'BD', label: 'Bangladesh' },
+        { code: '+94', iso: 'LK', label: 'Sri Lanka' },
+        { code: '+977', iso: 'NP', label: 'Nepal' },
+        { code: '+66', iso: 'TH', label: 'Thailand' },
+        { code: '+62', iso: 'ID', label: 'Indonesia' },
+        { code: '+63', iso: 'PH', label: 'Philippines' },
+        { code: '+84', iso: 'VN', label: 'Vietnam' },
+        { code: '+86', iso: 'CN', label: 'China' },
+        { code: '+852', iso: 'HK', label: 'Hong Kong' },
+        { code: '+82', iso: 'KR', label: 'South Korea' },
+        { code: '+39', iso: 'IT', label: 'Italy' },
+        { code: '+34', iso: 'ES', label: 'Spain' },
+        { code: '+31', iso: 'NL', label: 'Netherlands' },
+        { code: '+41', iso: 'CH', label: 'Switzerland' },
+        { code: '+46', iso: 'SE', label: 'Sweden' },
+        { code: '+47', iso: 'NO', label: 'Norway' },
+        { code: '+45', iso: 'DK', label: 'Denmark' },
+        { code: '+353', iso: 'IE', label: 'Ireland' },
+        { code: '+32', iso: 'BE', label: 'Belgium' },
+        { code: '+43', iso: 'AT', label: 'Austria' },
+        { code: '+48', iso: 'PL', label: 'Poland' },
+        { code: '+351', iso: 'PT', label: 'Portugal' },
+        { code: '+30', iso: 'GR', label: 'Greece' },
+        { code: '+90', iso: 'TR', label: 'Turkey' },
+        { code: '+7', iso: 'RU', label: 'Russia' },
+        { code: '+20', iso: 'EG', label: 'Egypt' },
+        { code: '+27', iso: 'ZA', label: 'South Africa' },
+        { code: '+254', iso: 'KE', label: 'Kenya' },
+        { code: '+55', iso: 'BR', label: 'Brazil' },
+        { code: '+52', iso: 'MX', label: 'Mexico' },
+        { code: '+54', iso: 'AR', label: 'Argentina' },
+        { code: '+64', iso: 'NZ', label: 'New Zealand' },
+        { code: '+93', iso: 'AF', label: 'Afghanistan' },
+        { code: '+95', iso: 'MM', label: 'Myanmar' },
+        { code: '+960', iso: 'MV', label: 'Maldives' },
+        { code: '+975', iso: 'BT', label: 'Bhutan' },
+        { code: '+98', iso: 'IR', label: 'Iran' },
+        { code: '+964', iso: 'IQ', label: 'Iraq' },
+    ];
 
     useEffect(() => {
         setMounted(true);
@@ -58,9 +117,20 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
 
         // Phone Validation
         const cleanPhone = formData.phone.replace(/\D/g, '');
-        if (cleanPhone.length < 10 || cleanPhone.length > 15) {
-            newErrors.phone = "Enter a valid phone number";
-            isValid = false;
+
+        if (countryIso === 'IN') {
+            if (cleanPhone.length !== 10) {
+                newErrors.phone = "Indian numbers must be exactly 10 digits";
+                isValid = false;
+            } else if (!/^[6-9]/.test(cleanPhone)) {
+                newErrors.phone = "Invalid Indian mobile number";
+                isValid = false;
+            }
+        } else {
+            if (cleanPhone.length < 10 || cleanPhone.length > 15) {
+                newErrors.phone = "Enter valid phone (10-15 digits)";
+                isValid = false;
+            }
         }
 
         setErrors(newErrors);
@@ -81,13 +151,17 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
 
         setIsSubmitting(true);
 
+        const selectedCountry = countryCodes.find(c => c.iso === countryIso);
+        const code = selectedCountry?.code || '+91';
+        const fullPhone = `${code} ${formData.phone}`;
+
         try {
             const token = await executeRecaptcha('enquiry_modal_submit');
 
             // 1. Save to Database
             const result = await createInquiry({
                 name: formData.name,
-                phone: formData.phone,
+                phone: fullPhone,
                 message: formData.message || "General Enquiry via Website Header",
                 type: "GENERAL",
                 captchaToken: token
@@ -112,7 +186,13 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+        if (e.target.name === 'phone') {
+            const val = e.target.value.replace(/\D/g, '');
+            setFormData(prev => ({ ...prev, phone: val }));
+        } else {
+            setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+        }
+
         if (errorMessage) setErrorMessage(null);
         // Clear field validation error on change
         if (errors[e.target.name as keyof typeof errors]) {
@@ -191,21 +271,47 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
                                                 {errors.name && <p className="text-[10px] text-red-500 absolute -bottom-4 left-1">{errors.name}</p>}
                                             </div>
 
-                                            <div className="relative pt-1">
-                                                <Phone className="absolute left-3 top-4 w-5 h-5 text-gray-400" />
-                                                <input
-                                                    required
-                                                    type="tel"
-                                                    name="phone"
-                                                    inputMode="numeric"
-                                                    pattern="[0-9]*"
-                                                    autoComplete="tel"
-                                                    value={formData.phone}
-                                                    onChange={handleChange}
-                                                    placeholder="Phone Number"
-                                                    className={`w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all outline-none placeholder:text-gray-400 font-medium ${errors.phone ? 'ring-2 ring-red-500 bg-red-50' : ''}`}
-                                                />
-                                                {errors.phone && <p className="text-[10px] text-red-500 absolute -bottom-4 left-1">{errors.phone}</p>}
+                                            <div className="space-y-2">
+                                                <div className="flex gap-2">
+                                                    <Select value={countryIso} onValueChange={setCountryIso}>
+                                                        <SelectTrigger className="w-[100px] px-2 h-12 border-none bg-gray-50 rounded-xl">
+                                                            <SelectValue placeholder="Code" />
+                                                            <span className="sr-only">Select Country Code</span>
+                                                        </SelectTrigger>
+                                                        <SelectContent className="max-h-[250px] z-[10000]">
+                                                            {countryCodes.map((c) => (
+                                                                <SelectItem key={c.iso} value={c.iso}>
+                                                                    <div className="flex items-center gap-2">
+                                                                        <img
+                                                                            src={`https://flagcdn.com/w20/${c.iso.toLowerCase()}.png`}
+                                                                            srcSet={`https://flagcdn.com/w40/${c.iso.toLowerCase()}.png 2x`}
+                                                                            width="20"
+                                                                            alt={c.iso}
+                                                                            className="object-contain"
+                                                                        />
+                                                                        <span className="text-xs text-muted-foreground">{c.code}</span>
+                                                                    </div>
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                    <div className="relative flex-1">
+                                                        <Phone className="absolute left-3 top-3.5 w-5 h-5 text-gray-400 z-10" />
+                                                        <input
+                                                            required
+                                                            type="tel"
+                                                            name="phone"
+                                                            inputMode="numeric"
+                                                            pattern="[0-9]*"
+                                                            autoComplete="tel"
+                                                            value={formData.phone}
+                                                            onChange={handleChange}
+                                                            placeholder="Phone Number"
+                                                            className={`w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all outline-none placeholder:text-gray-400 font-medium ${errors.phone ? 'ring-2 ring-red-500 bg-red-50' : ''}`}
+                                                        />
+                                                    </div>
+                                                </div>
+                                                {errors.phone && <p className="text-[10px] text-red-500 pl-1">{errors.phone}</p>}
                                             </div>
 
                                             <div className="relative pt-1">
