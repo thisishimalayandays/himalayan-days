@@ -20,7 +20,7 @@ export function WhatsAppButton() {
         return () => clearTimeout(timer);
     }, []);
 
-    if (pathname?.startsWith('/admin')) {
+    if (pathname?.startsWith('/admin') || pathname?.startsWith('/careers')) {
         return null;
     }
 

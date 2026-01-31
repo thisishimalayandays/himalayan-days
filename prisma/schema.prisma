@@ -133,3 +133,29 @@ model Payment {
   notes       String?
   createdAt   DateTime @default(now())
 }
+
+model Job {
+  id           String           @id @default(cuid())
+  slug         String           @unique
+  title        String?
+  status       String           @default("OPEN") // OPEN, CLOSED, ON_HOLD
+  applications JobApplication[]
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+}
+
+model JobApplication {
+  id          String   @id @default(cuid())
+  jobId       String
+  job         Job      @relation(fields: [jobId], references: [id])
+  name        String
+  email       String
+  phone       String
+  resumeData  Bytes?   // Stored as bytes
+  resumeName  String?
+  resumeType  String?
+  coverLetter String?
+  status      String   @default("NEW") // NEW, REVIEWED, INTERVIEWING, REJECTED, HIRED
+  appliedAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

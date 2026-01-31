@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Package, MapPin, Users, Calculator, FileText, LogOut, MessageSquare, Mail, CalendarDays } from "lucide-react";
+import { LayoutDashboard, Package, MapPin, Users, Calculator, FileText, LogOut, MessageSquare, Mail, CalendarDays, Briefcase } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { ModeToggle } from "@/components/mode-toggle";
@@ -33,6 +33,7 @@ export function AdminSidebar({ pendingInquiries, pendingSubscribers = 0, classNa
                     icon: Mail,
                     badge: pendingSubscribers > 0 ? pendingSubscribers : undefined
                 },
+                { href: "/admin/careers", label: "Job Applications", icon: Briefcase },
             ]
         },
         {

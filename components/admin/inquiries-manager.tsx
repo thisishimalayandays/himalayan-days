@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calendar } from '@/components/ui/calendar';
-import { Mail, Phone, Calendar as CalendarIcon, MapPin, Trash2, RefreshCcw, FileDown, Eye, Users, Wallet, Clock } from 'lucide-react';
+import { Mail, Phone, Calendar as CalendarIcon, MapPin, Trash2, RefreshCcw, FileDown, Eye, Users, Wallet, Clock, MessageCircle } from 'lucide-react';
 import { softDeleteInquiry, restoreInquiry, permanentDeleteInquiry, markInquiryAsRead, updateInquiryStatus } from '@/app/actions/inquiries';
 import { useRouter } from 'next/navigation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -223,9 +223,21 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
                                     {inquiry.name}
                                 </div>
                                 <div className="flex flex-col gap-1 mt-1">
-                                    <a href={`tel:${inquiry.phone}`} onClick={e => e.stopPropagation()} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
-                                        <Phone className="w-3 h-3" /> {inquiry.phone}
-                                    </a>
+                                    <div className="flex items-center gap-2">
+                                        <a href={`tel:${inquiry.phone}`} onClick={e => e.stopPropagation()} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
+                                            <Phone className="w-3 h-3" /> {inquiry.phone}
+                                        </a>
+                                        <a
+                                            href={`https://wa.me/${inquiry.phone.replace(/[^0-9]/g, '')}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            onClick={e => e.stopPropagation()}
+                                            className="ml-auto inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-green-50 text-[10px] font-medium text-green-700 hover:bg-green-100 border border-green-200 transition-colors"
+                                            title="Chat on WhatsApp"
+                                        >
+                                            <MessageCircle className="w-3 h-3" /> Chat
+                                        </a>
+                                    </div>
                                     {inquiry.email && (
                                         <a href={`mailto:${inquiry.email}`} onClick={e => e.stopPropagation()} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
                                             <Mail className="w-3 h-3" /> {inquiry.email}
