@@ -17,8 +17,7 @@ export function WhatsAppButton() {
 
     const [isOpen, setIsOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [formData, setFormData] = useState({ name: '', phone: '' });
-
+    const [name, setName] = useState(''); // Only Name
     const [showTooltip, setShowTooltip] = useState(false);
 
     // Initial nudge
@@ -35,7 +34,7 @@ export function WhatsAppButton() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!executeRecaptcha) return;
+        if (!executeRecaptcha || !name) return;
 
         setIsSubmitting(true);
         try {
@@ -43,8 +42,8 @@ export function WhatsAppButton() {
 
             // 1. Save Lead quietly
             await createInquiry({
-                name: formData.name,
-                phone: formData.phone,
+                name: name,
+                phone: "WhatsApp-Direct-Chat", // Placeholder as it is required in DB
                 message: "Started Quick Chat via WhatsApp Button",
                 type: "GENERAL",
                 captchaToken: token
@@ -52,14 +51,14 @@ export function WhatsAppButton() {
 
             // 2. Open WhatsApp
             const phoneNumber = '919103901803';
-            const text = `Hi, I am ${formData.name}. I want to plan a trip with Himalayan Days.`;
+            const text = `Hi, I am ${name}. I want to plan a trip with Himalayan Days.`;
             const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`;
 
             window.open(url, '_blank');
 
             // 3. Close & Reset
             setIsOpen(false);
-            setFormData({ name: '', phone: '' });
+            setName('');
             analytics.event('Lead', { content_name: 'WhatsApp Quick Chat' });
 
         } catch (error) {
@@ -101,17 +100,10 @@ export function WhatsAppButton() {
                                     placeholder="Your Name"
                                     className="h-9 text-sm"
                                     required
-                                    value={formData.name}
-                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
                                 />
-                                <Input
-                                    placeholder="Phone Number"
-                                    className="h-9 text-sm"
-                                    type="tel"
-                                    required
-                                    value={formData.phone}
-                                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                />
+                                {/* Phone Input Removed */}
                                 <Button
                                     type="submit"
                                     disabled={isSubmitting}

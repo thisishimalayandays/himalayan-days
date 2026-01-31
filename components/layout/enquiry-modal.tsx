@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, MessageCircle, Phone, Send, User } from 'lucide-react';
+import { X, MessageCircle, Phone, Send, User, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createInquiry } from '@/app/actions/inquiries';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
@@ -21,6 +21,7 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
         phone: '',
         message: ''
     });
+    const [isSuccess, setIsSuccess] = useState(false);
 
     const { executeRecaptcha } = useGoogleReCaptcha();
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,6 +31,7 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
         setMounted(true);
         if (isOpen) {
             document.body.style.overflow = 'hidden';
+            setIsSuccess(false); // Reset to form on open
         } else {
             document.body.style.overflow = 'unset';
             setIsSubmitting(false);
@@ -71,15 +73,10 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
                 return;
             }
 
-            // Success - No Redirect
-            toast({
-                title: "Enquiry Sent! ✅",
-                description: "We have received your message. Our team will contact you shortly.",
-                className: "bg-green-50 border-green-200 text-green-800"
-            });
-
+            // Success - Show In-Modal Success
+            setIsSuccess(true);
             setFormData({ name: '', phone: '', message: '' });
-            onClose();
+            // Notification toast is optional now since we show meaningful UI
 
         } catch (error) {
             console.error("Failed to save enquiry", error);
@@ -88,7 +85,6 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
                 title: "Error",
                 description: "Something went wrong. Please try again."
             });
-        } finally {
             setIsSubmitting(false);
         }
     };
@@ -116,80 +112,102 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
                             initial={{ opacity: 0, scale: 0.9, rotateX: 10 }}
                             animate={{ opacity: 1, scale: 1, rotateX: 0 }}
                             exit={{ opacity: 0, scale: 0.9, rotateX: 10 }}
-                            className="bg-white pointer-events-auto rounded-2xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col relative"
+                            className="bg-white pointer-events-auto rounded-2xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col relative min-h-[350px]"
                         >
-                            {/* Simple Clean Header */}
-                            <div className="px-6 pt-6 pb-2 text-center">
-                                <h3 className="text-2xl font-bold text-gray-900">Have a Question?</h3>
-                                <p className="text-gray-500 text-sm mt-1">We are here to help you 24/7</p>
-                            </div>
-
                             <button
                                 onClick={onClose}
-                                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors z-10"
                             >
                                 <X className="w-5 h-5" />
                             </button>
 
-                            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                                <div className="space-y-4">
-                                    <div className="relative">
-                                        <User className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-                                        <input
-                                            required
-                                            type="text"
-                                            name="name"
-                                            value={formData.name}
-                                            onChange={handleChange}
-                                            placeholder="Your Name"
-                                            className="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all outline-none placeholder:text-gray-400 font-medium"
-                                        />
-                                    </div>
-
-                                    <div className="relative">
-                                        <Phone className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-                                        <input
-                                            required
-                                            type="tel"
-                                            name="phone"
-                                            value={formData.phone}
-                                            onChange={handleChange}
-                                            placeholder="Phone Number"
-                                            className="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all outline-none placeholder:text-gray-400 font-medium"
-                                        />
-                                    </div>
-
-                                    <div className="relative">
-                                        <MessageCircle className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-                                        <textarea
-                                            name="message"
-                                            value={formData.message}
-                                            onChange={handleChange}
-                                            placeholder="What's on your mind?"
-                                            rows={3}
-                                            className="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all outline-none placeholder:text-gray-400 font-medium resize-none"
-                                        />
-                                    </div>
-                                </div>
-
-                                <Button
-                                    type="submit"
-                                    disabled={isSubmitting}
-                                    className="w-full bg-gray-900 hover:bg-black text-white py-6 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 group"
+                            {isSuccess ? (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.8 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    className="flex flex-col items-center justify-center h-full p-8 text-center space-y-4 my-auto flex-grow"
                                 >
-                                    <span>{isSubmitting ? 'Processing...' : 'Send Message'}</span>
-                                    <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                                </Button>
+                                    <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
+                                        <CheckCircle2 className="w-10 h-10 text-green-600" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <h3 className="text-2xl font-bold text-gray-900">Message Sent!</h3>
+                                        <p className="text-gray-500 max-w-[250px] mx-auto">
+                                            Thank you for reaching out. Our team will get back to you shortly.
+                                        </p>
+                                    </div>
+                                    <Button onClick={onClose} className="bg-gray-900 text-white mt-4 w-full">
+                                        Done
+                                    </Button>
+                                </motion.div>
+                            ) : (
+                                <>
+                                    <div className="px-6 pt-6 pb-2 text-center">
+                                        <h3 className="text-2xl font-bold text-gray-900">Have a Question?</h3>
+                                        <p className="text-gray-500 text-sm mt-1">We are here to help you 24/7</p>
+                                    </div>
 
-                                <div className="text-center">
-                                    <p className="text-xs text-gray-400">
-                                        Prefer a call? <a href="tel:+919103901803" className="text-primary hover:underline font-medium">+91-9103901803</a>
+                                    <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                                        <div className="space-y-4">
+                                            <div className="relative">
+                                                <User className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                                                <input
+                                                    required
+                                                    type="text"
+                                                    name="name"
+                                                    value={formData.name}
+                                                    onChange={handleChange}
+                                                    placeholder="Your Name"
+                                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all outline-none placeholder:text-gray-400 font-medium"
+                                                />
+                                            </div>
+
+                                            <div className="relative">
+                                                <Phone className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                                                <input
+                                                    required
+                                                    type="tel"
+                                                    name="phone"
+                                                    value={formData.phone}
+                                                    onChange={handleChange}
+                                                    placeholder="Phone Number"
+                                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all outline-none placeholder:text-gray-400 font-medium"
+                                                />
+                                            </div>
+
+                                            <div className="relative">
+                                                <MessageCircle className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                                                <textarea
+                                                    name="message"
+                                                    value={formData.message}
+                                                    onChange={handleChange}
+                                                    placeholder="What's on your mind?"
+                                                    rows={3}
+                                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all outline-none placeholder:text-gray-400 font-medium resize-none"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <Button
+                                            type="submit"
+                                            disabled={isSubmitting}
+                                            className="w-full bg-gray-900 hover:bg-black text-white py-6 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 group"
+                                        >
+                                            <span>{isSubmitting ? 'Processing...' : 'Send Message'}</span>
+                                            <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                        </Button>
+
+                                        <div className="text-center">
+                                            <p className="text-xs text-gray-400">
+                                                Prefer a call? <a href="tel:+919103901803" className="text-primary hover:underline font-medium">+91-9103901803</a>
+                                            </p>
+                                        </div>
+                                    </form>
+                                    <p className="text-[10px] text-center text-gray-400 pb-4 px-6">
+                                        This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy" className="underline">Privacy Policy</a> and <a href="https://policies.google.com/terms" className="underline">Terms of Service</a> apply.
                                     </p>
-                                </div>
-                            </form>
-                            <p className="text-[10px] text-center text-gray-400 pb-4 px-6">
-                                This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy" className="underline">Privacy Policy</a> and <a href="https://policies.google.com/terms" className="underline">Terms of Service</a> apply.
-                            </p>
+                                </>
+                            )}
                         </motion.div>
                     </div>
                 </>
