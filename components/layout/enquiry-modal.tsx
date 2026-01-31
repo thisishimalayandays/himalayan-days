@@ -20,6 +20,7 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
         phone: '',
         message: ''
     });
+    const [errors, setErrors] = useState<{ name?: string, phone?: string }>({});
     const [isSuccess, setIsSuccess] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -32,6 +33,7 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
             document.body.style.overflow = 'hidden';
             setIsSuccess(false);
             setErrorMessage(null);
+            setErrors({});
         } else {
             document.body.style.overflow = 'unset';
             setIsSubmitting(false);
@@ -41,9 +43,36 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
         };
     }, [isOpen]);
 
+    const validate = () => {
+        let isValid = true;
+        const newErrors: any = {};
+
+        // Name Validation
+        if (formData.name.trim().length < 2) {
+            newErrors.name = "Name is too short";
+            isValid = false;
+        } else if (/\d/.test(formData.name)) {
+            newErrors.name = "Name cannot contain numbers";
+            isValid = false;
+        }
+
+        // Phone Validation
+        const cleanPhone = formData.phone.replace(/\D/g, '');
+        if (cleanPhone.length < 10 || cleanPhone.length > 15) {
+            newErrors.phone = "Enter a valid phone number";
+            isValid = false;
+        }
+
+        setErrors(newErrors);
+        return isValid;
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setErrorMessage(null);
+        setErrors({});
+
+        if (!validate()) return;
 
         if (!executeRecaptcha) {
             setErrorMessage("ReCAPTCHA not ready. Please check your connection.");
@@ -85,6 +114,10 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
         if (errorMessage) setErrorMessage(null);
+        // Clear field validation error on change
+        if (errors[e.target.name as keyof typeof errors]) {
+            setErrors(prev => ({ ...prev, [e.target.name]: undefined }));
+        }
     };
 
     if (!mounted) return null;
@@ -152,13 +185,14 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
                                                     value={formData.name}
                                                     onChange={handleChange}
                                                     autoComplete="name"
-                                                    placeholder="Your Name"
-                                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all outline-none placeholder:text-gray-400 font-medium"
+                                                    placeholder="Amit Sharma"
+                                                    className={`w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all outline-none placeholder:text-gray-400 font-medium ${errors.name ? 'ring-2 ring-red-500 bg-red-50' : ''}`}
                                                 />
+                                                {errors.name && <p className="text-[10px] text-red-500 absolute -bottom-4 left-1">{errors.name}</p>}
                                             </div>
 
-                                            <div className="relative">
-                                                <Phone className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                                            <div className="relative pt-1">
+                                                <Phone className="absolute left-3 top-4 w-5 h-5 text-gray-400" />
                                                 <input
                                                     required
                                                     type="tel"
@@ -168,18 +202,19 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
                                                     autoComplete="tel"
                                                     value={formData.phone}
                                                     onChange={handleChange}
-                                                    placeholder="Phone Number"
-                                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all outline-none placeholder:text-gray-400 font-medium"
+                                                    placeholder="98765 43210"
+                                                    className={`w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all outline-none placeholder:text-gray-400 font-medium ${errors.phone ? 'ring-2 ring-red-500 bg-red-50' : ''}`}
                                                 />
+                                                {errors.phone && <p className="text-[10px] text-red-500 absolute -bottom-4 left-1">{errors.phone}</p>}
                                             </div>
 
-                                            <div className="relative">
-                                                <MessageCircle className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                                            <div className="relative pt-1">
+                                                <MessageCircle className="absolute left-3 top-4 w-5 h-5 text-gray-400" />
                                                 <textarea
                                                     name="message"
                                                     value={formData.message}
                                                     onChange={handleChange}
-                                                    placeholder="What's on your mind?"
+                                                    placeholder="I want to plan a family trip to Kashmir..."
                                                     rows={3}
                                                     className="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all outline-none placeholder:text-gray-400 font-medium resize-none"
                                                 />
@@ -196,7 +231,7 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
                                         <Button
                                             type="submit"
                                             disabled={isSubmitting}
-                                            className="w-full bg-gray-900 hover:bg-black text-white py-6 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 group"
+                                            className="w-full bg-gray-900 hover:bg-black text-white py-6 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 group mt-2"
                                         >
                                             <span>{isSubmitting ? 'Processing...' : 'Send Message'}</span>
                                             <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

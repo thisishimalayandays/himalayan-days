@@ -19,6 +19,7 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
         guests: '',
         budget: ''
     });
+    const [errors, setErrors] = useState<{ name?: string, phone?: string, guests?: string }>({});
     const { toast } = useToast();
 
     const countryCodes = [
@@ -81,8 +82,41 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
     // Get today's date for min attribute
     const today = new Date().toISOString().split('T')[0];
 
+    const validate = () => {
+        let isValid = true;
+        const newErrors: any = {};
+
+        // Name Validation
+        if (formData.name.trim().length < 2) {
+            newErrors.name = "Name is too short";
+            isValid = false;
+        } else if (/\d/.test(formData.name)) {
+            newErrors.name = "Name cannot contain numbers";
+            isValid = false;
+        }
+
+        // Phone Validation (10 digits for India usually, but allow 10-15 generally)
+        const cleanPhone = formData.phone.replace(/\D/g, '');
+        if (cleanPhone.length < 10 || cleanPhone.length > 15) {
+            newErrors.phone = "Enter valid phone (10-15 digits)";
+            isValid = false;
+        }
+
+        // Guests
+        if (parseInt(formData.guests) < 1) {
+            newErrors.guests = "At least 1 guest";
+            isValid = false;
+        }
+
+        setErrors(newErrors);
+        return isValid;
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setErrors({});
+
+        if (!validate()) return;
 
         if (!executeRecaptcha) {
             console.error("ReCAPTCHA not ready");
@@ -170,13 +204,16 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
                     <input
                         required
                         type="text"
-                        placeholder="John Doe"
-                        pattern="^[a-zA-Z\s\.]+$"
-                        title="Name should only contain letters"
+                        placeholder="Amit Sharma"
+                        autoComplete="name"
                         value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all [&:not(:placeholder-shown):invalid]:border-red-500 [&:not(:placeholder-shown):invalid]:text-red-600 focus:invalid:ring-red-500/20"
+                        onChange={(e) => {
+                            setFormData({ ...formData, name: e.target.value });
+                            if (errors.name) setErrors({ ...errors, name: '' });
+                        }}
+                        className={`w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${errors.name ? 'border-red-500 focus:ring-red-500/20' : ''}`}
                     />
+                    {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
                 </div>
 
                 <div className="space-y-2">
@@ -203,23 +240,24 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
                                 ))}
                             </SelectContent>
                         </Select>
-                        <input
-                            required
-                            type="tel"
-                            placeholder="9999999999"
-                            pattern="^[0-9]{10}$"
-                            title="Please enter exactly 10 digits"
-                            maxLength={10}
-                            minLength={10}
-                            value={formData.phone}
-                            onChange={(e) => {
-                                const val = e.target.value.replace(/\D/g, '');
-                                if (val.length <= 10) {
+                        <div className="flex-1">
+                            <input
+                                required
+                                type="tel"
+                                placeholder="98765 43210"
+                                inputMode="numeric"
+                                pattern="[0-9]*"
+                                autoComplete="tel"
+                                value={formData.phone}
+                                onChange={(e) => {
+                                    const val = e.target.value.replace(/\D/g, '');
                                     setFormData({ ...formData, phone: val });
-                                }
-                            }}
-                            className="flex-1 px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all [&:not(:placeholder-shown):invalid]:border-red-500 [&:not(:placeholder-shown):invalid]:text-red-600 focus:invalid:ring-red-500/20"
-                        />
+                                    if (errors.phone) setErrors({ ...errors, phone: '' });
+                                }}
+                                className={`w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${errors.phone ? 'border-red-500 focus:ring-red-500/20' : ''}`}
+                            />
+                            {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
+                        </div>
                     </div>
                 </div>
 
@@ -243,8 +281,11 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
                             min="1"
                             placeholder="2"
                             value={formData.guests}
-                            onChange={(e) => setFormData({ ...formData, guests: e.target.value })}
-                            className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all [&:not(:placeholder-shown):invalid]:border-red-500 [&:not(:placeholder-shown):invalid]:text-red-600 focus:invalid:ring-red-500/20"
+                            onChange={(e) => {
+                                setFormData({ ...formData, guests: e.target.value });
+                                if (errors.guests) setErrors({ ...errors, guests: '' });
+                            }}
+                            className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                         />
                     </div>
                 </div>

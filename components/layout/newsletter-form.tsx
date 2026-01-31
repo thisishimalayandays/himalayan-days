@@ -55,7 +55,7 @@ export function NewsletterForm() {
                 name="email"
                 type="email"
                 required
-                placeholder="Your email"
+                placeholder="amit@example.com"
                 className="bg-gray-900 border-none rounded-md px-4 py-2 text-sm w-full focus:ring-1 focus:ring-primary outline-none transition-all text-white placeholder:text-gray-500"
             />
             <Button

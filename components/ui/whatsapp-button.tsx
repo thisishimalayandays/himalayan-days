@@ -128,7 +128,7 @@ export function WhatsAppButton() {
                             <form onSubmit={handleSubmit} className="flex flex-col gap-3 mt-1">
                                 <div>
                                     <Input
-                                        placeholder="Your Name"
+                                        placeholder="Amit Sharma"
                                         className={`h-9 text-sm ${errors.name ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
                                         required
                                         autoComplete="name"
@@ -143,7 +143,7 @@ export function WhatsAppButton() {
 
                                 <div>
                                     <Input
-                                        placeholder="Phone Number"
+                                        placeholder="98765 43210"
                                         className={`h-9 text-sm ${errors.phone ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
                                         type="tel"
                                         inputMode="numeric"

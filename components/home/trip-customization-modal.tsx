@@ -27,12 +27,14 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
         budget: 'Standard',
         type: 'Family'
     });
+    const [errors, setErrors] = useState<{ name?: string, phone?: string }>({});
     const { toast } = useToast();
 
     useEffect(() => {
         setMounted(true);
         if (isOpen) {
             document.body.style.overflow = 'hidden';
+            setErrors({});
         } else {
             document.body.style.overflow = 'unset';
             setIsSubmitting(false); // Reset submitting state on close
@@ -43,8 +45,35 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
         };
     }, [isOpen]);
 
+    const validate = () => {
+        let isValid = true;
+        const newErrors: any = {};
+
+        // Name Validation
+        if (formData.name.trim().length < 2) {
+            newErrors.name = "Name is too short";
+            isValid = false;
+        } else if (/\d/.test(formData.name)) {
+            newErrors.name = "Name cannot contain numbers";
+            isValid = false;
+        }
+
+        // Phone Validation
+        const cleanPhone = formData.phone.replace(/\D/g, '');
+        if (cleanPhone.length < 10 || cleanPhone.length > 15) {
+            newErrors.phone = "Enter valid phone (10-15 digits)";
+            isValid = false;
+        }
+
+        setErrors(newErrors);
+        return isValid;
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setErrors({});
+
+        if (!validate()) return;
 
         if (!executeRecaptcha) {
             console.error("ReCAPTCHA not ready");
@@ -114,6 +143,10 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+        // Clear error on type
+        if (errors[e.target.name as keyof typeof errors]) {
+            setErrors(prev => ({ ...prev, [e.target.name]: undefined }));
+        }
     };
 
     if (!mounted) return null;
@@ -167,9 +200,11 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
                                             name="name"
                                             value={formData.name}
                                             onChange={handleChange}
-                                            placeholder="Your full name"
-                                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-gray-400"
+                                            placeholder="Amit Sharma"
+                                            autoComplete="name"
+                                            className={`w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-gray-400 ${errors.name ? 'border-red-500 focus:ring-red-500/20' : ''}`}
                                         />
+                                        {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
                                     </div>
 
                                     {/* Phone */}
@@ -181,11 +216,15 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
                                             required
                                             type="tel"
                                             name="phone"
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
                                             value={formData.phone}
                                             onChange={handleChange}
-                                            placeholder="+91 XXXXX XXXXX"
-                                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-gray-400"
+                                            placeholder="98765 43210"
+                                            autoComplete="tel"
+                                            className={`w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-gray-400 ${errors.phone ? 'border-red-500 focus:ring-red-500/20' : ''}`}
                                         />
+                                        {errors.phone && <p className="text-xs text-red-500">{errors.phone}</p>}
                                     </div>
 
                                     {/* Date */}
