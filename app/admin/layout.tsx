@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { NotificationWatcher } from "@/components/admin/notification-watcher";
 
 export default async function AdminLayout({
     children,
@@ -22,12 +23,20 @@ export default async function AdminLayout({
     const unreadSubscribers = await prisma.subscriber.count({
         where: { isRead: false }
     });
+    const pendingApplications = await prisma.jobApplication.count({
+        where: { status: { in: ['new', 'NEW'] } }
+    });
 
     return (
         <div className="flex h-screen bg-muted/40 font-sans overflow-hidden">
+            <NotificationWatcher />
             {/* Desktop Sidebar */}
             <aside className="hidden md:flex w-64 bg-background shadow-md flex-col border-r h-full">
-                <AdminSidebar pendingInquiries={pendingInquiries} pendingSubscribers={unreadSubscribers} />
+                <AdminSidebar
+                    pendingInquiries={pendingInquiries}
+                    pendingSubscribers={unreadSubscribers}
+                    pendingApplications={pendingApplications}
+                />
             </aside>
 
             {/* Main Content Area */}
@@ -44,7 +53,11 @@ export default async function AdminLayout({
                         <SheetContent side="left" className="p-0 w-72">
                             {/* Pass a dummy onClick to close sheet? No, simple link navigation usually works but better to use a client wrapper if we want auto-close. 
                                 For now, default link behavior + standard Sheet is fine. */}
-                            <AdminSidebar pendingInquiries={pendingInquiries} pendingSubscribers={unreadSubscribers} />
+                            <AdminSidebar
+                                pendingInquiries={pendingInquiries}
+                                pendingSubscribers={unreadSubscribers}
+                                pendingApplications={pendingApplications}
+                            />
                         </SheetContent>
                     </Sheet>
                 </header>

@@ -11,11 +11,12 @@ import { ModeToggle } from "@/components/mode-toggle";
 interface AdminSidebarProps {
     pendingInquiries: number;
     pendingSubscribers?: number;
+    pendingApplications?: number;
     className?: string;
     onItemClick?: () => void;
 }
 
-export function AdminSidebar({ pendingInquiries, pendingSubscribers = 0, className, onItemClick }: AdminSidebarProps) {
+export function AdminSidebar({ pendingInquiries, pendingSubscribers = 0, pendingApplications = 0, className, onItemClick }: AdminSidebarProps) {
     const pathname = usePathname();
 
     const isActive = (path: string) => pathname === path || pathname?.startsWith(`${path}/`);
@@ -33,7 +34,12 @@ export function AdminSidebar({ pendingInquiries, pendingSubscribers = 0, classNa
                     icon: Mail,
                     badge: pendingSubscribers > 0 ? pendingSubscribers : undefined
                 },
-                { href: "/admin/careers", label: "Job Applications", icon: Briefcase },
+                {
+                    href: "/admin/careers",
+                    label: "Job Applications",
+                    icon: Briefcase,
+                    badge: pendingApplications > 0 ? pendingApplications : undefined
+                },
             ]
         },
         {

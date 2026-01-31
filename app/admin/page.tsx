@@ -50,22 +50,27 @@ export default async function AdminDashboard() {
                 </Card>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+            {/* NEW LAYOUT: Inquiries & Upcoming Trips First */}
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+                {/* Recent Inquiries (Takes Priority - Space where graph was) */}
                 <div className="col-span-4">
-                    <Card className="h-full">
-                        <CardHeader>
-                            <CardTitle>Inquiry Overview</CardTitle>
-                        </CardHeader>
-                        <CardContent className="pl-2">
-                            <Overview data={analyticsData.chartData} />
-                        </CardContent>
-                    </Card>
-                </div>
-                <div className="col-span-3 space-y-4">
-                    <UpcomingTrips trips={crmStats.success ? crmStats.upcomingTrips : []} />
                     <RecentInquiries activities={analyticsData.recentActivity} />
                 </div>
+                {/* Upcoming Trips (Side) */}
+                <div className="col-span-3">
+                    <UpcomingTrips trips={crmStats.success ? crmStats.upcomingTrips : []} />
+                </div>
             </div>
+
+            {/* Graph at Bottom (Full Width) */}
+            <Card className="col-span-full">
+                <CardHeader>
+                    <CardTitle>Inquiry Overview</CardTitle>
+                </CardHeader>
+                <CardContent className="pl-2 h-[350px]">
+                    <Overview data={analyticsData.chartData} />
+                </CardContent>
+            </Card>
         </div>
     )
 }
