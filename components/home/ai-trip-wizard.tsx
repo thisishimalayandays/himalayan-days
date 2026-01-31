@@ -308,7 +308,7 @@ export function AiTripWizard({ isOpen, onClose }: AiTripWizardProps) {
                                             <Input
                                                 required
                                                 className="pl-10 h-12"
-                                                placeholder="e.g. Suhail Sofi"
+                                                placeholder="Full Name"
                                                 value={preferences.name}
                                                 onChange={(e) => setPreferences({ ...preferences, name: e.target.value })}
                                             />
@@ -321,7 +321,7 @@ export function AiTripWizard({ isOpen, onClose }: AiTripWizardProps) {
                                             <Input
                                                 required
                                                 className="pl-10 h-12"
-                                                placeholder="e.g. +91 99999 99999"
+                                                placeholder="Phone Number"
                                                 value={preferences.phone}
                                                 onChange={(e) => setPreferences({ ...preferences, phone: e.target.value })}
                                             />
