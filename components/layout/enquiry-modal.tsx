@@ -151,6 +151,7 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
                                                     name="name"
                                                     value={formData.name}
                                                     onChange={handleChange}
+                                                    autoComplete="name"
                                                     placeholder="Your Name"
                                                     className="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all outline-none placeholder:text-gray-400 font-medium"
                                                 />
@@ -162,6 +163,9 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
                                                     required
                                                     type="tel"
                                                     name="phone"
+                                                    inputMode="numeric"
+                                                    pattern="[0-9]*"
+                                                    autoComplete="tel"
                                                     value={formData.phone}
                                                     onChange={handleChange}
                                                     placeholder="Phone Number"

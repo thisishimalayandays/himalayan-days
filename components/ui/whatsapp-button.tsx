@@ -100,6 +100,7 @@ export function WhatsAppButton() {
                                     placeholder="Your Name"
                                     className="h-9 text-sm"
                                     required
+                                    autoComplete="name"
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 />
@@ -107,6 +108,9 @@ export function WhatsAppButton() {
                                     placeholder="Phone Number"
                                     className="h-9 text-sm"
                                     type="tel"
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
+                                    autoComplete="tel"
                                     required
                                     value={formData.phone}
                                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
