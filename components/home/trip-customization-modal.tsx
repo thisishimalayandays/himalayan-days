@@ -200,7 +200,7 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
                                             name="name"
                                             value={formData.name}
                                             onChange={handleChange}
-                                            placeholder="Amit Sharma"
+                                            placeholder="Full Name"
                                             autoComplete="name"
                                             className={`w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-gray-400 ${errors.name ? 'border-red-500 focus:ring-red-500/20' : ''}`}
                                         />
@@ -220,7 +220,7 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
                                             pattern="[0-9]*"
                                             value={formData.phone}
                                             onChange={handleChange}
-                                            placeholder="98765 43210"
+                                            placeholder="Phone Number"
                                             autoComplete="tel"
                                             className={`w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-gray-400 ${errors.phone ? 'border-red-500 focus:ring-red-500/20' : ''}`}
                                         />

@@ -185,7 +185,7 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
                                                     value={formData.name}
                                                     onChange={handleChange}
                                                     autoComplete="name"
-                                                    placeholder="Amit Sharma"
+                                                    placeholder="Full Name"
                                                     className={`w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all outline-none placeholder:text-gray-400 font-medium ${errors.name ? 'ring-2 ring-red-500 bg-red-50' : ''}`}
                                                 />
                                                 {errors.name && <p className="text-[10px] text-red-500 absolute -bottom-4 left-1">{errors.name}</p>}
@@ -202,7 +202,7 @@ export function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
                                                     autoComplete="tel"
                                                     value={formData.phone}
                                                     onChange={handleChange}
-                                                    placeholder="98765 43210"
+                                                    placeholder="Phone Number"
                                                     className={`w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all outline-none placeholder:text-gray-400 font-medium ${errors.phone ? 'ring-2 ring-red-500 bg-red-50' : ''}`}
                                                 />
                                                 {errors.phone && <p className="text-[10px] text-red-500 absolute -bottom-4 left-1">{errors.phone}</p>}

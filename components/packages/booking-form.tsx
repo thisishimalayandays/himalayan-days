@@ -204,7 +204,7 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
                     <input
                         required
                         type="text"
-                        placeholder="Amit Sharma"
+                        placeholder="Full Name"
                         autoComplete="name"
                         value={formData.name}
                         onChange={(e) => {
@@ -244,7 +244,7 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
                             <input
                                 required
                                 type="tel"
-                                placeholder="98765 43210"
+                                placeholder="Phone Number"
                                 inputMode="numeric"
                                 pattern="[0-9]*"
                                 autoComplete="tel"
