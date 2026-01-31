@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { createInquiry, InquiryInput } from '@/app/actions/inquiries';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import * as analytics from '@/lib/analytics';
+import { useToast } from "@/hooks/use-toast";
 
 export function BookingForm({ packageTitle, packageId }: { packageTitle?: string, packageId?: string }) {
     const { executeRecaptcha } = useGoogleReCaptcha();
@@ -15,8 +16,10 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
         name: '',
         phone: '',
         date: '',
-        guests: ''
+        guests: '',
+        budget: ''
     });
+    const { toast } = useToast();
 
     const countryCodes = [
         { code: '+91', iso: 'IN', label: 'India' },
@@ -101,30 +104,57 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
                 startDate: formData.date ? new Date(formData.date).toISOString() : undefined,
                 type: "PACKAGE_BOOKING",
                 travelers: parseInt(formData.guests) || undefined,
+                budget: formData.budget || undefined,
                 message: packageTitle ? `Booking Inquiry for Package: ${packageTitle}` : "General Booking Inquiry",
                 packageId: packageId,
                 captchaToken: token
             };
-            await createInquiry(inquiryData);
+
+            const result = await createInquiry(inquiryData);
+
+            if (!result.success) {
+                toast({
+                    variant: "destructive",
+                    title: "Submission Failed",
+                    description: result.error || "Please try again."
+                });
+                setIsSubmitting(false);
+                return;
+            }
+
+            // Track Lead Event
+            analytics.event('Lead', {
+                content_name: packageTitle || 'General Inquiry',
+                content_category: 'Booking',
+                value: 0,
+                currency: 'INR'
+            });
+
+            toast({
+                title: "Request Received! ✅",
+                description: "Thank you. Our travel expert will contact you shortly to discuss your plan.",
+                duration: 6000,
+                className: "bg-green-600 text-white border-none"
+            });
+
+            setFormData({
+                name: '',
+                phone: '',
+                date: '',
+                guests: '',
+                budget: ''
+            });
+
         } catch (error) {
             console.error("Failed to save booking inquiry", error);
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Something went wrong. Please try contacting us directly."
+            });
+        } finally {
+            setIsSubmitting(false);
         }
-
-        // 2. WhatsApp Redirect
-        const packageNameText = packageTitle ? `\nPackage: *${packageTitle}*` : '';
-        const message = `Hello, I am interested in booking a package.${packageNameText}\n\nName: ${formData.name}\nPhone: ${fullPhone}\nDate: ${formData.date}\nGuests: ${formData.guests}`;
-
-        // Track Lead Event
-        analytics.event('Lead', {
-            content_name: packageTitle || 'General Inquiry',
-            content_category: 'Booking',
-            value: 0, // Or potential value
-            currency: 'INR'
-        });
-
-        const whatsappUrl = `https://wa.me/919103901803?text=${encodeURIComponent(message)}`;
-        window.open(whatsappUrl, '_blank');
-        setIsSubmitting(false);
     };
 
     return (
@@ -217,6 +247,21 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
                             className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all [&:not(:placeholder-shown):invalid]:border-red-500 [&:not(:placeholder-shown):invalid]:text-red-600 focus:invalid:ring-red-500/20"
                         />
                     </div>
+                </div>
+
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">Budget (Per Person)</label>
+                    <Select value={formData.budget} onValueChange={(val) => setFormData({ ...formData, budget: val })}>
+                        <SelectTrigger className="w-full px-4 h-10 rounded-lg border border-gray-200 bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                            <SelectValue placeholder="Select Range" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white">
+                            <SelectItem value="Economy (Below 15k)">Economy (Below ₹15k)</SelectItem>
+                            <SelectItem value="Standard (15k - 25k)">Standard (₹15k - ₹25k)</SelectItem>
+                            <SelectItem value="Premium (25k - 40k)">Premium (₹25k - ₹40k)</SelectItem>
+                            <SelectItem value="Luxury (Above 40k)">Luxury (Above ₹40k)</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
 
                 <Button type="submit" disabled={isSubmitting} className="w-full bg-primary hover:bg-orange-600 text-lg font-semibold h-12">

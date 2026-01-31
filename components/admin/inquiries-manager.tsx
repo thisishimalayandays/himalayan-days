@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calendar } from '@/components/ui/calendar';
-import { Mail, Phone, Calendar as CalendarIcon, MapPin, Trash2, RefreshCcw, FileDown, Eye, Users, Wallet, Clock, MessageCircle } from 'lucide-react';
+import { Mail, Phone, Calendar as CalendarIcon, MapPin, Trash2, RefreshCcw, FileDown, Eye, Users, Wallet, Clock, MessageCircle, Copy, Check } from 'lucide-react';
 import { softDeleteInquiry, restoreInquiry, permanentDeleteInquiry, markInquiryAsRead, updateInquiryStatus } from '@/app/actions/inquiries';
 import { useRouter } from 'next/navigation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -174,6 +174,31 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
         })
         : [];
 
+    const CopyButton = ({ inquiry }: { inquiry: Inquiry }) => {
+        const [copied, setCopied] = useState(false);
+
+        const handleCopy = (e: React.MouseEvent) => {
+            e.stopPropagation();
+            const text = `*Lead Details* 📋\nName: ${inquiry.name}\nPhone: ${inquiry.phone}\n${inquiry.startDate ? `Travel: ${new Date(inquiry.startDate).toLocaleDateString('en-GB')}` : ''}\n${inquiry.travelers ? `Guests: ${inquiry.travelers}` : ''}\n${inquiry.budget ? `Budget: ${inquiry.budget}` : ''}\n${inquiry.message ? `Note: ${inquiry.message}` : ''}`;
+            navigator.clipboard.writeText(text);
+            setCopied(true);
+            toast.success("Details copied!");
+            setTimeout(() => setCopied(false), 2000);
+        };
+
+        return (
+            <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleCopy}
+                title="Copy Details"
+                className={`h-8 w-8 transition-all ${copied ? 'text-green-600 bg-green-50 scale-110' : 'text-gray-400 hover:text-blue-600 hover:bg-blue-50'}`}
+            >
+                {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+            </Button>
+        );
+    };
+
     const InquiriesTable = ({ data, isTrash = false }: { data: Inquiry[], isTrash?: boolean }) => (
         <Table>
             <TableHeader>
@@ -246,46 +271,46 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
                                 </div>
                             </TableCell>
                             <TableCell className="max-w-[300px]">
-                                <div className="space-y-1.5 text-sm text-muted-foreground">
-                                    {inquiry.startDate && (
-                                        <div className="flex items-center gap-1.5">
-                                            <CalendarIcon className="w-3.5 h-3.5 text-muted-foreground/70" />
-                                            <span className="font-medium">Travel: {new Date(inquiry.startDate).toLocaleDateString('en-GB')}</span>
-                                        </div>
-                                    )}
-                                    {inquiry.destination && (
-                                        <div className="flex items-center gap-1.5">
-                                            <MapPin className="w-3.5 h-3.5 text-muted-foreground/70" />
-                                            <span>{inquiry.destination}</span>
-                                        </div>
-                                    )}
-                                    {(inquiry.message || inquiry.budget) && (
-                                        <div className="mt-2">
-                                            {inquiry.type === 'AI_WIZARD_LEAD' && inquiry.message ? (
-                                                <div className="flex flex-wrap gap-1.5">
+                                <div className="space-y-2">
+                                    <div className="flex flex-wrap gap-2">
+                                        {inquiry.startDate && (
+                                            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 h-6 font-normal">
+                                                <CalendarIcon className="w-3 h-3 mr-1 opacity-70" />
+                                                {new Date(inquiry.startDate).toLocaleDateString('en-GB')}
+                                            </Badge>
+                                        )}
+                                        {!!inquiry.travelers && (
+                                            <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 h-6 font-normal">
+                                                <Users className="w-3 h-3 mr-1 opacity-70" />
+                                                {inquiry.travelers} Guests
+                                            </Badge>
+                                        )}
+                                        {!!inquiry.budget && (
+                                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 h-6 font-normal">
+                                                <Wallet className="w-3 h-3 mr-1 opacity-70" />
+                                                {inquiry.budget}
+                                            </Badge>
+                                        )}
+                                    </div>
+
+                                    {inquiry.message && (
+                                        <div className="text-xs text-muted-foreground">
+                                            {inquiry.type === 'AI_WIZARD_LEAD' ? (
+                                                <div className="flex flex-wrap gap-1.5 mt-1">
                                                     {inquiry.message.split('\n').map((line, i) => {
                                                         const parts = line.split(':');
                                                         if (parts.length < 2) return null;
-                                                        const key = parts[0];
-                                                        const val = parts.slice(1).join(':').trim(); // Handle colons in value if any
-
-                                                        if (key.includes('Travel Type')) return <Badge key={i} variant="secondary" className="bg-indigo-50 text-indigo-700 border-indigo-100 hover:bg-indigo-100 font-normal px-2 py-0.5 h-6"><Users className="w-3 h-3 mr-1.5 opacity-70" /> {val}</Badge>;
-                                                        if (key.includes('Duration')) return <Badge key={i} variant="secondary" className="bg-blue-50 text-blue-700 border-blue-100 hover:bg-blue-100 font-normal px-2 py-0.5 h-6"><Clock className="w-3 h-3 mr-1.5 opacity-70" /> {val}</Badge>;
-                                                        if (key.includes('Season')) return <Badge key={i} variant="secondary" className="bg-amber-50 text-amber-700 border-amber-100 hover:bg-amber-100 font-normal px-2 py-0.5 h-6"><CalendarIcon className="w-3 h-3 mr-1.5 opacity-70" /> {val}</Badge>;
+                                                        const val = parts.slice(1).join(':').trim();
+                                                        if (line.includes('Travel Type')) return <Badge key={i} variant="secondary" className="px-1.5 h-5 text-[10px] bg-indigo-50 text-indigo-700 border-indigo-100">{val}</Badge>;
+                                                        if (line.includes('Duration')) return <Badge key={i} variant="secondary" className="px-1.5 h-5 text-[10px] bg-blue-50 text-blue-700 border-blue-100">{val}</Badge>;
+                                                        if (line.includes('Season')) return <Badge key={i} variant="secondary" className="px-1.5 h-5 text-[10px] bg-amber-50 text-amber-700 border-amber-100">{val}</Badge>;
                                                         return null;
                                                     })}
-                                                    {inquiry.budget && (
-                                                        <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-100 font-normal px-2 py-0.5 h-6">
-                                                            <Wallet className="w-3 h-3 mr-1.5 opacity-70" /> {inquiry.budget}
-                                                        </Badge>
-                                                    )}
                                                 </div>
                                             ) : (
-                                                inquiry.message && (
-                                                    <p className="text-xs bg-muted/50 p-2 rounded-md border border-border text-muted-foreground italic line-clamp-2" title={inquiry.message}>
-                                                        "{inquiry.message}"
-                                                    </p>
-                                                )
+                                                <div className="bg-muted/30 p-2 rounded text-[11px] leading-relaxed border border-border/50 line-clamp-2 hover:line-clamp-none transition-all">
+                                                    {inquiry.message.replace('Booking Inquiry for Package:', '').trim()}
+                                                </div>
                                             )}
                                         </div>
                                     )}
@@ -318,15 +343,18 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
                                             </Button>
                                         </>
                                     ) : (
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={(e) => handleSoftDelete(inquiry.id, e)}
-                                            title="Move to Trash"
-                                            className="h-8 w-8 text-gray-400 hover:text-red-600 hover:bg-red-50"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </Button>
+                                        <>
+                                            <CopyButton inquiry={inquiry} />
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={(e) => handleSoftDelete(inquiry.id, e)}
+                                                title="Move to Trash"
+                                                className="h-8 w-8 text-gray-400 hover:text-red-600 hover:bg-red-50"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </Button>
+                                        </>
                                     )}
                                 </div>
                             </TableCell>
