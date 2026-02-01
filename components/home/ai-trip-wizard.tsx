@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Users, Calendar, Wallet, Sparkles, Check, ArrowRight, Plane, ArrowLeft, Phone, User, Clock, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { submitAiInquiry } from '@/app/actions/ai-wizard';
+import * as analytics from '@/lib/analytics';
 import { toast } from 'sonner';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -91,6 +92,18 @@ export function AiTripWizard({ isOpen, onClose }: AiTripWizardProps) {
         const result = await submitAiInquiry(formData);
 
         if (result.success) {
+            // Track Lead Event
+            const budgetValue = preferences.budget.includes('18k') ? 18000
+                : preferences.budget.includes('28k') ? 28000
+                    : preferences.budget.includes('45k') ? 45000
+                        : 18000;
+
+            analytics.event('Lead', {
+                content_name: 'AI Trip Wizard',
+                value: budgetValue,
+                currency: 'INR'
+            });
+
             toast.success("Preferences saved! Generating your trip...");
             setTimeout(() => {
                 setStep('result');

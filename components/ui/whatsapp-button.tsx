@@ -116,9 +116,21 @@ export function WhatsAppButton() {
             window.open(url, '_blank');
 
             // 3. Close & Reset
+            // 3. Close & Reset
             setIsOpen(false);
             setFormData({ name: '', phone: '', budget: '' });
-            analytics.event('Lead', { content_name: 'WhatsApp Quick Chat' });
+
+            // Extract numeric value from budget string (e.g., "Standard (18k - 25k)" -> 18000)
+            const budgetValue = formData.budget.includes('18k') ? 18000
+                : formData.budget.includes('25k') ? 25000
+                    : formData.budget.includes('40k') ? 40000
+                        : 18000; // Default fallback
+
+            analytics.event('Lead', {
+                content_name: 'WhatsApp Quick Chat',
+                value: budgetValue,
+                currency: 'INR'
+            });
 
         } catch (error) {
             console.error(error);

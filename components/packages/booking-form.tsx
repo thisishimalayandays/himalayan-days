@@ -120,11 +120,16 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
                 return;
             }
 
-            // Track Lead Event
+            // Track Lead Event with Value
+            const budgetValue = formData.budget.includes('18k') ? 18000
+                : formData.budget.includes('25k') ? 25000
+                    : formData.budget.includes('40k') ? 40000
+                        : 18000;
+
             analytics.event('Lead', {
                 content_name: packageTitle || 'General Inquiry',
                 content_category: 'Booking',
-                value: 0,
+                value: budgetValue,
                 currency: 'INR'
             });
 

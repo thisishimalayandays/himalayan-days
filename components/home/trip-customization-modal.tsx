@@ -132,9 +132,14 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
             }
 
             // Track Lead Event
+            const budgetValue = formData.budget.includes('Standard') ? 18000
+                : formData.budget.includes('Premium') ? 25000
+                    : formData.budget.includes('Luxury') ? 40000
+                        : 18000;
+
             analytics.event('Lead', {
                 content_name: 'Trip Customization',
-                value: 0,
+                value: budgetValue,
                 currency: 'INR'
             });
 
