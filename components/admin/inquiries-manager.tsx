@@ -382,89 +382,158 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
                 </div>
             </div>
 
-            <Tabs defaultValue="active" className="w-full">
-                <TabsList className="grid w-full max-w-lg grid-cols-3 mb-6 bg-card border shadow-sm">
-                    <TabsTrigger value="active">
-                        Active ({initialInquiries.length})
-                    </TabsTrigger>
-                    <TabsTrigger value="calendar">
-                        Calendar
-                    </TabsTrigger>
-                    <TabsTrigger value="trash" className="data-[state=active]:bg-red-50 dark:data-[state=active]:bg-red-900/20 data-[state=active]:text-red-900 dark:data-[state=active]:text-red-400">
-                        Trash ({trashedInquiries.length})
-                    </TabsTrigger>
-                </TabsList>
+            <Tabs defaultValue="all" className="w-full">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                    <TabsList className="bg-card border shadow-sm h-auto p-1 flex-wrap justify-start">
+                        <TabsTrigger value="all" className="px-4 py-2">
+                            All Active <Badge variant="secondary" className="ml-2 bg-slate-100">{initialInquiries.length}</Badge>
+                        </TabsTrigger>
+                        <TabsTrigger value="package" className="px-4 py-2">
+                            Packages <Badge variant="secondary" className="ml-2 bg-blue-50 text-blue-700">{initialInquiries.filter(i => i.type === 'PACKAGE_BOOKING').length}</Badge>
+                        </TabsTrigger>
+                        <TabsTrigger value="whatsapp" className="px-4 py-2">
+                            WhatsApp <Badge variant="secondary" className="ml-2 bg-green-50 text-green-700">{initialInquiries.filter(i => i.type === 'GENERAL').length}</Badge>
+                        </TabsTrigger>
+                        <TabsTrigger value="ai_wizard" className="px-4 py-2">
+                            AI Wizard <Badge variant="secondary" className="ml-2 bg-purple-50 text-purple-700">{initialInquiries.filter(i => i.type === 'AI_WIZARD_LEAD').length}</Badge>
+                        </TabsTrigger>
+                        <TabsTrigger value="custom" className="px-4 py-2">
+                            Plan My Trip <Badge variant="secondary" className="ml-2 bg-orange-50 text-orange-700">{initialInquiries.filter(i => i.type === 'PLAN_MY_TRIP').length}</Badge>
+                        </TabsTrigger>
+                        <TabsTrigger value="calendar" className="px-4 py-2 gap-2">
+                            <CalendarIcon className="w-4 h-4" /> Calendar
+                        </TabsTrigger>
+                        <TabsTrigger value="trash" className="px-4 py-2 gap-2 data-[state=active]:bg-red-50 text-red-600">
+                            <Trash2 className="w-4 h-4" /> Trash ({trashedInquiries.length})
+                        </TabsTrigger>
+                    </TabsList>
+                </div>
 
-                <TabsContent value="active">
-                    <Card>
-                        <CardHeader className="pb-3">
-                            <CardTitle>Active Leads</CardTitle>
-                            <CardDescription>
-                                Click on a row to mark it as read. Unread items are highlighted.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-0">
-                            <InquiriesTable data={initialInquiries} />
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-
-                <TabsContent value="calendar">
-                    <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-6 items-start">
+                <div className="space-y-4">
+                    {/* ALL ACTIVE */}
+                    <TabsContent value="all" className="mt-0">
                         <Card>
-                            <CardContent className="p-4">
-                                <Calendar
-                                    mode="single"
-                                    selected={selectedDate}
-                                    onSelect={setSelectedDate}
-                                    className="rounded-md border shadow-sm"
-                                    modifiers={{
-                                        hasInquiry: initialInquiries.map(inq => new Date(inq.createdAt))
-                                    }}
-                                    modifiersClassNames={{
-                                        hasInquiry: "font-bold text-orange-600 bg-orange-50 relative after:content-[''] after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:bg-orange-600 after:rounded-full"
-                                    }}
-                                />
-                                <div className="mt-4 text-xs text-gray-500 text-center">
-                                    <span className="inline-block w-2 h-2 bg-orange-600 rounded-full mr-1"></span>
-                                    Dates with inquiries
-                                </div>
+                            <CardHeader className="pb-3 border-b bg-slate-50/40">
+                                <CardTitle className="text-lg font-semibold text-slate-800">All Active Leads</CardTitle>
+                                <CardDescription>Complete list of all incoming inquiries from every source.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="p-0">
+                                <InquiriesTable data={initialInquiries} />
                             </CardContent>
                         </Card>
+                    </TabsContent>
 
-                        <Card className="h-full min-h-[400px]">
-                            <CardHeader>
-                                <CardTitle>
-                                    {selectedDate
-                                        ? `Inquiries for ${selectedDate.toLocaleDateString('en-GB')}`
-                                        : 'Select a date'}
+                    {/* PACKAGES */}
+                    <TabsContent value="package" className="mt-0">
+                        <Card>
+                            <CardHeader className="pb-3 border-b bg-blue-50/30">
+                                <CardTitle className="text-lg font-semibold text-blue-800">📦 Package Bookings</CardTitle>
+                                <CardDescription>Direct booking requests for specific tour packages.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="p-0">
+                                <InquiriesTable data={initialInquiries.filter(i => i.type === 'PACKAGE_BOOKING')} />
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
+                    {/* WHATSAPP */}
+                    <TabsContent value="whatsapp" className="mt-0">
+                        <Card>
+                            <CardHeader className="pb-3 border-b bg-green-50/30">
+                                <CardTitle className="text-lg font-semibold text-green-800">💬 WhatsApp Quick Chats</CardTitle>
+                                <CardDescription>Leads initiated via the floating WhatsApp button.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="p-0">
+                                <InquiriesTable data={initialInquiries.filter(i => i.type === 'GENERAL')} />
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
+                    {/* AI WIZARD */}
+                    <TabsContent value="ai_wizard" className="mt-0">
+                        <Card>
+                            <CardHeader className="pb-3 border-b bg-purple-50/30">
+                                <CardTitle className="text-lg font-semibold text-purple-800">🤖 AI Trip Wizard</CardTitle>
+                                <CardDescription>Personalized itineraries generated by the AI tool.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="p-0">
+                                <InquiriesTable data={initialInquiries.filter(i => i.type === 'AI_WIZARD_LEAD')} />
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
+                    {/* CUSTOM / PLAN MY TRIP */}
+                    <TabsContent value="custom" className="mt-0">
+                        <Card>
+                            <CardHeader className="pb-3 border-b bg-orange-50/30">
+                                <CardTitle className="text-lg font-semibold text-orange-800">✨ Plan My Trip</CardTitle>
+                                <CardDescription>Custom trip customization requests.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="p-0">
+                                <InquiriesTable data={initialInquiries.filter(i => i.type === 'PLAN_MY_TRIP')} />
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
+                    {/* CALENDAR */}
+                    <TabsContent value="calendar" className="mt-0">
+                        <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-6 items-start">
+                            <Card>
+                                <CardContent className="p-4">
+                                    <Calendar
+                                        mode="single"
+                                        selected={selectedDate}
+                                        onSelect={setSelectedDate}
+                                        className="rounded-md border shadow-sm"
+                                        modifiers={{
+                                            hasInquiry: initialInquiries.map(inq => new Date(inq.createdAt))
+                                        }}
+                                        modifiersClassNames={{
+                                            hasInquiry: "font-bold text-orange-600 bg-orange-50 relative after:content-[''] after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:bg-orange-600 after:rounded-full"
+                                        }}
+                                    />
+                                    <div className="mt-4 text-xs text-gray-500 text-center">
+                                        <span className="inline-block w-2 h-2 bg-orange-600 rounded-full mr-1"></span>
+                                        Dates with inquiries
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            <Card className="h-full min-h-[400px]">
+                                <CardHeader>
+                                    <CardTitle>
+                                        {selectedDate
+                                            ? `Inquiries for ${selectedDate.toLocaleDateString('en-GB')}`
+                                            : 'Select a date'}
+                                    </CardTitle>
+                                    <CardDescription>
+                                        {calendarInquiries.length} inquiry(s) found.
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="p-0">
+                                    <InquiriesTable data={calendarInquiries} />
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </TabsContent>
+
+                    {/* TRASH */}
+                    <TabsContent value="trash" className="mt-0">
+                        <Card className="border-red-100">
+                            <CardHeader className="pb-3 bg-red-50/30">
+                                <CardTitle className="text-red-900 flex items-center gap-2">
+                                    <Trash2 className="w-5 h-5" /> Trash
                                 </CardTitle>
-                                <CardDescription>
-                                    {calendarInquiries.length} inquiry(s) found.
+                                <CardDescription className="text-red-700/80">
+                                    Deleted inquiries. You can restore them or permanently delete them.
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="p-0">
-                                <InquiriesTable data={calendarInquiries} />
+                                <InquiriesTable data={trashedInquiries} isTrash={true} />
                             </CardContent>
                         </Card>
-                    </div>
-                </TabsContent>
-
-                <TabsContent value="trash">
-                    <Card className="border-red-100">
-                        <CardHeader className="pb-3 bg-red-50/30">
-                            <CardTitle className="text-red-900 flex items-center gap-2">
-                                <Trash2 className="w-5 h-5" /> Trash
-                            </CardTitle>
-                            <CardDescription className="text-red-700/80">
-                                Deleted inquiries. You can restore them or permanently delete them.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-0">
-                            <InquiriesTable data={trashedInquiries} isTrash={true} />
-                        </CardContent>
-                    </Card>
-                </TabsContent>
+                    </TabsContent>
+                </div>
             </Tabs>
         </div>
     );
