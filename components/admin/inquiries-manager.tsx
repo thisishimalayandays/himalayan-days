@@ -77,36 +77,49 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
     const handleExport = () => {
         setIsExporting(true);
         try {
+            // Get current filtered data based on active tab would be ideal, 
+            // but exporting ALL active inquiries is safer for the user request.
             const dataToExport = initialInquiries.map(inq => ({
                 Date: new Date(inq.createdAt).toLocaleDateString('en-GB'),
                 Name: inq.name,
                 Phone: inq.phone,
-                Email: inq.email || '',
                 Type: inq.type,
                 Status: inq.status,
-                Destination: inq.destination || '',
-                TravelDate: inq.startDate ? new Date(inq.startDate).toLocaleDateString('en-GB') : '',
-                Travelers: inq.travelers || '',
-                Message: inq.message || ''
+                Budget: inq.budget || '-',
+                Guests: inq.travelers || '-',
+                Message: inq.message ? inq.message.replace(/\n/g, ' ') : '-'
             }));
 
-            const textHeader = Object.keys(dataToExport[0]).join(',') + '\n';
-            const textBody = dataToExport.map(row => Object.values(row).map(val => `"${val}"`).join(',')).join('\n');
-            const csv = textHeader + textBody;
+            if (dataToExport.length === 0) {
+                alert("No filtered data to export");
+                return;
+            }
 
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('hidden', '');
-            a.setAttribute('href', url);
-            a.setAttribute('download', `inquiries_export_${new Date().toISOString().split('T')[0]}.csv`);
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            // Generate CSV
+            const headers = Object.keys(dataToExport[0]);
+            const csvContent = [
+                headers.join(','),
+                ...dataToExport.map(row => headers.map(header => {
+                    const cell = row[header as keyof typeof row] as string;
+                    return `"${(cell || '').replace(/"/g, '""')}"`; // Escape quotes
+                }).join(','))
+            ].join('\n');
+
+            // Download
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `leads_export_${new Date().toLocaleDateString('en-GB').replace(/\//g, '-')}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            toast.success("Leads exported successfully! 📊");
 
         } catch (err) {
             console.error("Export failed", err);
-            alert("Failed to export data");
+            toast.error("Failed to export data");
         } finally {
             setIsExporting(false);
         }
