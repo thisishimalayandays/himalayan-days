@@ -33,60 +33,7 @@ export function AiTripWizard({ isOpen, onClose }: AiTripWizardProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const countryCodes = [
-        { code: '+91', iso: 'IN', label: 'India' },
-        { code: '+1', iso: 'US', label: 'USA' },
-        { code: '+44', iso: 'GB', label: 'UK' },
-        { code: '+971', iso: 'AE', label: 'UAE' },
-        { code: '+61', iso: 'AU', label: 'Australia' },
-        { code: '+1', iso: 'CA', label: 'Canada' },
-        { code: '+65', iso: 'SG', label: 'Singapore' },
-        { code: '+60', iso: 'MY', label: 'Malaysia' },
-        { code: '+81', iso: 'JP', label: 'Japan' },
-        { code: '+49', iso: 'DE', label: 'Germany' },
-        { code: '+33', iso: 'FR', label: 'France' },
-        { code: '+966', iso: 'SA', label: 'Saudi Arabia' },
-        { code: '+974', iso: 'QA', label: 'Qatar' },
-        { code: '+965', iso: 'KW', label: 'Kuwait' },
-        { code: '+968', iso: 'OM', label: 'Oman' },
-        { code: '+973', iso: 'BH', label: 'Bahrain' },
-        { code: '+880', iso: 'BD', label: 'Bangladesh' },
-        { code: '+94', iso: 'LK', label: 'Sri Lanka' },
-        { code: '+977', iso: 'NP', label: 'Nepal' },
-        { code: '+66', iso: 'TH', label: 'Thailand' },
-        { code: '+62', iso: 'ID', label: 'Indonesia' },
-        { code: '+63', iso: 'PH', label: 'Philippines' },
-        { code: '+84', iso: 'VN', label: 'Vietnam' },
-        { code: '+86', iso: 'CN', label: 'China' },
-        { code: '+852', iso: 'HK', label: 'Hong Kong' },
-        { code: '+82', iso: 'KR', label: 'South Korea' },
-        { code: '+39', iso: 'IT', label: 'Italy' },
-        { code: '+34', iso: 'ES', label: 'Spain' },
-        { code: '+31', iso: 'NL', label: 'Netherlands' },
-        { code: '+41', iso: 'CH', label: 'Switzerland' },
-        { code: '+46', iso: 'SE', label: 'Sweden' },
-        { code: '+47', iso: 'NO', label: 'Norway' },
-        { code: '+45', iso: 'DK', label: 'Denmark' },
-        { code: '+353', iso: 'IE', label: 'Ireland' },
-        { code: '+32', iso: 'BE', label: 'Belgium' },
-        { code: '+43', iso: 'AT', label: 'Austria' },
-        { code: '+48', iso: 'PL', label: 'Poland' },
-        { code: '+351', iso: 'PT', label: 'Portugal' },
-        { code: '+30', iso: 'GR', label: 'Greece' },
-        { code: '+90', iso: 'TR', label: 'Turkey' },
-        { code: '+7', iso: 'RU', label: 'Russia' },
-        { code: '+20', iso: 'EG', label: 'Egypt' },
-        { code: '+27', iso: 'ZA', label: 'South Africa' },
-        { code: '+254', iso: 'KE', label: 'Kenya' },
-        { code: '+55', iso: 'BR', label: 'Brazil' },
-        { code: '+52', iso: 'MX', label: 'Mexico' },
-        { code: '+54', iso: 'AR', label: 'Argentina' },
-        { code: '+64', iso: 'NZ', label: 'New Zealand' },
-        { code: '+93', iso: 'AF', label: 'Afghanistan' },
-        { code: '+95', iso: 'MM', label: 'Myanmar' },
-        { code: '+960', iso: 'MV', label: 'Maldives' },
-        { code: '+975', iso: 'BT', label: 'Bhutan' },
-        { code: '+98', iso: 'IR', label: 'Iran' },
-        { code: '+964', iso: 'IQ', label: 'Iraq' },
+        { code: '+91', iso: 'IN', label: 'India' }
     ];
 
     const resetWizard = () => {
@@ -347,9 +294,9 @@ export function AiTripWizard({ isOpen, onClose }: AiTripWizardProps) {
                                 </div>
                                 <div className="grid grid-cols-1 gap-3">
                                     {[
-                                        { label: 'Budget Friendly', price: '₹12k - ₹20k', desc: 'Standard hotels, group/shared cab' },
-                                        { label: 'Comfort & Classic', price: '₹22k - ₹35k', desc: '3-4 Star stays, clean Cab' },
-                                        { label: 'Luxury & Premium', price: '₹40k+', desc: '5-Star stays, Premium Houseboat, Innova Crysta' }
+                                        { label: 'Standard (Quality)', price: '₹18k - ₹25k', desc: 'Good hotels, private cab, verified drivers' },
+                                        { label: 'Premium (Comfort)', price: '₹28k - ₹40k', desc: '4-Star stays, Innova, best rooms' },
+                                        { label: 'Luxury (VVIP)', price: '₹45k+', desc: '5-Star, Houseboats, top-tier service' }
                                     ].map(opt => (
                                         <button
                                             key={opt.label}
@@ -363,6 +310,10 @@ export function AiTripWizard({ isOpen, onClose }: AiTripWizardProps) {
                                             <div className="text-xs text-gray-500 mt-1">{opt.desc}</div>
                                         </button>
                                     ))}
+                                </div>
+                                <div className="mt-4 p-3 bg-blue-50 text-blue-800 text-xs rounded-lg flex items-start gap-2">
+                                    <Sparkles className="w-4 h-4 shrink-0 mt-0.5" />
+                                    <p><b>Note:</b> We do not offer "Cheap" packages. All options represent <b>premium quality</b> (min ₹18k/person).</p>
                                 </div>
                             </motion.div>
                         )}

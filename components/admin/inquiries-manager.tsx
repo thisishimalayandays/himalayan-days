@@ -310,7 +310,7 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
                                                     })}
                                                 </div>
                                             ) : (
-                                                <div className="bg-muted/30 p-2 rounded text-[11px] leading-relaxed border border-border/50 line-clamp-2 hover:line-clamp-none transition-all">
+                                                <div className="bg-muted/30 p-2 rounded text-[11px] leading-relaxed border border-border/50 whitespace-pre-wrap">
                                                     {inquiry.message.replace('Booking Inquiry for Package:', '').trim()}
                                                 </div>
                                             )}

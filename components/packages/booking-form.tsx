@@ -19,64 +19,11 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
         guests: '',
         budget: ''
     });
-    const [errors, setErrors] = useState<{ name?: string, phone?: string, guests?: string }>({});
+    const [errors, setErrors] = useState<{ name?: string, phone?: string, guests?: string, budget?: string }>({});
     const { toast } = useToast();
 
     const countryCodes = [
-        { code: '+91', iso: 'IN', label: 'India' },
-        { code: '+1', iso: 'US', label: 'USA' },
-        { code: '+44', iso: 'GB', label: 'UK' },
-        { code: '+971', iso: 'AE', label: 'UAE' },
-        { code: '+61', iso: 'AU', label: 'Australia' },
-        { code: '+1', iso: 'CA', label: 'Canada' },
-        { code: '+65', iso: 'SG', label: 'Singapore' },
-        { code: '+60', iso: 'MY', label: 'Malaysia' },
-        { code: '+81', iso: 'JP', label: 'Japan' },
-        { code: '+49', iso: 'DE', label: 'Germany' },
-        { code: '+33', iso: 'FR', label: 'France' },
-        { code: '+966', iso: 'SA', label: 'Saudi Arabia' },
-        { code: '+974', iso: 'QA', label: 'Qatar' },
-        { code: '+965', iso: 'KW', label: 'Kuwait' },
-        { code: '+968', iso: 'OM', label: 'Oman' },
-        { code: '+973', iso: 'BH', label: 'Bahrain' },
-        { code: '+880', iso: 'BD', label: 'Bangladesh' },
-        { code: '+94', iso: 'LK', label: 'Sri Lanka' },
-        { code: '+977', iso: 'NP', label: 'Nepal' },
-        { code: '+66', iso: 'TH', label: 'Thailand' },
-        { code: '+62', iso: 'ID', label: 'Indonesia' },
-        { code: '+63', iso: 'PH', label: 'Philippines' },
-        { code: '+84', iso: 'VN', label: 'Vietnam' },
-        { code: '+86', iso: 'CN', label: 'China' },
-        { code: '+852', iso: 'HK', label: 'Hong Kong' },
-        { code: '+82', iso: 'KR', label: 'South Korea' },
-        { code: '+39', iso: 'IT', label: 'Italy' },
-        { code: '+34', iso: 'ES', label: 'Spain' },
-        { code: '+31', iso: 'NL', label: 'Netherlands' },
-        { code: '+41', iso: 'CH', label: 'Switzerland' },
-        { code: '+46', iso: 'SE', label: 'Sweden' },
-        { code: '+47', iso: 'NO', label: 'Norway' },
-        { code: '+45', iso: 'DK', label: 'Denmark' },
-        { code: '+353', iso: 'IE', label: 'Ireland' },
-        { code: '+32', iso: 'BE', label: 'Belgium' },
-        { code: '+43', iso: 'AT', label: 'Austria' },
-        { code: '+48', iso: 'PL', label: 'Poland' },
-        { code: '+351', iso: 'PT', label: 'Portugal' },
-        { code: '+30', iso: 'GR', label: 'Greece' },
-        { code: '+90', iso: 'TR', label: 'Turkey' },
-        { code: '+7', iso: 'RU', label: 'Russia' },
-        { code: '+20', iso: 'EG', label: 'Egypt' },
-        { code: '+27', iso: 'ZA', label: 'South Africa' },
-        { code: '+254', iso: 'KE', label: 'Kenya' },
-        { code: '+55', iso: 'BR', label: 'Brazil' },
-        { code: '+52', iso: 'MX', label: 'Mexico' },
-        { code: '+54', iso: 'AR', label: 'Argentina' },
-        { code: '+64', iso: 'NZ', label: 'New Zealand' },
-        { code: '+93', iso: 'AF', label: 'Afghanistan' },
-        { code: '+95', iso: 'MM', label: 'Myanmar' },
-        { code: '+960', iso: 'MV', label: 'Maldives' },
-        { code: '+975', iso: 'BT', label: 'Bhutan' },
-        { code: '+98', iso: 'IR', label: 'Iran' },
-        { code: '+964', iso: 'IQ', label: 'Iraq' },
+        { code: '+91', iso: 'IN', label: 'India' }
     ];
 
     // Get today's date for min attribute
@@ -116,6 +63,12 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
         // Guests
         if (parseInt(formData.guests) < 1) {
             newErrors.guests = "At least 1 guest";
+            isValid = false;
+        }
+
+        // Budget Validation
+        if (!formData.budget) {
+            newErrors.budget = "Please select a budget range";
             isValid = false;
         }
 
@@ -303,17 +256,27 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
 
                 <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-700">Budget (Per Person)</label>
-                    <Select value={formData.budget} onValueChange={(val) => setFormData({ ...formData, budget: val })}>
-                        <SelectTrigger className="w-full px-4 h-10 rounded-lg border border-gray-200 bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                    <Select value={formData.budget} onValueChange={(val) => {
+                        setFormData({ ...formData, budget: val });
+                        if (errors.budget) setErrors({ ...errors, budget: '' });
+                    }}>
+                        <SelectTrigger className={`w-full px-4 h-10 rounded-lg border bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all ${errors.budget ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-200 focus:border-primary'}`}>
                             <SelectValue placeholder="Select Range" />
                         </SelectTrigger>
                         <SelectContent className="bg-white">
-                            <SelectItem value="Economy (Below 15k)">Economy (Below ₹15k)</SelectItem>
-                            <SelectItem value="Standard (15k - 25k)">Standard (₹15k - ₹25k)</SelectItem>
+                            <SelectItem value="Standard (18k - 25k)">Standard (₹18k - ₹25k)</SelectItem>
                             <SelectItem value="Premium (25k - 40k)">Premium (₹25k - ₹40k)</SelectItem>
                             <SelectItem value="Luxury (Above 40k)">Luxury (Above ₹40k)</SelectItem>
                         </SelectContent>
                     </Select>
+                    {errors.budget && <p className="text-xs text-red-500">{errors.budget}</p>}
+                </div>
+
+                <div className="bg-orange-50 p-3 rounded-lg border border-orange-100 flex gap-2 items-start">
+                    <span className="text-orange-600 mt-0.5 text-xs">ℹ️</span>
+                    <p className="text-xs text-orange-800 leading-snug">
+                        <strong>Note:</strong> Premium packages start from <strong>₹18,000/person</strong>. We prioritize quality experiences over cheap deals.
+                    </p>
                 </div>
 
                 <Button type="submit" disabled={isSubmitting} className="w-full bg-primary hover:bg-orange-600 text-lg font-semibold h-12">

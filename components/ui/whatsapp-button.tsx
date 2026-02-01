@@ -19,65 +19,12 @@ export function WhatsAppButton() {
     const [isOpen, setIsOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [countryIso, setCountryIso] = useState('IN');
-    const [formData, setFormData] = useState({ name: '', phone: '' });
-    const [errors, setErrors] = useState({ name: '', phone: '' });
+    const [formData, setFormData] = useState({ name: '', phone: '', budget: '' });
+    const [errors, setErrors] = useState({ name: '', phone: '', budget: '' });
     const [showTooltip, setShowTooltip] = useState(false);
 
     const countryCodes = [
-        { code: '+91', iso: 'IN', label: 'India' },
-        { code: '+1', iso: 'US', label: 'USA' },
-        { code: '+44', iso: 'GB', label: 'UK' },
-        { code: '+971', iso: 'AE', label: 'UAE' },
-        { code: '+61', iso: 'AU', label: 'Australia' },
-        { code: '+1', iso: 'CA', label: 'Canada' },
-        { code: '+65', iso: 'SG', label: 'Singapore' },
-        { code: '+60', iso: 'MY', label: 'Malaysia' },
-        { code: '+81', iso: 'JP', label: 'Japan' },
-        { code: '+49', iso: 'DE', label: 'Germany' },
-        { code: '+33', iso: 'FR', label: 'France' },
-        { code: '+966', iso: 'SA', label: 'Saudi Arabia' },
-        { code: '+974', iso: 'QA', label: 'Qatar' },
-        { code: '+965', iso: 'KW', label: 'Kuwait' },
-        { code: '+968', iso: 'OM', label: 'Oman' },
-        { code: '+973', iso: 'BH', label: 'Bahrain' },
-        { code: '+880', iso: 'BD', label: 'Bangladesh' },
-        { code: '+94', iso: 'LK', label: 'Sri Lanka' },
-        { code: '+977', iso: 'NP', label: 'Nepal' },
-        { code: '+66', iso: 'TH', label: 'Thailand' },
-        { code: '+62', iso: 'ID', label: 'Indonesia' },
-        { code: '+63', iso: 'PH', label: 'Philippines' },
-        { code: '+84', iso: 'VN', label: 'Vietnam' },
-        { code: '+86', iso: 'CN', label: 'China' },
-        { code: '+852', iso: 'HK', label: 'Hong Kong' },
-        { code: '+82', iso: 'KR', label: 'South Korea' },
-        { code: '+39', iso: 'IT', label: 'Italy' },
-        { code: '+34', iso: 'ES', label: 'Spain' },
-        { code: '+31', iso: 'NL', label: 'Netherlands' },
-        { code: '+41', iso: 'CH', label: 'Switzerland' },
-        { code: '+46', iso: 'SE', label: 'Sweden' },
-        { code: '+47', iso: 'NO', label: 'Norway' },
-        { code: '+45', iso: 'DK', label: 'Denmark' },
-        { code: '+353', iso: 'IE', label: 'Ireland' },
-        { code: '+32', iso: 'BE', label: 'Belgium' },
-        { code: '+43', iso: 'AT', label: 'Austria' },
-        { code: '+48', iso: 'PL', label: 'Poland' },
-        { code: '+351', iso: 'PT', label: 'Portugal' },
-        { code: '+30', iso: 'GR', label: 'Greece' },
-        { code: '+90', iso: 'TR', label: 'Turkey' },
-        { code: '+7', iso: 'RU', label: 'Russia' },
-        { code: '+20', iso: 'EG', label: 'Egypt' },
-        { code: '+27', iso: 'ZA', label: 'South Africa' },
-        { code: '+254', iso: 'KE', label: 'Kenya' },
-        { code: '+55', iso: 'BR', label: 'Brazil' },
-        { code: '+52', iso: 'MX', label: 'Mexico' },
-        { code: '+54', iso: 'AR', label: 'Argentina' },
-        { code: '+64', iso: 'NZ', label: 'New Zealand' },
-        { code: '+93', iso: 'AF', label: 'Afghanistan' },
-        { code: '+95', iso: 'MM', label: 'Myanmar' },
-        { code: '+960', iso: 'MV', label: 'Maldives' },
-        { code: '+975', iso: 'BT', label: 'Bhutan' },
-        { code: '+98', iso: 'IR', label: 'Iran' },
-        { code: '+964', iso: 'IQ', label: 'Iraq' },
+        { code: '+91', iso: 'IN', label: 'India' }
     ];
 
     // Initial nudge
@@ -94,7 +41,7 @@ export function WhatsAppButton() {
 
     const validate = () => {
         let isValid = true;
-        const newErrors = { name: '', phone: '' };
+        const newErrors = { name: '', phone: '', budget: '' };
 
         // Name Validation
         if (formData.name.trim().length < 2) {
@@ -123,6 +70,12 @@ export function WhatsAppButton() {
             }
         }
 
+        // Budget Validation
+        if (!formData.budget) {
+            newErrors.budget = "Please select a budget";
+            isValid = false;
+        }
+
         setErrors(newErrors);
         return isValid;
     };
@@ -131,7 +84,7 @@ export function WhatsAppButton() {
         e.preventDefault();
 
         // Clear previous errors
-        setErrors({ name: '', phone: '' });
+        setErrors({ name: '', phone: '', budget: '' });
 
         if (!validate()) return;
         if (!executeRecaptcha) return;
@@ -149,21 +102,22 @@ export function WhatsAppButton() {
             await createInquiry({
                 name: formData.name,
                 phone: fullPhone,
-                message: "Started Quick Chat via WhatsApp Button",
+                message: `Started Quick Chat via WhatsApp Button (Budget: ${formData.budget})`,
                 type: "GENERAL",
+                budget: formData.budget,
                 captchaToken: token
             });
 
             // 2. Open WhatsApp
             const phoneNumber = '919103901803';
-            const text = `Hi, I am ${formData.name}. I want to plan a trip with Himalayan Days.`;
+            const text = `Hi, I am ${formData.name}. I want to plan a trip. My budget is ${formData.budget}.`;
             const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`;
 
             window.open(url, '_blank');
 
             // 3. Close & Reset
             setIsOpen(false);
-            setFormData({ name: '', phone: '' });
+            setFormData({ name: '', phone: '', budget: '' });
             analytics.event('Lead', { content_name: 'WhatsApp Quick Chat' });
 
         } catch (error) {
@@ -262,6 +216,33 @@ export function WhatsAppButton() {
                                         </div>
                                     </div>
                                     {errors.phone && <p className="text-[10px] text-red-500 ml-1">{errors.phone}</p>}
+                                </div>
+
+                                <div className="space-y-1">
+                                    <Select
+                                        value={formData.budget}
+                                        onValueChange={(val) => {
+                                            setFormData({ ...formData, budget: val });
+                                            if (errors.budget) setErrors({ ...errors, budget: '' });
+                                        }}
+                                    >
+                                        <SelectTrigger className={`h-9 text-sm ${errors.budget ? 'border-red-500' : ''}`}>
+                                            <SelectValue placeholder="Budget (Per Person)" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Standard (18k - 25k)">Standard (₹18k - ₹25k)</SelectItem>
+                                            <SelectItem value="Premium (25k - 40k)">Premium (₹25k - ₹40k)</SelectItem>
+                                            <SelectItem value="Luxury (Above 40k)">Luxury (Above ₹40k)</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.budget && <p className="text-[10px] text-red-500 ml-1">{errors.budget}</p>}
+                                </div>
+
+                                <div className="bg-orange-50 p-2 rounded border border-orange-100 flex gap-2 items-start">
+                                    <AlertCircle className="w-3 h-3 text-orange-600 mt-0.5 shrink-0" />
+                                    <p className="text-[10px] text-orange-800 leading-snug">
+                                        <b>Note:</b> We specialize in premium trips. Minimum budget starts at <b>₹18,000/person</b>.
+                                    </p>
                                 </div>
 
                                 <Button

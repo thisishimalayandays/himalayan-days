@@ -33,60 +33,7 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
     const { toast } = useToast();
 
     const countryCodes = [
-        { code: '+91', iso: 'IN', label: 'India' },
-        { code: '+1', iso: 'US', label: 'USA' },
-        { code: '+44', iso: 'GB', label: 'UK' },
-        { code: '+971', iso: 'AE', label: 'UAE' },
-        { code: '+61', iso: 'AU', label: 'Australia' },
-        { code: '+1', iso: 'CA', label: 'Canada' },
-        { code: '+65', iso: 'SG', label: 'Singapore' },
-        { code: '+60', iso: 'MY', label: 'Malaysia' },
-        { code: '+81', iso: 'JP', label: 'Japan' },
-        { code: '+49', iso: 'DE', label: 'Germany' },
-        { code: '+33', iso: 'FR', label: 'France' },
-        { code: '+966', iso: 'SA', label: 'Saudi Arabia' },
-        { code: '+974', iso: 'QA', label: 'Qatar' },
-        { code: '+965', iso: 'KW', label: 'Kuwait' },
-        { code: '+968', iso: 'OM', label: 'Oman' },
-        { code: '+973', iso: 'BH', label: 'Bahrain' },
-        { code: '+880', iso: 'BD', label: 'Bangladesh' },
-        { code: '+94', iso: 'LK', label: 'Sri Lanka' },
-        { code: '+977', iso: 'NP', label: 'Nepal' },
-        { code: '+66', iso: 'TH', label: 'Thailand' },
-        { code: '+62', iso: 'ID', label: 'Indonesia' },
-        { code: '+63', iso: 'PH', label: 'Philippines' },
-        { code: '+84', iso: 'VN', label: 'Vietnam' },
-        { code: '+86', iso: 'CN', label: 'China' },
-        { code: '+852', iso: 'HK', label: 'Hong Kong' },
-        { code: '+82', iso: 'KR', label: 'South Korea' },
-        { code: '+39', iso: 'IT', label: 'Italy' },
-        { code: '+34', iso: 'ES', label: 'Spain' },
-        { code: '+31', iso: 'NL', label: 'Netherlands' },
-        { code: '+41', iso: 'CH', label: 'Switzerland' },
-        { code: '+46', iso: 'SE', label: 'Sweden' },
-        { code: '+47', iso: 'NO', label: 'Norway' },
-        { code: '+45', iso: 'DK', label: 'Denmark' },
-        { code: '+353', iso: 'IE', label: 'Ireland' },
-        { code: '+32', iso: 'BE', label: 'Belgium' },
-        { code: '+43', iso: 'AT', label: 'Austria' },
-        { code: '+48', iso: 'PL', label: 'Poland' },
-        { code: '+351', iso: 'PT', label: 'Portugal' },
-        { code: '+30', iso: 'GR', label: 'Greece' },
-        { code: '+90', iso: 'TR', label: 'Turkey' },
-        { code: '+7', iso: 'RU', label: 'Russia' },
-        { code: '+20', iso: 'EG', label: 'Egypt' },
-        { code: '+27', iso: 'ZA', label: 'South Africa' },
-        { code: '+254', iso: 'KE', label: 'Kenya' },
-        { code: '+55', iso: 'BR', label: 'Brazil' },
-        { code: '+52', iso: 'MX', label: 'Mexico' },
-        { code: '+54', iso: 'AR', label: 'Argentina' },
-        { code: '+64', iso: 'NZ', label: 'New Zealand' },
-        { code: '+93', iso: 'AF', label: 'Afghanistan' },
-        { code: '+95', iso: 'MM', label: 'Myanmar' },
-        { code: '+960', iso: 'MV', label: 'Maldives' },
-        { code: '+975', iso: 'BT', label: 'Bhutan' },
-        { code: '+98', iso: 'IR', label: 'Iran' },
-        { code: '+964', iso: 'IQ', label: 'Iraq' },
+        { code: '+91', iso: 'IN', label: 'India' }
     ];
 
     useEffect(() => {
@@ -369,13 +316,17 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
                                     <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
                                         <Wallet className="w-4 h-4 text-primary" /> Budget Preference
                                     </label>
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                                        {['Economy', 'Standard', 'Luxury', 'Premium'].map((option) => (
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {[
+                                            { label: 'Standard', sub: '₹18k-25k' },
+                                            { label: 'Premium', sub: '₹25k-40k' },
+                                            { label: 'Luxury', sub: '₹40k+' },
+                                        ].map((option) => (
                                             <label
-                                                key={option}
+                                                key={option.label}
                                                 className={`
-                                                    cursor-pointer text-center text-sm py-2.5 rounded-xl border transition-all font-medium
-                                                    ${formData.budget === option
+                                                    cursor-pointer text-center text-sm py-2.5 rounded-xl border transition-all font-medium flex flex-col items-center justify-center
+                                                    ${formData.budget === option.label
                                                         ? 'bg-orange-50 border-primary text-primary shadow-sm'
                                                         : 'border-gray-200 text-gray-600 hover:border-orange-200 hover:bg-orange-50/50'}
                                                 `}
@@ -383,15 +334,19 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
                                                 <input
                                                     type="radio"
                                                     name="budget"
-                                                    value={option}
-                                                    checked={formData.budget === option}
-                                                    onChange={handleChange}
+                                                    value={option.label}
+                                                    checked={formData.budget === option.label}
+                                                    onChange={(e) => handleChange(e as any)}
                                                     className="hidden"
                                                 />
-                                                {option}
+                                                <span>{option.label}</span>
+                                                <span className="text-[10px] opacity-70">{option.sub}</span>
                                             </label>
                                         ))}
                                     </div>
+                                    <p className="text-[10px] text-orange-600 bg-orange-50 p-2 rounded-lg border border-orange-100 mt-2">
+                                        ℹ️ <b>Note:</b> Our premium packages start from <b>₹18,000/person</b> to ensure quality.
+                                    </p>
                                 </div>
 
                                 {/* Trip Type */}
