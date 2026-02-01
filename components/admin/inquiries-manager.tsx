@@ -18,7 +18,7 @@ import { Mail, Phone, Calendar as CalendarIcon, MapPin, Trash2, RefreshCcw, File
 import { softDeleteInquiry, restoreInquiry, permanentDeleteInquiry, markInquiryAsRead, updateInquiryStatus } from '@/app/actions/inquiries';
 import { useRouter } from 'next/navigation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { toast } from 'sonner';
+import { useToast } from "@/hooks/use-toast";
 
 interface Inquiry {
     id: string;
@@ -45,6 +45,7 @@ interface InquiriesManagerProps {
 
 export function InquiriesManager({ initialInquiries, trashedInquiries }: InquiriesManagerProps) {
     const router = useRouter();
+    const { toast } = useToast();
     const [isExporting, setIsExporting] = useState(false);
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
 
@@ -75,25 +76,26 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
     };
 
     const handleExport = () => {
+        console.log("Export button clicked");
         setIsExporting(true);
         try {
-            // Get current filtered data based on active tab would be ideal, 
-            // but exporting ALL active inquiries is safer for the user request.
-            const dataToExport = initialInquiries.map(inq => ({
-                Date: new Date(inq.createdAt).toLocaleDateString('en-GB'),
-                Name: inq.name,
-                Phone: inq.phone,
-                Type: inq.type,
-                Status: inq.status,
-                Budget: inq.budget || '-',
-                Guests: inq.travelers || '-',
-                Message: inq.message ? inq.message.replace(/\n/g, ' ') : '-'
-            }));
+            console.log("Data to export:", initialInquiries.length);
 
-            if (dataToExport.length === 0) {
-                alert("No filtered data to export");
+            if (!initialInquiries || initialInquiries.length === 0) {
+                alert("No active inquiries to export.");
                 return;
             }
+
+            const dataToExport = initialInquiries.map(inq => ({
+                Date: new Date(inq.createdAt).toLocaleDateString('en-GB'),
+                Name: inq.name || '-',
+                Phone: inq.phone || '-',
+                Type: inq.type || '-',
+                Status: inq.status || '-',
+                Budget: inq.budget || '-',
+                Guests: inq.travelers || '-',
+                Message: inq.message ? inq.message.replace(/[\n\r]+/g, ' ').replace(/"/g, "'") : '-'
+            }));
 
             // Generate CSV
             const headers = Object.keys(dataToExport[0]);
@@ -101,25 +103,29 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
                 headers.join(','),
                 ...dataToExport.map(row => headers.map(header => {
                     const cell = row[header as keyof typeof row] as string;
-                    return `"${(cell || '').replace(/"/g, '""')}"`; // Escape quotes
+                    return `"${(cell || '').toString().replace(/"/g, '""')}"`;
                 }).join(','))
             ].join('\n');
 
             // Download
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
+            const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
             link.setAttribute('download', `leads_export_${new Date().toLocaleDateString('en-GB').replace(/\//g, '-')}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
 
-            toast.success("Leads exported successfully! 📊");
+            toast({
+                title: "Export Successful",
+                description: `Downloaded ${dataToExport.length} leads to CSV.`
+            });
 
         } catch (err) {
             console.error("Export failed", err);
-            toast.error("Failed to export data");
+            alert("Export failed. Please check console for details.");
         } finally {
             setIsExporting(false);
         }
@@ -134,10 +140,18 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
             // Optimistic update could go here, but router.refresh() is safer for now
             const result = await updateInquiryStatus(id, newStatus);
             if (result.success) {
-                toast.success(`Status updated to ${newStatus.toLowerCase()}`)
+                toast({
+                    title: "Status Updated",
+                    description: `Status updated to ${newStatus.toLowerCase()}`,
+                    className: "bg-green-50 border-green-200 text-green-800"
+                });
                 router.refresh();
             } else {
-                toast.error("Failed to update status");
+                toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: "Failed to update status"
+                });
             }
         };
 
@@ -197,7 +211,10 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
             const text = `*Lead Details* 📋\nName: ${inquiry.name}\nPhone: ${inquiry.phone}\n${inquiry.startDate ? `Travel: ${new Date(inquiry.startDate).toLocaleDateString('en-GB')}` : ''}\n${inquiry.travelers ? `Guests: ${inquiry.travelers}` : ''}\n${inquiry.budget ? `Budget: ${inquiry.budget}` : ''}\n${inquiry.message ? `Note: ${inquiry.message}` : ''}`;
             navigator.clipboard.writeText(text);
             setCopied(true);
-            toast.success("Details copied!");
+            toast({
+                title: "Copied!",
+                description: "Lead details copied to clipboard."
+            });
             setTimeout(() => setCopied(false), 2000);
         };
 
