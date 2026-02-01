@@ -61,8 +61,13 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
         }
 
         // Guests
-        if (parseInt(formData.guests) < 1) {
+        // Guests
+        const guestsNum = parseInt(formData.guests);
+        if (isNaN(guestsNum) || guestsNum < 1) {
             newErrors.guests = "At least 1 guest";
+            isValid = false;
+        } else if (guestsNum > 50) {
+            newErrors.guests = "Max 50 guests allowed";
             isValid = false;
         }
 

@@ -307,9 +307,13 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
                                             required
                                             type="number"
                                             min="2"
+                                            max="60"
                                             name="duration"
                                             value={formData.duration}
-                                            onChange={handleChange}
+                                            onChange={(e) => {
+                                                if (parseInt(e.target.value) > 60) return;
+                                                handleChange(e);
+                                            }}
                                             placeholder="e.g. 5"
                                             className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-gray-400"
                                         />
