@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import { MapPin, Clock } from 'lucide-react';
 import { SnowEffect } from '@/components/ui/snow-effect';
