@@ -8,6 +8,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 import { ReCaptchaWrapper } from "@/components/providers/recaptcha-provider";
 import { DynamicThemeProvider } from "@/components/providers/dynamic-theme-provider";
 import { FacebookPixel } from "@/components/analytics/facebook-pixel";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -79,6 +80,7 @@ export default function RootLayout({
             <Analytics />
             <SpeedInsights />
             <FacebookPixel />
+            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || "G-GE51ZR3PFR"} />
           </DynamicThemeProvider>
         </ReCaptchaWrapper>
       </body>
