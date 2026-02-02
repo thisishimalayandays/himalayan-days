@@ -168,7 +168,10 @@ export default async function PackagePage({ params }: { params: Promise<{ slug: 
 
                     {/* Sidebar */}
                     <div className="lg:col-span-1">
-                        <BookingForm packageTitle={pkg.title} />
+                        <BookingForm
+                            packageTitle={pkg.title}
+                            isHighDemand={resolvedParams.slug === 'winter-wonderland-kashmir'}
+                        />
                     </div>
                 </div>
             </div>
