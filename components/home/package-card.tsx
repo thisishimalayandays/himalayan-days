@@ -64,9 +64,17 @@ export function PackageCard({ packageData, index = 0 }: PackageCardProps) {
                     />
                 )}
 
-                <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-full text-xs font-bold text-primary uppercase tracking-wide shadow-sm z-10">
-                    {packageData.category}
+                <div className="absolute top-4 left-4 flex gap-2">
+                    <div className="bg-white/95 backdrop-blur-sm px-4 py-2 rounded-full text-xs font-bold text-primary uppercase tracking-wide shadow-sm z-10">
+                        {packageData.category}
+                    </div>
                 </div>
+
+                {reviews > 500 && (
+                    <div className="absolute top-4 right-4 bg-yellow-400 text-black px-3 py-1.5 rounded-full text-[10px] font-bold shadow-md z-10 flex items-center gap-1">
+                        🏆 Best Seller
+                    </div>
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300 z-0" />
             </Link>
 
@@ -82,7 +90,9 @@ export function PackageCard({ packageData, index = 0 }: PackageCardProps) {
                                 <Star key={i} className={`w-3.5 h-3.5 ${i < Math.round(rating) ? "fill-current" : "fill-current opacity-30 text-gray-300"}`} />
                             ))}
                         </div>
-                        <span className="text-xs text-gray-500 font-medium ml-1">{rating} ({reviews} reviews)</span>
+                        <span className="text-xs text-gray-500 font-medium ml-1">
+                            {rating} ({reviews > 900 ? '900+' : reviews} reviews)
+                        </span>
                     </div>
                     <div className="flex items-center gap-4 text-sm text-gray-500">
                         <div className="flex items-center gap-1.5">
