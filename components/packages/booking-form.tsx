@@ -273,7 +273,7 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
                         <SelectTrigger className={`w-full px-4 h-10 rounded-lg border bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all ${errors.budget ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-200 focus:border-primary'}`}>
                             <SelectValue placeholder="Select Range" />
                         </SelectTrigger>
-                        <SelectContent className="bg-white">
+                        <SelectContent className="bg-white z-[9999]">
                             <SelectItem value="Standard (18k - 25k)">Standard (₹18k - ₹25k)</SelectItem>
                             <SelectItem value="Premium (25k - 40k)">Premium (₹25k - ₹40k)</SelectItem>
                             <SelectItem value="Luxury (Above 40k)">Luxury (Above ₹40k)</SelectItem>
