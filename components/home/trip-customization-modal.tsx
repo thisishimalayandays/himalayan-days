@@ -3,13 +3,12 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, User, Phone, Wallet, Map, Clock, Plane, CheckCircle2 } from 'lucide-react';
+import { X, Calendar, User, Phone, Wallet, Clock, Plane, ArrowRight, CheckCircle2, ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createInquiry, InquiryInput } from '@/app/actions/inquiries';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import * as analytics from '@/lib/analytics';
 import { useToast } from '@/hooks/use-toast';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface TripCustomizationModalProps {
     isOpen: boolean;
@@ -19,8 +18,8 @@ interface TripCustomizationModalProps {
 export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationModalProps) {
     const { executeRecaptcha } = useGoogleReCaptcha();
     const [mounted, setMounted] = useState(false);
+    const [step, setStep] = useState(1); // 1: Details, 2: Contact
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [countryIso, setCountryIso] = useState('IN');
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
@@ -29,91 +28,82 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
         budget: 'Standard',
         type: 'Family'
     });
-    const [errors, setErrors] = useState<{ name?: string, phone?: string }>({});
+    const [errors, setErrors] = useState<{ name?: string, phone?: string, duration?: string, date?: string }>({});
     const { toast } = useToast();
-
-    const countryCodes = [
-        { code: '+91', iso: 'IN', label: 'India' }
-    ];
 
     useEffect(() => {
         setMounted(true);
         if (isOpen) {
             document.body.style.overflow = 'hidden';
             setErrors({});
+            setStep(1); // Reset to step 1
         } else {
             document.body.style.overflow = 'unset';
-            setIsSubmitting(false); // Reset submitting state on close
+            setIsSubmitting(false);
         }
         return () => {
             document.body.style.overflow = 'unset';
-            // clean up just in case
         };
     }, [isOpen]);
 
-    const validate = () => {
+    const validateStep1 = () => {
         let isValid = true;
         const newErrors: any = {};
 
-        // Name Validation
-        if (formData.name.trim().length < 2) {
-            newErrors.name = "Name is too short";
-            isValid = false;
-        } else if (/\d/.test(formData.name)) {
-            newErrors.name = "Name cannot contain numbers";
+        if (!formData.date) {
+            newErrors.date = "Please select a date";
             isValid = false;
         }
-
-        // Phone Validation
-        const cleanPhone = formData.phone.replace(/\D/g, '');
-
-        if (countryIso === 'IN') {
-            if (cleanPhone.length !== 10) {
-                newErrors.phone = "Indian numbers must be exactly 10 digits";
-                isValid = false;
-            } else if (!/^[6-9]/.test(cleanPhone)) {
-                newErrors.phone = "Invalid Indian mobile number";
-                isValid = false;
-            }
-        } else {
-            if (cleanPhone.length < 10 || cleanPhone.length > 15) {
-                newErrors.phone = "Enter valid phone (10-15 digits)";
-                isValid = false;
-            }
+        if (!formData.duration || parseInt(formData.duration) < 2) {
+            newErrors.duration = "Min 2 days";
+            isValid = false;
         }
 
         setErrors(newErrors);
         return isValid;
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setErrors({});
+    const validateStep2 = () => {
+        let isValid = true;
+        const newErrors: any = {};
 
-        if (!validate()) return;
-
-        if (!executeRecaptcha) {
-            console.error("ReCAPTCHA not ready");
-            return;
+        if (formData.name.trim().length < 2) {
+            newErrors.name = "Name too short";
+            isValid = false;
+        }
+        const cleanPhone = formData.phone.replace(/\D/g, '');
+        if (cleanPhone.length !== 10 || !/^[6-9]/.test(cleanPhone)) {
+            newErrors.phone = "Valid 10-digit number required";
+            isValid = false;
         }
 
+        setErrors(newErrors);
+        return isValid;
+    };
+
+    const handleNext = () => {
+        if (step === 1) {
+            if (validateStep1()) setStep(2);
+        } else {
+            handleSubmit();
+        }
+    };
+
+    const handleSubmit = async () => {
+        if (!validateStep2()) return;
+        if (!executeRecaptcha) return;
+
         setIsSubmitting(true);
-
-        const selectedCountry = countryCodes.find(c => c.iso === countryIso);
-        const code = selectedCountry?.code || '+91';
-        const fullPhone = `${code} ${formData.phone}`;
-
         try {
             const token = await executeRecaptcha('trip_customization_submit');
+            const fullPhone = `+91 ${formData.phone}`;
 
-            // 1. Save to Database
             const inquiryData: InquiryInput = {
                 name: formData.name,
                 phone: fullPhone,
-                startDate: formData.date ? new Date(formData.date).toISOString() : undefined,
+                startDate: new Date(formData.date).toISOString(),
                 budget: formData.budget,
                 type: "PLAN_MY_TRIP",
-                // Construct a message with extra details not directly mapped
                 message: `Duration: ${formData.duration} days, Type: ${formData.type}`,
                 travelers: undefined,
                 captchaToken: token
@@ -122,61 +112,46 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
             const result = await createInquiry(inquiryData);
 
             if (!result.success) {
-                toast({
-                    variant: "destructive",
-                    title: "Submission Failed",
-                    description: result.error || "Spam detected. Please try again."
-                });
+                toast({ variant: "destructive", title: "Error", description: result.error || "Please try again." });
                 setIsSubmitting(false);
                 return;
             }
 
-            // Track Lead Event
-            const budgetValue = formData.budget.includes('Standard') ? 18000
-                : formData.budget.includes('Premium') ? 25000
-                    : formData.budget.includes('Luxury') ? 40000
-                        : 18000;
-
+            // Track Lead
+            const budgetMap: Record<string, number> = { 'Standard': 18000, 'Premium': 25000, 'Luxury': 40000 };
             analytics.event('Lead', {
                 content_name: 'Trip Customization',
-                value: budgetValue,
+                value: budgetMap[formData.budget] || 18000,
                 currency: 'INR'
             });
 
-            // Success - No Redirect
             toast({
-                title: "Trip Request Sent! ✈️",
-                description: "Our experts are reviewing your plan. Expect a call shortly!",
-                className: "bg-green-50 border-green-200 text-green-800"
+                title: "Request Received! ✈️",
+                description: "Our travel expert will call you shortly.",
+                className: "bg-green-600 text-white border-none"
             });
 
-            setFormData({
-                name: '', phone: '', date: '', duration: '', budget: 'Standard', type: 'Family'
-            });
+            setFormData({ name: '', phone: '', date: '', duration: '', budget: 'Standard', type: 'Family' });
             onClose();
 
         } catch (error) {
-            console.error("Failed to save inquiry", error);
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: "Something went wrong."
-            });
+            console.error(error);
+            toast({ variant: "destructive", title: "Error", description: "Something went wrong." });
         } finally {
             setIsSubmitting(false);
         }
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        if (e.target.name === 'phone') {
-            const val = e.target.value.replace(/\D/g, '');
-            setFormData(prev => ({ ...prev, phone: val }));
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        if (name === 'phone') {
+            const numeric = value.replace(/\D/g, '').slice(0, 10);
+            setFormData(prev => ({ ...prev, phone: numeric }));
         } else {
-            setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+            setFormData(prev => ({ ...prev, [name]: value }));
         }
-        // Clear error on type
-        if (errors[e.target.name as keyof typeof errors]) {
-            setErrors(prev => ({ ...prev, [e.target.name]: undefined }));
+        if (errors[name as keyof typeof errors]) {
+            setErrors(prev => ({ ...prev, [name]: undefined }));
         }
     };
 
@@ -186,224 +161,201 @@ export function TripCustomizationModal({ isOpen, onClose }: TripCustomizationMod
         <AnimatePresence>
             {isOpen && (
                 <>
-                    {/* Backdrop */}
                     <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={onClose}
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999]"
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        onClick={onClose} className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999]"
                     />
-
-                    {/* Modal */}
                     <div className="fixed inset-0 z-[9999] pointer-events-none flex items-center justify-center p-4">
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="bg-white pointer-events-auto rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]"
+                            className="bg-white pointer-events-auto rounded-3xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col h-auto max-h-[85vh]"
                         >
                             {/* Header */}
-                            <div className="bg-primary px-6 py-5 flex items-center justify-between shrink-0">
-                                <div className="text-white">
-                                    <h3 className="text-xl font-bold">Plan Your Dream Trip</h3>
-                                    <p className="text-orange-100 text-sm">Tell us your preferences & get a quote</p>
+                            <div className="bg-white px-6 py-4 border-b border-gray-100 flex items-center justify-between sticky top-0 z-10">
+                                <div>
+                                    <h3 className="text-lg font-bold text-gray-900">Plan Your Trip</h3>
+                                    <div className="flex items-center gap-1 mt-1">
+                                        <div className={`h-1 rounded-full transition-all duration-300 ${step === 1 ? 'w-8 bg-primary' : 'w-2 bg-gray-200'}`} />
+                                        <div className={`h-1 rounded-full transition-all duration-300 ${step === 2 ? 'w-8 bg-primary' : 'w-2 bg-gray-200'}`} />
+                                    </div>
                                 </div>
-                                <button
-                                    onClick={onClose}
-                                    className="p-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors text-white"
-                                >
+                                <button onClick={onClose} className="p-2 bg-gray-50 hover:bg-gray-100 rounded-full text-gray-500 transition-colors">
                                     <X className="w-5 h-5" />
                                 </button>
                             </div>
 
-                            {/* Form */}
-                            <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-5">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                    {/* Name */}
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
-                                            <User className="w-4 h-4 text-primary" /> Name
-                                        </label>
-                                        <input
-                                            required
-                                            type="text"
-                                            name="name"
-                                            value={formData.name}
-                                            onChange={handleChange}
-                                            placeholder="Full Name"
-                                            autoComplete="name"
-                                            className={`w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-gray-400 ${errors.name ? 'border-red-500 focus:ring-red-500/20' : ''}`}
-                                        />
-                                        {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
-                                    </div>
-
-                                    {/* Phone */}
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
-                                            <Phone className="w-4 h-4 text-primary" /> Phone
-                                        </label>
-                                        <div className="flex gap-3">
-                                            <Select value={countryIso} onValueChange={setCountryIso}>
-                                                <SelectTrigger className="w-[110px] px-3 h-[46px] border border-gray-200 rounded-xl bg-white focus:ring-1 focus:ring-primary/20">
-                                                    <SelectValue placeholder="Code" />
-                                                </SelectTrigger>
-                                                <SelectContent className="max-h-[250px] z-[10000]">
-                                                    {countryCodes.map((c) => (
-                                                        <SelectItem key={c.iso} value={c.iso}>
-                                                            <div className="flex items-center gap-2">
-                                                                <img
-                                                                    src={`https://flagcdn.com/w20/${c.iso.toLowerCase()}.png`}
-                                                                    srcSet={`https://flagcdn.com/w40/${c.iso.toLowerCase()}.png 2x`}
-                                                                    width="20"
-                                                                    alt={c.iso}
-                                                                    className="object-contain"
-                                                                />
-                                                                <span className="text-xs text-muted-foreground">{c.code}</span>
-                                                            </div>
-                                                        </SelectItem>
+                            {/* Body */}
+                            <div className="p-6 overflow-y-auto custom-scrollbar">
+                                <AnimatePresence mode="wait">
+                                    {step === 1 ? (
+                                        <motion.div
+                                            key="step1"
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, x: -20 }}
+                                            className="space-y-6"
+                                        >
+                                            {/* Trip Type */}
+                                            <div className="space-y-3">
+                                                <label className="text-sm font-semibold text-gray-800">Trip Style</label>
+                                                <div className="grid grid-cols-2 gap-3">
+                                                    {['Family', 'Honeymoon', 'Adventure', 'Group'].map((type) => (
+                                                        <button
+                                                            key={type}
+                                                            onClick={() => setFormData(prev => ({ ...prev, type }))}
+                                                            className={`p-3 rounded-xl border text-sm font-medium transition-all ${formData.type === type
+                                                                    ? 'border-primary bg-primary/5 text-primary shadow-sm ring-1 ring-primary/20'
+                                                                    : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+                                                                }`}
+                                                            type="button"
+                                                        >
+                                                            {type}
+                                                        </button>
                                                     ))}
-                                                </SelectContent>
-                                            </Select>
-                                            <div className="flex-1 relative">
-                                                <input
-                                                    required
-                                                    type="tel"
-                                                    name="phone"
-                                                    inputMode="numeric"
-                                                    pattern="[0-9]*"
-                                                    value={formData.phone}
-                                                    onChange={handleChange}
-                                                    placeholder="Phone Number"
-                                                    autoComplete="tel"
-                                                    className={`w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-gray-400 ${errors.phone ? 'border-red-500 focus:ring-red-500/20' : ''}`}
-                                                />
+                                                </div>
                                             </div>
-                                        </div>
-                                        {errors.phone && <p className="text-xs text-red-500">{errors.phone}</p>}
-                                    </div>
 
-                                    {/* Date */}
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
-                                            <Calendar className="w-4 h-4 text-primary" /> Travel Date
-                                        </label>
-                                        <input
-                                            required
-                                            type="date"
-                                            name="date"
-                                            value={formData.date}
-                                            onChange={handleChange}
-                                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-gray-600"
-                                        />
-                                    </div>
+                                            {/* Date & Duration */}
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="space-y-2">
+                                                    <label className="text-sm font-semibold text-gray-800 flex items-center gap-1">
+                                                        <Calendar className="w-4 h-4 text-primary" /> Start Date
+                                                    </label>
+                                                    <input
+                                                        type="date"
+                                                        name="date"
+                                                        value={formData.date}
+                                                        onChange={handleChange}
+                                                        className={`w-full px-3 py-2.5 rounded-xl border bg-gray-50 focus:bg-white transition-all outline-none focus:ring-2 focus:ring-primary/20 ${errors.date ? 'border-red-500' : 'border-gray-200'}`}
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-sm font-semibold text-gray-800 flex items-center gap-1">
+                                                        <Clock className="w-4 h-4 text-primary" /> Days
+                                                    </label>
+                                                    <input
+                                                        type="number"
+                                                        name="duration"
+                                                        placeholder="e.g. 5"
+                                                        value={formData.duration}
+                                                        onChange={handleChange}
+                                                        className={`w-full px-3 py-2.5 rounded-xl border bg-gray-50 focus:bg-white transition-all outline-none focus:ring-2 focus:ring-primary/20 ${errors.duration ? 'border-red-500' : 'border-gray-200'}`}
+                                                    />
+                                                </div>
+                                            </div>
 
-                                    {/* Duration */}
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
-                                            <Clock className="w-4 h-4 text-primary" /> Duration (Days)
-                                        </label>
-                                        <input
-                                            required
-                                            type="number"
-                                            min="2"
-                                            max="60"
-                                            name="duration"
-                                            value={formData.duration}
-                                            onChange={(e) => {
-                                                if (parseInt(e.target.value) > 60) return;
-                                                handleChange(e);
-                                            }}
-                                            placeholder="e.g. 5"
-                                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-gray-400"
-                                        />
-                                    </div>
-                                </div>
+                                            {/* Budget */}
+                                            <div className="space-y-3">
+                                                <label className="text-sm font-semibold text-gray-800 flex items-center gap-1">
+                                                    <Wallet className="w-4 h-4 text-primary" /> Budget (Per Person)
+                                                </label>
+                                                <div className="flex flex-col gap-2">
+                                                    {[
+                                                        { label: 'Standard', sub: '₹18k - ₹25k', desc: 'Best Basics' },
+                                                        { label: 'Premium', sub: '₹25k - ₹40k', desc: 'Most Popular' },
+                                                        { label: 'Luxury', sub: '₹40k+', desc: 'All Inclusive' },
+                                                    ].map((opt) => (
+                                                        <button
+                                                            key={opt.label}
+                                                            onClick={() => setFormData(prev => ({ ...prev, budget: opt.label }))}
+                                                            className={`flex items-center justify-between p-3 rounded-xl border transition-all text-left group ${formData.budget === opt.label
+                                                                    ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
+                                                                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                                                                }`}
+                                                            type="button"
+                                                        >
+                                                            <div>
+                                                                <div className={`font-semibold text-sm ${formData.budget === opt.label ? 'text-primary' : 'text-gray-900'}`}>{opt.label}</div>
+                                                                <div className="text-xs text-gray-500">{opt.desc}</div>
+                                                            </div>
+                                                            <div className={`text-xs font-medium px-2 py-1 rounded-md ${formData.budget === opt.label ? 'bg-primary text-white' : 'bg-gray-100 text-gray-600'}`}>
+                                                                {opt.sub}
+                                                            </div>
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    ) : (
+                                        <motion.div
+                                            key="step2"
+                                            initial={{ opacity: 0, x: 20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, x: 20 }}
+                                            className="space-y-6 py-4"
+                                        >
+                                            <div className="text-center space-y-2 mb-6">
+                                                <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                    <CheckCircle2 className="w-8 h-8 text-green-600" />
+                                                </div>
+                                                <h4 className="text-xl font-bold text-gray-900">Almost Done!</h4>
+                                                <p className="text-sm text-gray-500">Where should we send your custom itinerary?</p>
+                                            </div>
 
-                                {/* Budget */}
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
-                                        <Wallet className="w-4 h-4 text-primary" /> Budget Preference
-                                    </label>
-                                    <div className="grid grid-cols-2 gap-2">
-                                        {[
-                                            { label: 'Standard', sub: '₹18k-25k' },
-                                            { label: 'Premium', sub: '₹25k-40k' },
-                                            { label: 'Luxury', sub: '₹40k+' },
-                                        ].map((option) => (
-                                            <label
-                                                key={option.label}
-                                                className={`
-                                                    cursor-pointer text-center text-sm py-2.5 rounded-xl border transition-all font-medium flex flex-col items-center justify-center
-                                                    ${formData.budget === option.label
-                                                        ? 'bg-orange-50 border-primary text-primary shadow-sm'
-                                                        : 'border-gray-200 text-gray-600 hover:border-orange-200 hover:bg-orange-50/50'}
-                                                `}
-                                            >
-                                                <input
-                                                    type="radio"
-                                                    name="budget"
-                                                    value={option.label}
-                                                    checked={formData.budget === option.label}
-                                                    onChange={(e) => handleChange(e as any)}
-                                                    className="hidden"
-                                                />
-                                                <span>{option.label}</span>
-                                                <span className="text-[10px] opacity-70">{option.sub}</span>
-                                            </label>
-                                        ))}
-                                    </div>
-                                    <p className="text-[10px] text-orange-600 bg-orange-50 p-2 rounded-lg border border-orange-100 mt-2">
-                                        ℹ️ <b>Note:</b> Our premium packages start from <b>₹18,000/person</b> to ensure quality.
-                                    </p>
-                                </div>
+                                            <div className="space-y-4">
+                                                <div className="space-y-2">
+                                                    <label className="text-sm font-semibold text-gray-700">Full Name</label>
+                                                    <div className="relative">
+                                                        <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                                        <input
+                                                            type="text"
+                                                            name="name"
+                                                            placeholder="Enter your name"
+                                                            value={formData.name}
+                                                            onChange={handleChange}
+                                                            className={`w-full pl-10 pr-4 py-3 rounded-xl border bg-gray-50 focus:bg-white transition-all outline-none focus:ring-2 focus:ring-primary/20 ${errors.name ? 'border-red-500' : 'border-gray-200'}`}
+                                                        />
+                                                    </div>
+                                                </div>
 
-                                {/* Trip Type */}
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
-                                        <Plane className="w-4 h-4 text-primary" /> Trip Type
-                                    </label>
-                                    <div className="grid grid-cols-2 gap-2">
-                                        {['Family', 'Honeymoon', 'Adventure', 'Group'].map((option) => (
-                                            <label
-                                                key={option}
-                                                className={`
-                                                    cursor-pointer flex items-center justify-center gap-2 text-sm py-3 rounded-xl border transition-all font-medium
-                                                    ${formData.type === option
-                                                        ? 'bg-orange-50 border-primary text-primary shadow-sm'
-                                                        : 'border-gray-200 text-gray-600 hover:border-orange-200 hover:bg-orange-50/50'}
-                                                `}
-                                            >
-                                                <input
-                                                    type="radio"
-                                                    name="type"
-                                                    value={option}
-                                                    checked={formData.type === option}
-                                                    onChange={handleChange}
-                                                    className="hidden"
-                                                />
-                                                {option}
-                                            </label>
-                                        ))}
-                                    </div>
-                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-sm font-semibold text-gray-700">Phone Number (WhatsApp)</label>
+                                                    <div className="relative flex">
+                                                        <div className="px-3 flex items-center justify-center bg-gray-100 border border-r-0 border-gray-200 rounded-l-xl text-sm font-medium text-gray-600">
+                                                            🇮🇳 +91
+                                                        </div>
+                                                        <input
+                                                            type="tel"
+                                                            name="phone"
+                                                            placeholder="99999 99999"
+                                                            value={formData.phone}
+                                                            onChange={handleChange}
+                                                            className={`w-full px-4 py-3 rounded-r-xl border bg-gray-50 focus:bg-white transition-all outline-none focus:ring-2 focus:ring-primary/20 ${errors.phone ? 'border-red-500' : 'border-gray-200'}`}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
 
+                            {/* Footer */}
+                            <div className="p-6 border-t border-gray-100 bg-gray-50/50 flex gap-3">
+                                {step === 2 && (
+                                    <button
+                                        onClick={() => setStep(1)}
+                                        className="px-4 py-3 rounded-xl border border-gray-200 text-gray-700 font-semibold hover:bg-gray-100 transition-colors"
+                                    >
+                                        <ChevronLeft className="w-5 h-5" />
+                                    </button>
+                                )}
                                 <Button
-                                    type="submit"
+                                    onClick={handleNext}
                                     disabled={isSubmitting}
-                                    className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold h-12 rounded-xl shadow-lg hover:shadow-xl hover:shadow-orange-600/20 transition-all text-lg flex items-center justify-center gap-2 mt-2"
+                                    className="flex-1 bg-primary hover:bg-orange-600 text-white font-bold h-12 rounded-xl shadow-lg shadow-orange-500/20 text-lg flex items-center justify-center gap-2"
                                 >
-                                    <Plane className="w-5 h-5 fill-current" />
-                                    {isSubmitting ? 'Processing...' : 'Submit Trip Request'}
+                                    {isSubmitting ? (
+                                        'Sending...'
+                                    ) : step === 1 ? (
+                                        <>Next <ArrowRight className="w-5 h-5" /></>
+                                    ) : (
+                                        'Get My Free Quote'
+                                    )}
                                 </Button>
-
-                                <p className="text-xs text-center text-gray-400 mt-2">
-                                    Our travel experts will create a custom itinerary for you instantly.
-                                </p>
-                            </form>
-                            <p className="text-[10px] text-center text-gray-400 pb-4 px-6 -mt-2">
-                                This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy" className="underline">Privacy Policy</a> and <a href="https://policies.google.com/terms" className="underline">Terms of Service</a> apply.
-                            </p>
+                            </div>
                         </motion.div>
                     </div>
                 </>

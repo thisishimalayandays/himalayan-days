@@ -329,16 +329,21 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
 
                                     {inquiry.message && (
                                         <div className="text-xs text-muted-foreground">
-                                            {inquiry.type === 'AI_WIZARD_LEAD' ? (
+                                            {inquiry.type === 'AI_WIZARD_LEAD' || inquiry.type === 'PLAN_MY_TRIP' ? (
                                                 <div className="flex flex-wrap gap-1.5 mt-1">
-                                                    {inquiry.message.split('\n').map((line, i) => {
-                                                        const parts = line.split(':');
-                                                        if (parts.length < 2) return null;
-                                                        const val = parts.slice(1).join(':').trim();
-                                                        if (line.includes('Travel Type')) return <Badge key={i} variant="secondary" className="px-1.5 h-5 text-[10px] bg-indigo-50 text-indigo-700 border-indigo-100">{val}</Badge>;
-                                                        if (line.includes('Duration')) return <Badge key={i} variant="secondary" className="px-1.5 h-5 text-[10px] bg-blue-50 text-blue-700 border-blue-100">{val}</Badge>;
-                                                        if (line.includes('Season')) return <Badge key={i} variant="secondary" className="px-1.5 h-5 text-[10px] bg-amber-50 text-amber-700 border-amber-100">{val}</Badge>;
-                                                        return null;
+                                                    {inquiry.message.split(', ').map((part, i) => {
+                                                        // AI Wizard uses newlines, Plan My Trip uses comma-space
+                                                        // Let's handle both broadly if needed, but here we target the comma-sep
+
+                                                        // Fallback for AI Wizard if it falls into this check (though strict line splitting is above? No, let's merge logic or just add a separate block)
+                                                        // Actually, let's keep it simple. Plan My Trip msg: "Duration: X days, Type: Y"
+
+                                                        if (part.includes('Duration')) return <Badge key={i} variant="secondary" className="px-1.5 h-5 text-[10px] bg-blue-50 text-blue-700 border-blue-100">{part.trim()}</Badge>;
+                                                        if (part.includes('Type')) return <Badge key={i} variant="secondary" className="px-1.5 h-5 text-[10px] bg-indigo-50 text-indigo-700 border-indigo-100">{part.replace('Type:', 'Style:').trim()}</Badge>;
+                                                        if (part.includes('Season')) return <Badge key={i} variant="secondary" className="px-1.5 h-5 text-[10px] bg-amber-50 text-amber-700 border-amber-100">{part.trim()}</Badge>;
+
+                                                        // AI Wizard fallback if mixing
+                                                        return <span key={i} className="text-[10px] text-gray-500">{part}</span>;
                                                     })}
                                                 </div>
                                             ) : (
