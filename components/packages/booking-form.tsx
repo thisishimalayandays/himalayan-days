@@ -235,7 +235,7 @@ export function BookingForm({ packageTitle, packageId, isHighDemand }: { package
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <div className="flex justify-between items-center">
                             <label className="text-sm font-medium text-gray-700">Travel Date</label>
