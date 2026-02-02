@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import * as analytics from '@/lib/analytics';
-import { X, Loader2, MessageCircle, AlertCircle, Phone, User, Send, Calendar as CalendarIcon } from 'lucide-react';
+import { X, Loader2, MessageCircle, AlertCircle, Phone, User, Send, Calendar as CalendarIcon, ChevronDown } from 'lucide-react';
 import { createInquiry } from '@/app/actions/inquiries';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { Input } from '@/components/ui/input';
@@ -283,22 +283,23 @@ export function WhatsAppButton() {
                                 </div>
 
                                 <div className="space-y-1">
-                                    <Select
-                                        value={formData.budget}
-                                        onValueChange={(val) => {
-                                            setFormData({ ...formData, budget: val });
-                                            if (errors.budget) setErrors({ ...errors, budget: '' });
-                                        }}
-                                    >
-                                        <SelectTrigger className={`h-9 text-sm ${errors.budget ? 'border-red-500' : ''}`}>
-                                            <SelectValue placeholder="Budget (Per Person)" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="Standard (18k - 25k)">Standard (₹18k - ₹25k)</SelectItem>
-                                            <SelectItem value="Premium (25k - 40k)">Premium (₹25k - ₹40k)</SelectItem>
-                                            <SelectItem value="Luxury (Above 40k)">Luxury (Above ₹40k)</SelectItem>
-                                        </SelectContent>
-                                    </Select>
+                                    <div className="relative">
+                                        <select
+                                            required
+                                            value={formData.budget}
+                                            onChange={(e) => {
+                                                setFormData({ ...formData, budget: e.target.value });
+                                                if (errors.budget) setErrors({ ...errors, budget: '' });
+                                            }}
+                                            className={`h-9 w-full pl-3 pr-8 text-sm rounded-md border bg-white focus:ring-2 focus:ring-green-500/20 outline-none transition-all appearance-none cursor-pointer ${errors.budget ? 'border-red-500' : 'border-gray-200 focus:border-green-500'} ${!formData.budget ? 'text-gray-500' : 'text-gray-900'}`}
+                                        >
+                                            <option value="" disabled>Budget (Per Person)</option>
+                                            <option value="Standard (18k - 25k)">Standard (₹18k - ₹25k)</option>
+                                            <option value="Premium (25k - 40k)">Premium (₹25k - ₹40k)</option>
+                                            <option value="Luxury (Above 40k)">Luxury (Above ₹40k)</option>
+                                        </select>
+                                        <ChevronDown className="absolute right-2 top-2.5 w-4 h-4 text-gray-400 pointer-events-none" />
+                                    </div>
                                     {errors.budget && <p className="text-[10px] text-red-500 ml-1">{errors.budget}</p>}
                                 </div>
 
