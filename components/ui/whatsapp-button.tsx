@@ -31,12 +31,6 @@ export function WhatsAppButton() {
         { code: '+91', iso: 'IN', label: 'India' }
     ];
 
-    // Initial nudge
-    useEffect(() => {
-        const timer = setTimeout(() => setShowTooltip(true), 15000);
-        return () => clearTimeout(timer);
-    }, []);
-
     if (pathname?.startsWith('/admin') || pathname?.startsWith('/careers')) {
         return null;
     }
@@ -156,7 +150,7 @@ export function WhatsAppButton() {
 
             {/* Quick Chat Form */}
             <AnimatePresence>
-                {(isOpen || showTooltip) && (
+                {isOpen && (
                     <motion.div
                         initial={{ opacity: 0, y: 10, scale: 0.9 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -170,177 +164,159 @@ export function WhatsAppButton() {
                                 Chat with Expert
                             </h3>
                             <button
-                                onClick={() => { setIsOpen(false); setShowTooltip(false); }}
+                                onClick={() => setIsOpen(false)}
                                 className="text-gray-400 hover:text-gray-600"
                             >
                                 <X size={16} />
                             </button>
                         </div>
 
-                        {isOpen ? (
-                            <form onSubmit={handleSubmit} className="flex flex-col gap-3 mt-1">
-                                <div className="space-y-1">
-                                    <div className="relative">
-                                        <User className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
-                                        <Input
-                                            placeholder="Full Name"
-                                            className={`h-9 pl-9 text-sm ${errors.name ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-                                            required
-                                            autoComplete="name"
-                                            value={formData.name}
-                                            onChange={(e) => {
-                                                setFormData({ ...formData, name: e.target.value });
-                                                if (errors.name) setErrors({ ...errors, name: '' });
-                                            }}
-                                        />
-                                    </div>
-                                    {errors.name && <p className="text-[10px] text-red-500 ml-1">{errors.name}</p>}
-                                </div>
-
-                                <div className="space-y-1">
-                                    <div className="flex gap-2">
-                                        <Select value={countryIso} onValueChange={setCountryIso}>
-                                            <SelectTrigger className="w-[85px] px-2 h-9 border-gray-200 bg-white text-xs">
-                                                <SelectValue placeholder="Code" />
-                                            </SelectTrigger>
-                                            <SelectContent className="max-h-[200px] w-[200px] z-[9999]">
-                                                {countryCodes.map((c) => (
-                                                    <SelectItem key={c.iso} value={c.iso} className="text-xs">
-                                                        <div className="flex items-center gap-2">
-                                                            <img
-                                                                src={`https://flagcdn.com/w20/${c.iso.toLowerCase()}.png`}
-                                                                srcSet={`https://flagcdn.com/w40/${c.iso.toLowerCase()}.png 2x`}
-                                                                width="16"
-                                                                alt={c.iso}
-                                                                className="object-contain"
-                                                            />
-                                                            <span>{c.code}</span>
-                                                        </div>
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-
-                                        <div className="relative flex-1">
-                                            <Input
-                                                placeholder="Phone Number"
-                                                className={`h-9 text-sm ${errors.phone ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-                                                type="tel"
-                                                inputMode="numeric"
-                                                pattern="[0-9]*"
-                                                autoComplete="tel"
-                                                required
-                                                value={formData.phone}
-                                                onChange={(e) => {
-                                                    const val = e.target.value.replace(/\D/g, '');
-                                                    setFormData({ ...formData, phone: val });
-                                                    if (errors.phone) setErrors({ ...errors, phone: '' });
-                                                }}
-                                            />
-                                        </div>
-                                    </div>
-                                    {errors.phone && <p className="text-[10px] text-red-500 ml-1">{errors.phone}</p>}
-                                </div>
-
-                                <div className="space-y-1">
-                                    <div
-                                        className="relative group cursor-pointer"
-                                        onClick={() => {
-                                            // Force open the picker
-                                            if (dateInputRef.current) {
-                                                try {
-                                                    (dateInputRef.current as any).showPicker();
-                                                } catch (err) {
-                                                    // Fallback for older browsers: just focus
-                                                    dateInputRef.current.focus();
-                                                }
-                                            }
+                        <form onSubmit={handleSubmit} className="flex flex-col gap-3 mt-1">
+                            {/* ... Form Content ... */}
+                            <div className="space-y-1">
+                                <div className="relative">
+                                    <User className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+                                    <Input
+                                        placeholder="Full Name"
+                                        className={`h-9 pl-9 text-sm ${errors.name ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                                        required
+                                        autoComplete="name"
+                                        value={formData.name}
+                                        onChange={(e) => {
+                                            setFormData({ ...formData, name: e.target.value });
+                                            if (errors.name) setErrors({ ...errors, name: '' });
                                         }}
-                                    >
-                                        <CalendarIcon className="absolute left-3 top-2.5 w-4 h-4 text-gray-400 z-0" />
+                                    />
+                                </div>
+                                {errors.name && <p className="text-[10px] text-red-500 ml-1">{errors.name}</p>}
+                            </div>
 
-                                        {/* Visual Fake Input */}
-                                        <div className={`h-9 w-full pl-9 pr-3 py-2 text-sm rounded-md border bg-transparent flex items-center ${errors.travelDate ? 'border-red-500' : 'border-input group-hover:border-green-500'} ${!formData.travelDate ? 'text-gray-500' : 'text-gray-900'}`}>
-                                            {formData.travelDate ? new Date(formData.travelDate).toLocaleDateString('en-GB') : "Select Travel Date"}
-                                        </div>
+                            <div className="space-y-1">
+                                <div className="flex gap-2">
+                                    <Select value={countryIso} onValueChange={setCountryIso}>
+                                        <SelectTrigger className="w-[85px] px-2 h-9 border-gray-200 bg-white text-xs">
+                                            <SelectValue placeholder="Code" />
+                                        </SelectTrigger>
+                                        <SelectContent className="max-h-[200px] w-[200px] z-[9999]">
+                                            {countryCodes.map((c) => (
+                                                <SelectItem key={c.iso} value={c.iso} className="text-xs">
+                                                    <div className="flex items-center gap-2">
+                                                        <img
+                                                            src={`https://flagcdn.com/w20/${c.iso.toLowerCase()}.png`}
+                                                            srcSet={`https://flagcdn.com/w40/${c.iso.toLowerCase()}.png 2x`}
+                                                            width="16"
+                                                            alt={c.iso}
+                                                            className="object-contain"
+                                                        />
+                                                        <span>{c.code}</span>
+                                                    </div>
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
 
-                                        {/* Invisible Real Input */}
-                                        <input
-                                            ref={dateInputRef}
-                                            type="date"
+                                    <div className="relative flex-1">
+                                        <Input
+                                            placeholder="Phone Number"
+                                            className={`h-9 text-sm ${errors.phone ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                                            type="tel"
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
+                                            autoComplete="tel"
                                             required
-                                            min={today}
-                                            value={formData.travelDate}
+                                            value={formData.phone}
                                             onChange={(e) => {
-                                                setFormData({ ...formData, travelDate: e.target.value });
-                                                if (errors.travelDate) setErrors({ ...errors, travelDate: '' });
+                                                const val = e.target.value.replace(/\D/g, '');
+                                                setFormData({ ...formData, phone: val });
+                                                if (errors.phone) setErrors({ ...errors, phone: '' });
                                             }}
-                                            onKeyDown={(e) => e.preventDefault()}
-                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                         />
                                     </div>
-                                    {errors.travelDate && <p className="text-[10px] text-red-500 ml-1">{errors.travelDate}</p>}
                                 </div>
-
-                                <div className="space-y-1">
-                                    <div className="relative">
-                                        <select
-                                            required
-                                            value={formData.budget}
-                                            onChange={(e) => {
-                                                setFormData({ ...formData, budget: e.target.value });
-                                                if (errors.budget) setErrors({ ...errors, budget: '' });
-                                            }}
-                                            className={`h-9 w-full pl-3 pr-8 text-sm rounded-md border bg-white focus:ring-2 focus:ring-green-500/20 outline-none transition-all appearance-none cursor-pointer ${errors.budget ? 'border-red-500' : 'border-gray-200 focus:border-green-500'} ${!formData.budget ? 'text-gray-500' : 'text-gray-900'}`}
-                                        >
-                                            <option value="" disabled>Budget (Per Person)</option>
-                                            <option value="Standard (18k - 25k)">Standard (₹18k - ₹25k)</option>
-                                            <option value="Premium (25k - 40k)">Premium (₹25k - ₹40k)</option>
-                                            <option value="Luxury (Above 40k)">Luxury (Above ₹40k)</option>
-                                        </select>
-                                        <ChevronDown className="absolute right-2 top-2.5 w-4 h-4 text-gray-400 pointer-events-none" />
-                                    </div>
-                                    {errors.budget && <p className="text-[10px] text-red-500 ml-1">{errors.budget}</p>}
-                                </div>
-
-                                <div className="bg-orange-50 p-2 rounded border border-orange-100 flex gap-2 items-start">
-                                    <AlertCircle className="w-3 h-3 text-orange-600 mt-0.5 shrink-0" />
-                                    <p className="text-[10px] text-orange-800 leading-snug">
-                                        <b>Note:</b> We specialize in premium trips. Minimum budget starts at <b>₹18,000/person</b>.
-                                    </p>
-                                </div>
-
-                                <Button
-                                    type="submit"
-                                    disabled={isSubmitting}
-                                    className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white h-9 text-sm font-semibold"
-                                >
-                                    {isSubmitting ? (
-                                        <Loader2 className="w-4 h-4 animate-spin" />
-                                    ) : (
-                                        <div className="flex items-center gap-2">
-                                            Start Chat <MessageCircle size={14} className="fill-current" />
-                                        </div>
-                                    )}
-                                </Button>
-                                <p className="text-[10px] text-gray-400 text-center">
-                                    Secure by ReCaptcha
-                                </p>
-                            </form>
-                        ) : (
-                            // Tooltip Mode (Initial Nudge)
-                            <div
-                                className="cursor-pointer"
-                                onClick={() => { setShowTooltip(false); setIsOpen(true); }}
-                            >
-                                <p className="text-sm text-gray-600 leading-relaxed mb-2">
-                                    Hi! 👋 I'm online. Fill your details to start a quick chat on WhatsApp!
-                                </p>
-                                <div className="text-primary text-xs font-bold hover:underline">
-                                    Start Chat &rarr;
-                                </div>
+                                {errors.phone && <p className="text-[10px] text-red-500 ml-1">{errors.phone}</p>}
                             </div>
-                        )}
+
+                            <div className="space-y-1">
+                                <div
+                                    className="relative group cursor-pointer"
+                                    onClick={() => {
+                                        if (dateInputRef.current) {
+                                            try {
+                                                (dateInputRef.current as any).showPicker();
+                                            } catch (err) {
+                                                dateInputRef.current.focus();
+                                            }
+                                        }
+                                    }}
+                                >
+                                    <CalendarIcon className="absolute left-3 top-2.5 w-4 h-4 text-gray-400 z-0" />
+
+                                    <div className={`h-9 w-full pl-9 pr-3 py-2 text-sm rounded-md border bg-transparent flex items-center ${errors.travelDate ? 'border-red-500' : 'border-input group-hover:border-green-500'} ${!formData.travelDate ? 'text-gray-500' : 'text-gray-900'}`}>
+                                        {formData.travelDate ? new Date(formData.travelDate).toLocaleDateString('en-GB') : "Select Travel Date"}
+                                    </div>
+
+                                    <input
+                                        ref={dateInputRef}
+                                        type="date"
+                                        required
+                                        min={today}
+                                        value={formData.travelDate}
+                                        onChange={(e) => {
+                                            setFormData({ ...formData, travelDate: e.target.value });
+                                            if (errors.travelDate) setErrors({ ...errors, travelDate: '' });
+                                        }}
+                                        onKeyDown={(e) => e.preventDefault()}
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                    />
+                                </div>
+                                {errors.travelDate && <p className="text-[10px] text-red-500 ml-1">{errors.travelDate}</p>}
+                            </div>
+
+                            <div className="space-y-1">
+                                <div className="relative">
+                                    <select
+                                        required
+                                        value={formData.budget}
+                                        onChange={(e) => {
+                                            setFormData({ ...formData, budget: e.target.value });
+                                            if (errors.budget) setErrors({ ...errors, budget: '' });
+                                        }}
+                                        className={`h-9 w-full pl-3 pr-8 text-sm rounded-md border bg-white focus:ring-2 focus:ring-green-500/20 outline-none transition-all appearance-none cursor-pointer ${errors.budget ? 'border-red-500' : 'border-gray-200 focus:border-green-500'} ${!formData.budget ? 'text-gray-500' : 'text-gray-900'}`}
+                                    >
+                                        <option value="" disabled>Budget (Per Person)</option>
+                                        <option value="Standard (18k - 25k)">Standard (₹18k - ₹25k)</option>
+                                        <option value="Premium (25k - 40k)">Premium (₹25k - ₹40k)</option>
+                                        <option value="Luxury (Above 40k)">Luxury (Above ₹40k)</option>
+                                    </select>
+                                    <ChevronDown className="absolute right-2 top-2.5 w-4 h-4 text-gray-400 pointer-events-none" />
+                                </div>
+                                {errors.budget && <p className="text-[10px] text-red-500 ml-1">{errors.budget}</p>}
+                            </div>
+
+                            <div className="bg-orange-50 p-2 rounded border border-orange-100 flex gap-2 items-start">
+                                <AlertCircle className="w-3 h-3 text-orange-600 mt-0.5 shrink-0" />
+                                <p className="text-[10px] text-orange-800 leading-snug">
+                                    <b>Note:</b> We specialize in premium trips. Minimum budget starts at <b>₹18,000/person</b>.
+                                </p>
+                            </div>
+
+                            <Button
+                                type="submit"
+                                disabled={isSubmitting}
+                                className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white h-9 text-sm font-semibold"
+                            >
+                                {isSubmitting ? (
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                    <div className="flex items-center gap-2">
+                                        Start Chat <MessageCircle size={14} className="fill-current" />
+                                    </div>
+                                )}
+                            </Button>
+                            <p className="text-[10px] text-gray-400 text-center">
+                                Secure by ReCaptcha
+                            </p>
+                        </form>
 
                         {/* Arrow */}
                         <div className="absolute -right-2 bottom-6 w-4 h-4 bg-white transform rotate-45" />
@@ -350,14 +326,7 @@ export function WhatsAppButton() {
 
             {/* Main Button */}
             <motion.button
-                onClick={() => {
-                    if (isOpen) {
-                        setIsOpen(false);
-                    } else {
-                        setShowTooltip(false);
-                        setIsOpen(true);
-                    }
-                }}
+                onClick={() => setIsOpen(!isOpen)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="relative flex items-center justify-center group appearance-none border-none outline-none bg-transparent"
