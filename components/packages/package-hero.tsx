@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { MapPin, Clock } from 'lucide-react';
 import { SnowEffect } from '@/components/ui/snow-effect';
+import { useState, useEffect } from 'react';
 
 interface PackageHeroProps {
     title: string;
@@ -16,6 +17,21 @@ export function PackageHero({ title, image, duration, location, price, priceRang
     const isWinter = ['winter', 'snow', 'ski', 'gulmarg', 'frozen'].some(keyword =>
         title.toLowerCase().includes(keyword)
     );
+
+    const [viewerCount, setViewerCount] = useState(14);
+
+    useEffect(() => {
+        if (!isHighDemand) return;
+
+        // Randomize count every few seconds
+        const interval = setInterval(() => {
+            // Random number between 12 and 19
+            const newCount = Math.floor(Math.random() * (19 - 12 + 1)) + 12;
+            setViewerCount(newCount);
+        }, 3500); // 3.5 seconds
+
+        return () => clearInterval(interval);
+    }, [isHighDemand]);
 
     return (
         <section className="relative h-[60vh] md:h-[70vh] w-full overflow-hidden flex items-end pb-12 md:pb-24">
@@ -54,13 +70,13 @@ export function PackageHero({ title, image, duration, location, price, priceRang
                         </h1>
 
                         {isHighDemand && (
-                            <div className="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/20 backdrop-blur-sm px-3 py-1.5 rounded-lg">
+                            <div className="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/20 backdrop-blur-sm px-3 py-1.5 rounded-lg transition-all duration-300">
                                 <span className="relative flex h-3 w-3">
                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                                     <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
                                 </span>
                                 <span className="text-sm md:text-base font-medium text-red-100">
-                                    <strong className="text-red-400">14 people</strong> are planning this trip right now
+                                    <strong className="text-red-400 tabular-nums">{viewerCount} people</strong> are planning this trip right now
                                 </span>
                             </div>
                         )}
