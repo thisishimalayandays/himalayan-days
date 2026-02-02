@@ -3,9 +3,9 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import * as analytics from '@/lib/analytics';
-import { X, Loader2, MessageCircle, AlertCircle, Phone, User, Send } from 'lucide-react';
+import { X, Loader2, MessageCircle, AlertCircle, Phone, User, Send, Calendar as CalendarIcon } from 'lucide-react';
 import { createInquiry } from '@/app/actions/inquiries';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { Input } from '@/components/ui/input';
@@ -19,9 +19,13 @@ export function WhatsAppButton() {
     const [isOpen, setIsOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [countryIso, setCountryIso] = useState('IN');
-    const [formData, setFormData] = useState({ name: '', phone: '', budget: '' });
-    const [errors, setErrors] = useState({ name: '', phone: '', budget: '' });
+    const [formData, setFormData] = useState({ name: '', phone: '', budget: '', travelDate: '' });
+    const [errors, setErrors] = useState({ name: '', phone: '', budget: '', travelDate: '' });
     const [showTooltip, setShowTooltip] = useState(false);
+    const dateInputRef = useRef<HTMLInputElement>(null);
+
+    // Get today's date for min attribute
+    const today = new Date().toISOString().split('T')[0];
 
     const countryCodes = [
         { code: '+91', iso: 'IN', label: 'India' }
@@ -41,7 +45,7 @@ export function WhatsAppButton() {
 
     const validate = () => {
         let isValid = true;
-        const newErrors = { name: '', phone: '', budget: '' };
+        const newErrors = { name: '', phone: '', budget: '', travelDate: '' };
 
         // Name Validation
         if (formData.name.trim().length < 2) {
@@ -70,6 +74,12 @@ export function WhatsAppButton() {
             }
         }
 
+        // Travel Date Validation
+        if (!formData.travelDate) {
+            newErrors.travelDate = "Please select a date";
+            isValid = false;
+        }
+
         // Budget Validation
         if (!formData.budget) {
             newErrors.budget = "Please select a budget";
@@ -84,7 +94,7 @@ export function WhatsAppButton() {
         e.preventDefault();
 
         // Clear previous errors
-        setErrors({ name: '', phone: '', budget: '' });
+        setErrors({ name: '', phone: '', budget: '', travelDate: '' });
 
         if (!validate()) return;
         if (!executeRecaptcha) return;
@@ -99,38 +109,40 @@ export function WhatsAppButton() {
             const token = await executeRecaptcha('whatsapp_quick_chat');
 
             // 1. Save Lead quietly
+            // Format nice date for display
+            const niceDate = new Date(formData.travelDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
             await createInquiry({
                 name: formData.name,
                 phone: fullPhone,
-                message: `Started Quick Chat via WhatsApp Button (Budget: ${formData.budget})`,
+                message: `Started Quick Chat via WhatsApp Button (Budget: ${formData.budget}, Travel: ${niceDate})`,
                 type: "GENERAL",
                 budget: formData.budget,
+                startDate: formData.travelDate, // Pass as string (YYYY-MM-DD)
                 captchaToken: token
             });
 
             // 2. Open WhatsApp
             const phoneNumber = '919103901803';
-            const text = `Hi, I am ${formData.name}. I want to plan a trip. My budget is ${formData.budget}.`;
-            const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`;
-
-            window.open(url, '_blank');
-
-            // 3. Close & Reset
-            // 3. Close & Reset
-            setIsOpen(false);
-            setFormData({ name: '', phone: '', budget: '' });
-
-            // Extract numeric value from budget string (e.g., "Standard (18k - 25k)" -> 18000)
+            const text = `Hi, I am ${formData.name}. I want to plan a trip around ${niceDate}. My budget is ${formData.budget}.`;
+            // ... conversion tracking ...
             const budgetValue = formData.budget.includes('18k') ? 18000
                 : formData.budget.includes('25k') ? 25000
                     : formData.budget.includes('40k') ? 40000
-                        : 18000; // Default fallback
+                        : 18000;
 
             analytics.event('Lead', {
                 content_name: 'WhatsApp Quick Chat',
                 value: budgetValue,
                 currency: 'INR'
             });
+
+            const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+
+            // 3. Close & Reset
+            setIsOpen(false);
+            setFormData({ name: '', phone: '', budget: '', travelDate: '' });
 
         } catch (error) {
             console.error(error);
@@ -228,6 +240,46 @@ export function WhatsAppButton() {
                                         </div>
                                     </div>
                                     {errors.phone && <p className="text-[10px] text-red-500 ml-1">{errors.phone}</p>}
+                                </div>
+
+                                <div className="space-y-1">
+                                    <div
+                                        className="relative group cursor-pointer"
+                                        onClick={() => {
+                                            // Force open the picker
+                                            if (dateInputRef.current) {
+                                                try {
+                                                    (dateInputRef.current as any).showPicker();
+                                                } catch (err) {
+                                                    // Fallback for older browsers: just focus
+                                                    dateInputRef.current.focus();
+                                                }
+                                            }
+                                        }}
+                                    >
+                                        <CalendarIcon className="absolute left-3 top-2.5 w-4 h-4 text-gray-400 z-0" />
+
+                                        {/* Visual Fake Input */}
+                                        <div className={`h-9 w-full pl-9 pr-3 py-2 text-sm rounded-md border bg-transparent flex items-center ${errors.travelDate ? 'border-red-500' : 'border-input group-hover:border-green-500'} ${!formData.travelDate ? 'text-gray-500' : 'text-gray-900'}`}>
+                                            {formData.travelDate ? new Date(formData.travelDate).toLocaleDateString('en-GB') : "Select Travel Date"}
+                                        </div>
+
+                                        {/* Invisible Real Input */}
+                                        <input
+                                            ref={dateInputRef}
+                                            type="date"
+                                            required
+                                            min={today}
+                                            value={formData.travelDate}
+                                            onChange={(e) => {
+                                                setFormData({ ...formData, travelDate: e.target.value });
+                                                if (errors.travelDate) setErrors({ ...errors, travelDate: '' });
+                                            }}
+                                            onKeyDown={(e) => e.preventDefault()}
+                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                        />
+                                    </div>
+                                    {errors.travelDate && <p className="text-[10px] text-red-500 ml-1">{errors.travelDate}</p>}
                                 </div>
 
                                 <div className="space-y-1">

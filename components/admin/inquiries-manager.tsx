@@ -92,6 +92,8 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
                 Phone: inq.phone || '-',
                 Type: inq.type || '-',
                 Status: inq.status || '-',
+                'Travel Date': inq.startDate ? new Date(inq.startDate).toLocaleDateString('en-GB') : '-',
+                Destination: inq.destination || '-',
                 Budget: inq.budget || '-',
                 Guests: inq.travelers || '-',
                 Message: inq.message ? inq.message.replace(/[\n\r]+/g, ' ').replace(/"/g, "'") : '-'
