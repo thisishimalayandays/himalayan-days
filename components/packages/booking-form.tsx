@@ -237,21 +237,22 @@ export function BookingForm({ packageTitle, packageId, isHighDemand }: { package
 
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700">Travel Date</label>
+                        <div className="flex justify-between items-center">
+                            <label className="text-sm font-medium text-gray-700">Travel Date</label>
+                            {isHighDemand && (
+                                <span className="text-[10px] font-bold text-red-600 animate-pulse flex items-center gap-1">
+                                    🔥 Only 3 slots left
+                                </span>
+                            )}
+                        </div>
                         <input
                             required
                             type="date"
                             min={today}
                             value={formData.date}
                             onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                            className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                            className={`w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${isHighDemand ? 'border-red-200 focus:border-red-500 focus:ring-red-500/20' : ''}`}
                         />
-                        {isHighDemand && (
-                            <div className="flex items-center gap-2 mt-2 text-[11px] bg-red-50 text-red-600 px-2 py-1 rounded border border-red-100 font-medium">
-                                <AlertTriangle className="w-3 h-3 shrink-0" />
-                                <span>High Demand: Only 3 slots left for Feb</span>
-                            </div>
-                        )}
                     </div>
                     <div className="space-y-2">
                         <label className="text-sm font-medium text-gray-700">Guests</label>
