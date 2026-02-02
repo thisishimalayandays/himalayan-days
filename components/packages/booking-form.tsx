@@ -1,7 +1,7 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Phone, CheckCircle2, ChevronDown, AlertTriangle } from 'lucide-react';
+import { Phone, CheckCircle2, ChevronDown, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
 import { createInquiry, InquiryInput } from '@/app/actions/inquiries';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
@@ -300,9 +300,14 @@ export function BookingForm({ packageTitle, packageId, isHighDemand }: { package
                     </p>
                 </div>
 
-                <Button type="submit" disabled={isSubmitting} className="w-full bg-primary hover:bg-orange-600 text-lg font-semibold h-12">
-                    {isSubmitting ? 'Processing...' : 'Send Enquiry'}
-                </Button>
+                <div className="space-y-3">
+                    <Button type="submit" disabled={isSubmitting} className="w-full bg-primary hover:bg-orange-600 text-lg font-semibold h-12">
+                        {isSubmitting ? 'Checking...' : 'Check Availability'}
+                    </Button>
+                    <p className="text-xs text-center text-gray-500 flex items-center justify-center gap-1">
+                        <ShieldCheck className="w-3 h-3 text-green-600" /> No payment required right now
+                    </p>
+                </div>
             </form>
             <div className="px-6 pb-2">
                 <p className="text-[10px] text-center text-gray-400">
