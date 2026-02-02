@@ -71,8 +71,8 @@ export function PackageCard({ packageData, index = 0 }: PackageCardProps) {
                 </div>
 
                 {reviews > 500 && (
-                    <div className="absolute top-4 right-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white px-3 py-1 rounded-full text-[10px] font-bold shadow-lg shadow-amber-500/20 border border-white/20 z-10 flex items-center gap-1.5 backdrop-blur-md">
-                        <span className="text-sm">🏆</span> Best Seller
+                    <div className="absolute top-4 right-4 bg-[#ff4400] text-white px-3 py-1 rounded-full text-[11px] font-bold shadow-md z-10 flex items-center">
+                        Best Seller
                     </div>
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300 z-0" />
