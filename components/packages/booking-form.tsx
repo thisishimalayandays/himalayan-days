@@ -1,7 +1,7 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Phone, CheckCircle2 } from 'lucide-react';
+import { Phone, CheckCircle2, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import { createInquiry, InquiryInput } from '@/app/actions/inquiries';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
@@ -266,19 +266,23 @@ export function BookingForm({ packageTitle, packageId }: { packageTitle?: string
 
                 <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-700">Budget (Per Person)</label>
-                    <Select value={formData.budget} onValueChange={(val) => {
-                        setFormData({ ...formData, budget: val });
-                        if (errors.budget) setErrors({ ...errors, budget: '' });
-                    }}>
-                        <SelectTrigger className={`w-full px-4 h-10 rounded-lg border bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all ${errors.budget ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-200 focus:border-primary'}`}>
-                            <SelectValue placeholder="Select Range" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white z-[9999]">
-                            <SelectItem value="Standard (18k - 25k)">Standard (₹18k - ₹25k)</SelectItem>
-                            <SelectItem value="Premium (25k - 40k)">Premium (₹25k - ₹40k)</SelectItem>
-                            <SelectItem value="Luxury (Above 40k)">Luxury (Above ₹40k)</SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <div className="relative">
+                        <select
+                            required
+                            value={formData.budget}
+                            onChange={(e) => {
+                                setFormData({ ...formData, budget: e.target.value });
+                                if (errors.budget) setErrors({ ...errors, budget: '' });
+                            }}
+                            className={`w-full px-4 h-10 rounded-lg border bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all appearance-none cursor-pointer ${errors.budget ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-200 focus:border-primary'} ${!formData.budget ? 'text-gray-500' : 'text-gray-900'}`}
+                        >
+                            <option value="" disabled>Select Range</option>
+                            <option value="Standard (18k - 25k)">Standard (₹18k - ₹25k)</option>
+                            <option value="Premium (25k - 40k)">Premium (₹25k - ₹40k)</option>
+                            <option value="Luxury (Above 40k)">Luxury (Above ₹40k)</option>
+                        </select>
+                        <ChevronDown className="absolute right-3 top-3 w-4 h-4 text-gray-400 pointer-events-none" />
+                    </div>
                     {errors.budget && <p className="text-xs text-red-500">{errors.budget}</p>}
                 </div>
 
