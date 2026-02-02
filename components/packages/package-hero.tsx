@@ -72,13 +72,13 @@ export function PackageHero({ title, image, duration, location, price, priceRang
                         </h1>
 
                         {isHighDemand && (
-                            <div className="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/20 backdrop-blur-sm px-3 py-1.5 rounded-lg transition-all duration-300">
+                            <div className="inline-flex items-center gap-2 bg-white/95 border border-red-200 shadow-lg shadow-red-500/10 px-4 py-2 rounded-full transition-all duration-300 transform hover:scale-105">
                                 <span className="relative flex h-3 w-3">
                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600"></span>
                                 </span>
-                                <span className="text-sm md:text-base font-medium text-red-100">
-                                    <strong className="text-red-400 tabular-nums">{viewerCount} people</strong> are planning this trip right now
+                                <span className="text-sm font-bold text-gray-800">
+                                    <strong className="text-red-600 tabular-nums">{viewerCount} people</strong> are planning this trip right now
                                 </span>
                             </div>
                         )}

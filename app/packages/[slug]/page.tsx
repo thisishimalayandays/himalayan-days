@@ -12,6 +12,7 @@ import { TrustBadges } from '@/components/packages/trust-badges';
 import { WinterFAQ } from '@/components/packages/winter-faq';
 import { MobileBookingBar } from '@/components/packages/mobile-booking-bar';
 import { ViewContent } from '@/components/analytics/view-content';
+import { RecentActivityToast } from '@/components/packages/recent-activity-toast';
 
 // generateStaticParams removed to allow build on empty database
 
@@ -179,6 +180,7 @@ export default async function PackagePage({ params }: { params: Promise<{ slug: 
                 name={pkg.title}
                 price={pkg.startingPrice}
             />
+            {pkg.title.toLowerCase().includes('winter') && <RecentActivityToast />}
             <Footer />
         </main>
     );
