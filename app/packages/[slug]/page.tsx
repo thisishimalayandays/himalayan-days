@@ -10,6 +10,7 @@ import { Check, X } from 'lucide-react';
 import { SimilarPackages } from "@/components/packages/similar-packages";
 import { TrustBadges } from '@/components/packages/trust-badges';
 import { WinterFAQ } from '@/components/packages/winter-faq';
+import { Testimonials } from '@/components/packages/testimonials';
 import { MobileBookingBar } from '@/components/packages/mobile-booking-bar';
 import { ViewContent } from '@/components/analytics/view-content';
 import { RecentActivityToast } from '@/components/packages/recent-activity-toast';
@@ -132,7 +133,10 @@ export default async function PackagePage({ params }: { params: Promise<{ slug: 
 
                         {/* Winter FAQ */}
                         {pkg.title.toLowerCase().includes('winter') && (
-                            <WinterFAQ />
+                            <>
+                                <Testimonials />
+                                <WinterFAQ />
+                            </>
                         )}
 
                         {/* Inclusions & Exclusions */}
