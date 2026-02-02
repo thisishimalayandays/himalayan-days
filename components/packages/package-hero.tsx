@@ -8,10 +8,11 @@ interface PackageHeroProps {
     duration: string;
     location: string;
     price: number;
-    priceRange?: string; // Added prop
+    priceRange?: string;
+    isHighDemand?: boolean; // New prop
 }
 
-export function PackageHero({ title, image, duration, location, price, priceRange }: PackageHeroProps) {
+export function PackageHero({ title, image, duration, location, price, priceRange, isHighDemand }: PackageHeroProps) {
     const isWinter = ['winter', 'snow', 'ski', 'gulmarg', 'frozen'].some(keyword =>
         title.toLowerCase().includes(keyword)
     );
@@ -47,9 +48,23 @@ export function PackageHero({ title, image, duration, location, price, priceRang
                         </div>
                     </div>
 
-                    <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                        {title}
-                    </h1>
+                    <div className="space-y-2">
+                        <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight">
+                            {title}
+                        </h1>
+
+                        {isHighDemand && (
+                            <div className="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/20 backdrop-blur-sm px-3 py-1.5 rounded-lg">
+                                <span className="relative flex h-3 w-3">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                                </span>
+                                <span className="text-sm md:text-base font-medium text-red-100">
+                                    <strong className="text-red-400">14 people</strong> are planning this trip right now
+                                </span>
+                            </div>
+                        )}
+                    </div>
 
                     <div className="flex items-end gap-2">
                         <span className="text-lg md:text-xl text-gray-300 mb-1">Starting from</span>

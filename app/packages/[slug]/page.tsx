@@ -94,6 +94,7 @@ export default async function PackagePage({ params }: { params: Promise<{ slug: 
                 location={pkg.location}
                 price={pkg.startingPrice}
                 priceRange={pkg.priceRange || undefined}
+                isHighDemand={resolvedParams.slug === 'winter-wonderland-kashmir'}
             />
 
             <div className="container mx-auto px-4 py-16">
