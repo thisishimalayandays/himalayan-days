@@ -301,12 +301,10 @@ export function BookingForm({ packageTitle, packageId, isHighDemand }: { package
                 </div>
 
                 <div className="space-y-3">
-                    <Button type="submit" disabled={isSubmitting} className="w-full bg-primary hover:bg-orange-600 text-lg font-semibold h-12">
-                        {isSubmitting ? 'Checking...' : 'Check Availability'}
+                    <Button type="submit" disabled={isSubmitting} className="w-full bg-primary hover:bg-orange-600 text-lg font-bold h-12 shadow-lg shadow-orange-500/20">
+                        {isSubmitting ? 'Sending Request...' : 'Get Custom Quote'}
                     </Button>
-                    <p className="text-xs text-center text-gray-500 flex items-center justify-center gap-1">
-                        <ShieldCheck className="w-3 h-3 text-green-600" /> No payment required right now
-                    </p>
+                    {/* Removed 'No payment required' to qualify intent */}
                 </div>
             </form>
             <div className="px-6 pb-2">

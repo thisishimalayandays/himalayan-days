@@ -26,10 +26,9 @@ export function MobileBookingBar({ price }: { price: number }) {
             </div>
             <button
                 onClick={handleBook}
-                className="bg-primary hover:bg-orange-600 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm flex-1 text-sm flex flex-col items-center justify-center leading-tight"
+                className="bg-primary hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg shadow-orange-500/20 flex-1 text-base flex items-center justify-center"
             >
-                <span>Check Availability</span>
-                <span className="text-[10px] font-normal opacity-90">No payment required right now</span>
+                Get Custom Quote
             </button>
         </div>
     );
