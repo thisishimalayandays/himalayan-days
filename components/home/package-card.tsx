@@ -116,45 +116,35 @@ export function PackageCard({ packageData, index = 0 }: PackageCardProps) {
                 </div>
 
                 <div className="pt-4 flex items-center justify-between mt-auto">
-                    <div>
-                        <span className="text-xs text-gray-400 font-medium uppercase tracking-wider block mb-0.5">Starting from</span>
-                        <div className="flex items-baseline gap-1">
-                            {packageData.priceRange ? (
-                                <span className="text-lg font-bold text-primary">{packageData.priceRange}</span>
-                            ) : (
-                                <>
-                                    <span className="text-lg font-bold text-primary">₹{packageData.startingPrice.toLocaleString()}</span>
-                                    <span className="text-xs text-gray-400">/ person</span>
-                                </>
                             )}
-                        </div>
-                    </div>
-                    <div className="flex gap-3">
-                        <Link
-                            href={`https://wa.me/919103901803?text=${encodeURIComponent(`Hi, I'm interested in the ${packageData.title} package.`)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex-1"
-                        >
-                            <Button variant="outline" className="group w-full rounded-full border-[#25D366]/30 text-[#25D366] hover:bg-green-50 hover:text-[#25D366] hover:border-[#25D366] transition-all flex items-center justify-center gap-2">
-                                <Image
-                                    src="/whatsapp_enquiry.png"
-                                    alt="WhatsApp"
-                                    width={20}
-                                    height={20}
-                                    className="object-contain"
-                                />
-                                Enquire
-                            </Button>
-                        </Link>
-                        <Link href={`/packages/${packageData.slug}`} className="flex-1">
-                            <Button variant="outline" className="w-full text-primary border-primary/20 hover:bg-primary hover:text-white transition-all rounded-full">
-                                View Details
-                            </Button>
-                        </Link>
-                    </div>
                 </div>
             </div>
+            <div className="flex gap-3">
+                <Link
+                    href={`https://wa.me/919103901803?text=${encodeURIComponent(`Hi, I'm interested in the ${packageData.title} package.`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1"
+                >
+                    <Button variant="outline" className="group w-full rounded-full border-[#25D366]/30 text-[#25D366] hover:bg-green-50 hover:text-[#25D366] hover:border-[#25D366] transition-all flex items-center justify-center gap-2">
+                        <Image
+                            src="/whatsapp_enquiry.png"
+                            alt="WhatsApp"
+                            width={20}
+                            height={20}
+                            className="object-contain"
+                        />
+                        Enquire
+                    </Button>
+                </Link>
+                <Link href={`/packages/${packageData.slug}`} className="flex-1">
+                    <Button variant="outline" className="w-full text-primary border-primary/20 hover:bg-primary hover:text-white transition-all rounded-full">
+                        View Details
+                    </Button>
+                </Link>
+            </div>
         </div>
+            </div >
+        </div >
     );
 }
