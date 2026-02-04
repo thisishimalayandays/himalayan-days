@@ -31,6 +31,18 @@ export function WhatsAppButton() {
         { code: '+91', iso: 'IN', label: 'India' }
     ];
 
+    // Listen for custom open events
+    useEffect(() => {
+        const handleOpen = (e: CustomEvent) => {
+            setIsOpen(true);
+            // Optional: If we want to capture the package name later
+            // if (e.detail?.package) { ... }
+        };
+
+        window.addEventListener('open-whatsapp-chat', handleOpen as any);
+        return () => window.removeEventListener('open-whatsapp-chat', handleOpen as any);
+    }, []);
+
     if (pathname?.startsWith('/admin') || pathname?.startsWith('/careers')) {
         return null;
     }
