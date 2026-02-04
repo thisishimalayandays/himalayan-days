@@ -1,10 +1,8 @@
 'use client';
 import { Clock, MapPin, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-
 import Snowfall from 'react-snowfall';
 
 interface PackageCardProps {
@@ -36,9 +34,7 @@ export function PackageCard({ packageData, index = 0 }: PackageCardProps) {
     );
 
     return (
-        <div
-            className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 flex flex-col h-full"
-        >
+        <div className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 flex flex-col h-full">
             {/* Image Container */}
             <Link href={`/packages/${packageData.slug}`} className="relative h-64 w-full overflow-hidden shrink-0 block">
                 <Image
@@ -127,17 +123,17 @@ export function PackageCard({ packageData, index = 0 }: PackageCardProps) {
                                     <span className="text-xs text-gray-400">/ person</span>
                                 </>
                             )}
-                            Enquire
-                        </Button>
-                    </Link>
-                    <Link href={`/packages/${packageData.slug}`} className="flex-1">
-                        <Button variant="outline" className="w-full text-primary border-primary/20 hover:bg-primary hover:text-white transition-all rounded-full">
-                            View Details
-                        </Button>
-                    </Link>
+                        </div>
+                    </div>
+                    <div className="flex gap-3">
+                        <Link href={`/packages/${packageData.slug}`} className="flex-1">
+                            <Button className="w-full rounded-full bg-orange-50 text-orange-600 border border-orange-200 hover:bg-orange-100 hover:border-orange-300 transition-all font-bold text-sm h-10 px-6">
+                                Get Quote
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
             </div>
-        </div >
-        </div >
+        </div>
     );
 }
