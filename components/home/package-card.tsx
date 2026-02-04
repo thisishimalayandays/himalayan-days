@@ -127,26 +127,17 @@ export function PackageCard({ packageData, index = 0 }: PackageCardProps) {
                                     <span className="text-xs text-gray-400">/ person</span>
                                 </>
                             )}
-                >
-                            <Button variant="outline" className="group w-full rounded-full border-[#25D366]/30 text-[#25D366] hover:bg-green-50 hover:text-[#25D366] hover:border-[#25D366] transition-all flex items-center justify-center gap-2">
-                                <Image
-                                    src="/whatsapp_enquiry.png"
-                                    alt="WhatsApp"
-                                    width={20}
-                                    height={20}
-                                    className="object-contain"
-                                />
-                                Enquire
-                            </Button>
-                        </Link>
-                        <Link href={`/packages/${packageData.slug}`} className="flex-1">
-                            <Button variant="outline" className="w-full text-primary border-primary/20 hover:bg-primary hover:text-white transition-all rounded-full">
-                                View Details
-                            </Button>
-                        </Link>
-                    </div>
+                            Enquire
+                        </Button>
+                    </Link>
+                    <Link href={`/packages/${packageData.slug}`} className="flex-1">
+                        <Button variant="outline" className="w-full text-primary border-primary/20 hover:bg-primary hover:text-white transition-all rounded-full">
+                            View Details
+                        </Button>
+                    </Link>
                 </div>
-            </div >
+            </div>
+        </div >
         </div >
     );
 }
