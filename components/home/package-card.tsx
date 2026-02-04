@@ -115,7 +115,10 @@ export function PackageCard({ packageData, index = 0 }: PackageCardProps) {
                     <div>
                         <span className="text-xs text-gray-400 font-medium uppercase tracking-wider block mb-0.5">Starting from</span>
                         <div className="flex items-baseline gap-1">
-                            {packageData.priceRange ? (
+                            {/* Temporary Override for Winter Package Ad Consistency */}
+                            {packageData.slug.includes('winter') ? (
+                                <span className="text-lg font-bold text-primary">₹18,000 - ₹20,500</span>
+                            ) : packageData.priceRange ? (
                                 <span className="text-lg font-bold text-primary">{packageData.priceRange}</span>
                             ) : (
                                 <>
