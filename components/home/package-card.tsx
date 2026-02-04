@@ -126,6 +126,23 @@ export function PackageCard({ packageData, index = 0 }: PackageCardProps) {
                         </div>
                     </div>
                     <div className="flex gap-3">
+                        <Link
+                            href={`https://wa.me/919103901803?text=${encodeURIComponent(`Hi, I'm interested in the ${packageData.title} package.`)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex-1"
+                        >
+                            <Button variant="outline" className="w-full rounded-full border-[#25D366]/30 text-[#25D366] hover:bg-green-50 hover:text-[#25D366] hover:border-[#25D366] transition-all flex items-center justify-center gap-2 font-semibold">
+                                <Image
+                                    src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+                                    alt="WhatsApp"
+                                    width={18}
+                                    height={18}
+                                    className="w-4 h-4"
+                                />
+                                Enquire
+                            </Button>
+                        </Link>
                         <Link href={`/packages/${packageData.slug}`} className="flex-1">
                             <Button className="w-full rounded-full bg-orange-50 text-orange-600 border border-orange-200 hover:bg-orange-100 hover:border-orange-300 transition-all font-bold text-sm h-10 px-6">
                                 Get Quote
