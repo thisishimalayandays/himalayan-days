@@ -84,14 +84,14 @@ export function PackageHero({ title, image, duration, location, price, priceRang
                         )}
                     </div>
 
-                    <div className="flex items-end gap-2">
-                        <span className="text-lg md:text-xl text-gray-300 mb-1">Starting from</span>
-                        {priceRange ? (
-                            <span className="text-3xl md:text-5xl font-bold text-primary">{priceRange}</span>
-                        ) : (
-                            <span className="text-3xl md:text-5xl font-bold text-primary">₹{price.toLocaleString()}</span>
-                        )}
-                        <span className="text-sm md:text-base text-gray-400 mb-2">/ person *</span>
+                    <div className="flex items-baseline gap-2 text-white/90">
+                        <span className="text-lg md:text-xl font-light">Starting from</span>
+                        <div className="flex items-baseline gap-1">
+                            <span className="text-3xl md:text-5xl font-bold text-orange-500">
+                                ₹18,000 <span className="text-white">-</span> ₹20,500
+                            </span>
+                            <span className="text-sm md:text-base opacity-80">/ person *</span>
+                        </div>
                     </div>
                 </div>
             </div>

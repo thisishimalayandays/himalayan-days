@@ -28,7 +28,7 @@ export function MobileBookingBar({ price }: { price: number }) {
                 onClick={handleBook}
                 className="bg-primary hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg shadow-orange-500/20 flex-1 text-base flex items-center justify-center"
             >
-                Get Custom Quote
+                Get Quote
             </button>
         </div>
     );

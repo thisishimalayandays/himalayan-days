@@ -302,7 +302,7 @@ export function BookingForm({ packageTitle, packageId, isHighDemand }: { package
 
                 <div className="space-y-3">
                     <Button type="submit" disabled={isSubmitting} className="w-full bg-primary hover:bg-orange-600 text-lg font-bold h-12 shadow-lg shadow-orange-500/20">
-                        {isSubmitting ? 'Sending Request...' : 'Get Custom Quote'}
+                        {isSubmitting ? 'Sending Request...' : 'Get Quote'}
                     </Button>
                     {/* Removed 'No payment required' to qualify intent */}
                 </div>
