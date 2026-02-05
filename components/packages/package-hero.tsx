@@ -82,16 +82,14 @@ export function PackageHero({ title, image, duration, location, price, priceRang
                     <div className="flex items-baseline gap-2 text-white/90">
                         <span className="text-lg md:text-xl font-light">Starting from</span>
                         <div className="flex items-baseline gap-1">
-                            <div className="flex items-baseline gap-1">
-                                <span className="text-3xl md:text-5xl font-bold text-orange-500">
-                                    {priceRange ? (
-                                        <>₹{priceRange.split('-')[0]?.trim()} <span className="text-white">-</span> ₹{priceRange.split('-')[1]?.trim()}</>
-                                    ) : (
-                                        <>₹{price.toLocaleString()}</>
-                                    )}
-                                </span>
-                                <span className="text-sm md:text-base opacity-80">/ person *</span>
-                            </div>
+                            <span className="text-3xl md:text-5xl font-bold text-orange-500">
+                                {priceRange ? (
+                                    // Logic: Split by '-', strip any existing '₹' from parts but KEEP commas, then render cleanly
+                                    <>₹{priceRange.split('-')[0]?.replace(/[₹]/g, '').trim()} <span className="text-white">-</span> ₹{priceRange.split('-')[1]?.replace(/[₹]/g, '').trim()}</>
+                                ) : (
+                                    <>₹{price.toLocaleString()}</>
+                                )}
+                            </span>
                             <span className="text-sm md:text-base opacity-80">/ person *</span>
                         </div>
                     </div>
