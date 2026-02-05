@@ -13,9 +13,10 @@ interface PackageHeroProps {
     price: number;
     priceRange?: string;
     showEngagement?: boolean;
+    isBestSeller?: boolean;
 }
 
-export function PackageHero({ title, image, duration, location, price, priceRange, showEngagement }: PackageHeroProps) {
+export function PackageHero({ title, image, duration, location, price, priceRange, showEngagement, isBestSeller }: PackageHeroProps) {
     const isWinter = ['winter', 'snow', 'ski', 'gulmarg', 'frozen'].some(keyword =>
         title.toLowerCase().includes(keyword)
     );
@@ -55,7 +56,7 @@ export function PackageHero({ title, image, duration, location, price, priceRang
             <div className="container mx-auto px-4 relative z-10 text-white">
                 <div className="max-w-4xl space-y-4 md:space-y-6">
                     <div className="flex flex-wrap items-center gap-4 text-sm md:text-base font-medium text-white/90">
-                        <span className="bg-primary px-3 py-1 rounded-full text-white">Best Seller</span>
+                        {isBestSeller && <span className="bg-primary px-3 py-1 rounded-full text-white">Best Seller</span>}
                         <div className="flex items-center gap-1.5 backdrop-blur-md bg-white/10 px-3 py-1 rounded-full border border-white/20">
                             <Clock className="w-4 h-4" /> {duration}
                         </div>
