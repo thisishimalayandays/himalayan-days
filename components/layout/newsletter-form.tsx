@@ -24,10 +24,10 @@ export function NewsletterForm() {
                     className: "bg-green-600 text-white border-none"
                 });
 
-                // Track Registration
-                analytics.event('CompleteRegistration', {
-                    content_name: 'Newsletter Signup'
-                });
+                // Registration tracking removed to avoid polluting Ad Pixel data
+                // analytics.event('CompleteRegistration', {
+                //     content_name: 'Newsletter Signup'
+                // });
 
                 // Reset form
                 (document.getElementById('newsletter-form') as HTMLFormElement)?.reset();
