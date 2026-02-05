@@ -108,7 +108,10 @@ export function BookingForm({ packageTitle, packageId, isHighDemand }: { package
                 type: "PACKAGE_BOOKING",
                 travelers: parseInt(formData.guests) || undefined,
                 budget: formData.budget || undefined,
-                message: packageTitle ? `Booking Inquiry for Package: ${packageTitle}` : "General Booking Inquiry",
+
+                message: packageTitle
+                    ? `Booking Inquiry for Package: ${packageTitle}`
+                    : "General Booking Inquiry",
                 packageId: packageId,
                 captchaToken: token
             };
@@ -173,6 +176,16 @@ export function BookingForm({ packageTitle, packageId, isHighDemand }: { package
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                {/* Trust Banner - Addresses Payment Fear */}
+                <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 flex gap-3 items-start shadow-sm">
+                    <ShieldCheck className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
+                    <div>
+                        <p className="text-xs font-bold text-blue-800">No Online Payment Required</p>
+                        <p className="text-xs text-blue-700 leading-snug">
+                            We don't take payments on the website. Pay the <strong>25% booking token</strong> via verified UPI/Bank Transfer only <strong>after</strong> speaking to our expert.
+                        </p>
+                    </div>
+                </div>
                 <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-700">Full Name</label>
                     <input
@@ -302,8 +315,11 @@ export function BookingForm({ packageTitle, packageId, isHighDemand }: { package
 
                 <div className="space-y-3">
                     <Button type="submit" disabled={isSubmitting} className="w-full bg-primary hover:bg-orange-600 text-lg font-bold h-12 shadow-lg shadow-orange-500/20">
-                        {isSubmitting ? 'Sending Request...' : 'Get Quote'}
+                        {isSubmitting ? 'Checking...' : 'Check Availability'}
                     </Button>
+                    <p className="text-[10px] text-center text-gray-400">
+                        * No immediate payment. We will contact you to confirm.
+                    </p>
                     {/* Removed 'No payment required' to qualify intent */}
                 </div>
             </form>
