@@ -96,7 +96,6 @@ export default async function PackagePage({ params }: { params: Promise<{ slug: 
                 location={pkg.location}
                 price={pkg.startingPrice}
                 priceRange={pkg.priceRange || undefined}
-                isHighDemand={resolvedParams.slug === 'winter-wonderland-kashmir'}
             />
 
             <div className="container mx-auto px-4 py-16">
@@ -181,7 +180,9 @@ export default async function PackagePage({ params }: { params: Promise<{ slug: 
             </div>
 
             <SimilarPackages currentId={pkg.id} duration={pkg.duration} />
-            <MobileBookingBar price={pkg.startingPrice} />
+            <MobileBookingBar
+                price={pkg.startingPrice}
+            />
             <ViewContent
                 id={pkg.id}
                 name={pkg.title}

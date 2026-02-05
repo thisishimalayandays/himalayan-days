@@ -12,10 +12,9 @@ interface PackageHeroProps {
     location: string;
     price: number;
     priceRange?: string;
-    isHighDemand?: boolean; // New prop
 }
 
-export function PackageHero({ title, image, duration, location, price, priceRange, isHighDemand }: PackageHeroProps) {
+export function PackageHero({ title, image, duration, location, price, priceRange }: PackageHeroProps) {
     const isWinter = ['winter', 'snow', 'ski', 'gulmarg', 'frozen'].some(keyword =>
         title.toLowerCase().includes(keyword)
     );
@@ -23,9 +22,7 @@ export function PackageHero({ title, image, duration, location, price, priceRang
     const [viewerCount, setViewerCount] = useState(14);
 
     useEffect(() => {
-        if (!isHighDemand) return;
-
-        // Randomize count every few seconds
+        // Randomize count every few seconds for engagement
         const interval = setInterval(() => {
             // Random number between 12 and 19
             const newCount = Math.floor(Math.random() * (19 - 12 + 1)) + 12;
@@ -33,7 +30,7 @@ export function PackageHero({ title, image, duration, location, price, priceRang
         }, 3500); // 3.5 seconds
 
         return () => clearInterval(interval);
-    }, [isHighDemand]);
+    }, []);
 
     return (
         <section className="relative h-[60vh] md:h-[70vh] w-full overflow-hidden flex items-end pb-12 md:pb-24">
@@ -71,25 +68,30 @@ export function PackageHero({ title, image, duration, location, price, priceRang
                             {title}
                         </h1>
 
-                        {isHighDemand && (
-                            <div className="inline-flex items-center gap-2 bg-white/95 border border-red-200 shadow-lg shadow-red-500/10 px-4 py-2 rounded-full transition-all duration-300 transform hover:scale-105">
-                                <span className="relative flex h-3 w-3">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600"></span>
-                                </span>
-                                <span className="text-sm font-bold text-gray-800">
-                                    <strong className="text-red-600 tabular-nums">{viewerCount} people</strong> are planning this trip right now
-                                </span>
-                            </div>
-                        )}
+                        <div className="inline-flex items-center gap-2 bg-white/95 border border-red-200 shadow-lg shadow-red-500/10 px-4 py-2 rounded-full transition-all duration-300 transform hover:scale-105">
+                            <span className="relative flex h-3 w-3">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600"></span>
+                            </span>
+                            <span className="text-sm font-bold text-gray-800">
+                                <strong className="text-red-600 tabular-nums">{viewerCount} people</strong> are planning this trip right now
+                            </span>
+                        </div>
                     </div>
 
                     <div className="flex items-baseline gap-2 text-white/90">
                         <span className="text-lg md:text-xl font-light">Starting from</span>
                         <div className="flex items-baseline gap-1">
-                            <span className="text-3xl md:text-5xl font-bold text-orange-500">
-                                ₹18,000 <span className="text-white">-</span> ₹20,500
-                            </span>
+                            <div className="flex items-baseline gap-1">
+                                <span className="text-3xl md:text-5xl font-bold text-orange-500">
+                                    {priceRange ? (
+                                        <>₹{priceRange.split('-')[0]?.trim()} <span className="text-white">-</span> ₹{priceRange.split('-')[1]?.trim()}</>
+                                    ) : (
+                                        <>₹{price.toLocaleString()}</>
+                                    )}
+                                </span>
+                                <span className="text-sm md:text-base opacity-80">/ person *</span>
+                            </div>
                             <span className="text-sm md:text-base opacity-80">/ person *</span>
                         </div>
                     </div>
