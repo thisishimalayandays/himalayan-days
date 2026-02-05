@@ -61,6 +61,8 @@ export default async function PackagePage({ params }: { params: Promise<{ slug: 
         priceRange: (pkgRaw as any).priceRange as string | null // Explicit cast to avoid type error if client out of sync
     };
 
+    const isWinterWonderland = resolvedParams.slug === 'winter-wonderland-kashmir';
+
     return (
         <main className="min-h-screen font-sans bg-white">
             <div className="bg-black/80"><Header /></div> {/* Dark header for contrast */}
@@ -96,6 +98,7 @@ export default async function PackagePage({ params }: { params: Promise<{ slug: 
                 location={pkg.location}
                 price={pkg.startingPrice}
                 priceRange={pkg.priceRange || undefined}
+                showEngagement={isWinterWonderland}
             />
 
             <div className="container mx-auto px-4 py-16">
@@ -188,7 +191,7 @@ export default async function PackagePage({ params }: { params: Promise<{ slug: 
                 name={pkg.title}
                 price={pkg.startingPrice}
             />
-            {pkg.title.toLowerCase().includes('winter') && <RecentActivityToast />}
+            {isWinterWonderland && <RecentActivityToast />}
             <Footer />
         </main>
     );
