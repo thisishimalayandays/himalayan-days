@@ -17,7 +17,7 @@ interface PackageData {
     title: string;
     slug: string;
     startingPrice: number;
-    priceRange?: string; // Optional override
+    priceRange?: string | null; // Optional override
     duration: string;
     category: string;
     image: string;
@@ -134,7 +134,7 @@ export default function PackageForm({ initialData, isNew }: { initialData?: Pack
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-muted-foreground mb-1">Price Range Text (Optional)</label>
-                        <input name="priceRange" defaultValue={initialData?.priceRange} className="w-full rounded-lg border-input bg-background shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border" placeholder="e.g. 18,000 - 20,500" />
+                        <input name="priceRange" defaultValue={initialData?.priceRange || undefined} className="w-full rounded-lg border-input bg-background shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border" placeholder="e.g. 18,000 - 20,500" />
                         <p className="text-xs text-muted-foreground mt-1">Overrides the "Starting From" price display.</p>
                     </div>
                     <div>
