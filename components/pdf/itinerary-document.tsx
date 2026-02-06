@@ -6,7 +6,7 @@ import { ItineraryData } from '@/app/admin/tools/itinerary-maker/page';
 // Register fonts if needed (using standard fonts for speed now)
 // Font.register({ family: 'Inter', src: '...' });
 
-const LOGO_URL = typeof window !== 'undefined' ? `${window.location.origin}/Himalayan%20Days%20Logo.png` : "/Himalayan%20Days%20Logo.png";
+const LOGO_URL = typeof window !== 'undefined' ? `${window.location.origin}/logo.png` : "/logo.png";
 
 // Colors
 const COLORS = {
@@ -417,14 +417,20 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
                 <View style={styles.termsContainer} wrap={false}>
                     <Text style={styles.termsHeader}>Terms & Conditions</Text>
                     {[
-                        "From your first contact till your Tour ends, our Tour Advisors are available for your assistance 24x7.",
-                        "Customers are requested to pay 30% of the total booking amount in advance & 70% upon arrival.",
-                        "All bookings will be confirmed after the advance payment reflects in our bank account or online wallets.",
-                        "In case of a government-imposed lockdown, your booking amount is safe with us and can be used in the future.",
-                        "In case you choose to cancel your bookings with us after confirming, we trust you to pay the remaining amount over the advance payments made by you as per the hotel policies. Himalayan Days will not charge you anything as Tour Operators for cancellations except the Hotel & Driver charges after settlements.",
-                        "Kindly make the Advance Payments soon after finalizing your desired Itinerary. This helps us ensure that the Hotels/Houseboats are not Sold Out.",
-                        "All Visitors are bound to Hire Local Taxis for Sightseeing within the vicinities of Sonmarg, Pahalgam, Gulmarg & other destinations in Kashmir as per Kashmir Tourism Advisory.",
-                        "Your Prepaid Sim cards will not work on your Trip to Kashmir & Ladakh, kindly arrange a Postpaid/Pre-on-Postpaid Sim on your own beforehand."
+                        "From your first enquiry until the completion of your tour, our travel advisors will be available to assist you 24×7.",
+                        "To confirm your booking, 30% advance payment of the total tour cost is required.",
+                        "The remaining 70% balance is payable upon arrival.",
+                        "All bookings are confirmed only after the advance payment is successfully received in our bank account or authorised online payment channel.",
+                        "In case of any government-imposed restrictions or lockdown, the amount paid will remain safe with us and can be utilised for a future travel date.",
+                        "If you decide to cancel your booking after confirmation, Himalayan Days does not charge any tour cancellation fee.",
+                        "However, hotel and driver cancellation charges (if applicable) must be borne by the guest as per their respective policies.",
+                        "We kindly request guests to make the advance payment soon after finalising the itinerary to ensure availability of hotels and transport, especially during peak season.",
+                        "As per Kashmir Tourism regulations, guests are required to hire local taxis for sightseeing in destinations such as Sonmarg, Pahalgam, Gulmarg and other restricted zones.",
+                        "Outside vehicles are not permitted for local sightseeing in these areas.",
+                        "Prepaid SIM cards generally do not function properly in Kashmir & Ladakh.",
+                        "Guests are advised to arrange a post-paid or converted pre-to-post SIM before arrival.",
+                        "All personal expenses, entry fees, pony rides, gondola tickets and optional activities not mentioned in the itinerary are not included in the tour cost.",
+                        "Check-in and check-out timings at hotels are subject to the respective hotel’s policies."
                     ].map((term, idx) => (
                         <Text key={idx} style={styles.termItem}>• {term}</Text>
                     ))}
