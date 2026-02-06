@@ -36,8 +36,8 @@ export function MobileBookingBar({ price }: { price: number }) {
                 className="bg-primary hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-lg shadow-lg shadow-orange-500/20 flex-1 flex flex-col items-center justify-center"
             >
                 <span className="text-base">Check Availability</span>
-                <span className="text-[10px] bg-white/20 px-2 rounded-full mt-0.5 font-medium flex items-center gap-1">
-                    🛡️ No Upfront Payment
+                <span className="text-[10px] font-medium opacity-90 flex items-center gap-1 mt-0.5">
+                    (No Upfront Payment)
                 </span>
             </button>
         </div>
