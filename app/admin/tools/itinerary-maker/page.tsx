@@ -228,7 +228,7 @@ export default function ItineraryMakerPage() {
             mappedDays = applyStickyContext(mappedDays, stickyContext);
             setClientInfo(prev => ({
                 ...prev,
-                totalCost: stickyContext.grandTotal ? `₹${stickyContext.grandTotal.toLocaleString('en-IN')}` : '',
+                totalCost: stickyContext.grandTotal ? `${stickyContext.grandTotal.toLocaleString('en-IN')}` : '',
                 // Maybe map adults/kids too if present in context?
             }));
             toast.success("Template imported with Calculator Data applied!");
