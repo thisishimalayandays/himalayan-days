@@ -22,7 +22,6 @@ export async function submitApplication(prevState: ApplicationState, formData: F
 
     // 1. Spam Check (Honeypot)
     if (honeyPot) {
-        console.log("Create Bot detected! Honeypot field filled.")
         return {
             success: true,
             message: "Application submitted successfully! We will contact you shortly."

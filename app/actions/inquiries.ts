@@ -28,8 +28,9 @@ export async function createInquiry(data: InquiryInput) {
         // Verify ReCAPTCHA if token is provided (or enforce it if you want strict security)
         if (validated.captchaToken) {
             // Bypass for Development/Localhost to prevent "Spam Detected" during testing
+            // Bypass for Development/Localhost to prevent "Spam Detected" during testing
             if (process.env.NODE_ENV === 'development') {
-                console.log("⚠️ Development Mode: Skipping ReCaptcha Verification");
+                // Skipping verification in dev
             } else {
                 try {
                     const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {

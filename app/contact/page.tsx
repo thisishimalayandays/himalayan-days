@@ -23,8 +23,6 @@ function ContactForm() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        console.log("Submitting form...");
-
         if (!executeRecaptcha) {
             console.error("Recaptcha not ready");
             toast({
@@ -39,7 +37,6 @@ function ContactForm() {
 
         try {
             const token = await executeRecaptcha('contact_form_submit');
-            console.log("Captcha token received");
 
             const formDataObj = new FormData();
             formDataObj.append('firstName', formData.firstName);
