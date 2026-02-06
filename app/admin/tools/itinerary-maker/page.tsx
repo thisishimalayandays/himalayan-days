@@ -7,10 +7,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
-import { Plus, Trash2, Download, RefreshCw, FileText, Eye } from 'lucide-react';
+import { Plus, Trash2, Download, RefreshCw, FileText, Eye, Save, FolderOpen } from 'lucide-react';
+import { toast } from 'sonner';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 // Imports
-import { ITINERARY_TEMPLATES, ItineraryTemplate } from './data/templates';
+import { ITINERARY_TEMPLATES, ItineraryTemplate, BLOCKS } from './data/templates';
 import { ItineraryHTMLPreview } from '@/components/pdf/itinerary-preview';
+import { saveItinerary, getItineraries, deleteItinerary } from "@/app/actions/itineraries";
 
 // Dynamically import PDFExportButton to isolate @react-pdf/renderer
 const PDFExportButton = dynamic(
@@ -42,10 +45,42 @@ export interface ItineraryData {
     days: Day[];
 }
 
+interface DBItinerary {
+    id: string;
+    name: string;
+    clientName?: string | null;
+    date?: string;
+    data: {
+        clientInfo: any;
+        days: Day[];
+    };
+    createdAt: Date;
+}
+
 export default function ItineraryMakerPage() {
     // Template Selection State
     const [selectedDuration, setSelectedDuration] = useState('');
     const [selectedTemplateId, setSelectedTemplateId] = useState('');
+
+    // Save/Load State
+    const [savedItineraries, setSavedItineraries] = useState<DBItinerary[]>([]);
+    const [itineraryName, setItineraryName] = useState("");
+    const [clientName, setClientName] = useState(""); // NEW
+    const [isSaveOpen, setIsSaveOpen] = useState(false);
+    const [isLoadOpen, setIsLoadOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
+    // Load DB
+    const loadItinerariesFromDB = async () => {
+        setIsLoading(true);
+        const data = await getItineraries();
+        setSavedItineraries(data as any[]);
+        setIsLoading(false);
+    };
+
+    useEffect(() => {
+        loadItinerariesFromDB();
+    }, []);
 
     const [clientInfo, setClientInfo] = useState({
         clientTitle: 'Mr.',
@@ -90,24 +125,124 @@ export default function ItineraryMakerPage() {
 
     // ... handlers ...
 
+    // --- Sticky Context State ---
+    const [stickyContext, setStickyContext] = useState<any>(null);
+
+    // Load Calculator Draft on Mount
+    useEffect(() => {
+        const storedDraft = localStorage.getItem('calculatorDraft');
+        if (storedDraft) {
+            try {
+                const draft = JSON.parse(storedDraft);
+                setStickyContext(draft);
+
+                // Optional: Auto-populate if query param exists (indicating redirect)
+                // const urlParams = new URLSearchParams(window.location.search);
+                // if (urlParams.get('import') === 'true') {
+                //      // Could auto-trigger something here, but sticking to "Template Import" override for now
+                //      toast.info("Calculator data linked. It will be applied to any template you select.");
+                // }
+            } catch (e) {
+                console.error("Failed to parse sticky context", e);
+            }
+        }
+    }, []);
+
+    // Helper: Apply Sticky Context to Days
+    const applyStickyContext = (daysToProcess: Day[], context: any) => {
+        if (!context || !context.hotels) return daysToProcess;
+
+        // 1. Flatten Calculator Hotels into a "Timeline of Stays" based on nights
+        const stayQueue: string[] = [];
+
+        context.hotels.forEach((h: any) => {
+            if (h.name && h.nights > 0) {
+                let stayName = h.name.trim();
+                const type = h.type || "Hotel"; // e.g. "Hotel", "Houseboat"
+
+                // Check if name already implies type
+                // e.g. "Radisson" -> "Radisson Hotel"
+                // e.g. "Harmukh Houseboat" -> "Harmukh Houseboat" (no change)
+                const lowerName = stayName.toLowerCase();
+                const typeKeywords = ['hotel', 'resort', 'cottage', 'camp', 'houseboat', 'homestay', 'guest house'];
+
+                const hasKeyword = typeKeywords.some(keyword => lowerName.includes(keyword));
+
+                if (!hasKeyword) {
+                    stayName = `${stayName} ${type}`;
+                }
+
+                // Append Location
+                const location = h.location?.trim();
+                // Avoid double location if name already contains it
+                if (location && !stayName.toLowerCase().includes(location.toLowerCase())) {
+                    stayName = `${stayName} - ${location}`;
+                }
+
+                // Add entry for each night
+                for (let i = 0; i < h.nights; i++) {
+                    stayQueue.push(stayName);
+                }
+            }
+        });
+
+        // 2. Map sequentially to days
+        // We iterate through the days. If the timeline has a stay for this "night", we apply it.
+        // Usually Day 1 needs Night 1, Day 2 needs Night 2, etc.
+        // The last day typically doesn't have a night stay, so it naturally falls off if queue is empty.
+
+        return daysToProcess.map((day, idx) => {
+            const newStay = stayQueue[idx] || day.stay || '';
+
+            // "meals data will also be filled"
+            // If template has meals, keep them. If empty/missing and we have a calculator context,
+            // assume standard "Breakfast & Dinner" (MAP) could be a safe default if user desires automagical filling,
+            // but for now let's respect the template unless it's empty.
+            // User query: "meals data will also be filled... even though i import different template... meals remain unchanged"
+            // This might mean "Unchanged from the STICKY context" (if we had sticky meals) or "Unchanged from Template".
+            // Given the context "fills" data, I'll ensure it's not empty.
+            const newMeals = day.meals || 'Breakfast & Dinner';
+
+            return {
+                ...day,
+                stay: newStay,
+                meals: newMeals
+            };
+        });
+    };
+
     const handleImportTemplate = () => {
         const tpl = ITINERARY_TEMPLATES.find(t => t.id === selectedTemplateId);
         if (!tpl) return;
+
+        let mappedDays: Day[] = tpl.days.map((d, idx) => ({
+            dayNumber: idx + 1,
+            title: d.title,
+            description: d.description,
+            meals: d.meals || '',
+            stay: '' // User requested blank stays by default for "Normal" usage
+        }));
+
+        // APPLY STICKY CONTEXT
+        if (stickyContext) {
+            mappedDays = applyStickyContext(mappedDays, stickyContext);
+            setClientInfo(prev => ({
+                ...prev,
+                totalCost: stickyContext.grandTotal ? `₹${stickyContext.grandTotal.toLocaleString('en-IN')}` : '',
+                // Maybe map adults/kids too if present in context?
+            }));
+            toast.success("Template imported with Calculator Data applied!");
+        } else {
+            toast.success("Template imported.");
+        }
 
         setClientInfo(prev => ({
             ...prev,
             pkgTitle: tpl.title,
             duration: tpl.duration,
-            totalCost: '', // Templates don't have cost
+            // totalCost handled above if context exists
         }));
 
-        const mappedDays = tpl.days.map((d, idx) => ({
-            dayNumber: idx + 1,
-            title: d.title,
-            description: d.description,
-            meals: d.meals,
-            stay: d.stay
-        }));
         setDays(mappedDays);
     };
 
@@ -130,6 +265,195 @@ export default function ItineraryMakerPage() {
     const removeDay = (index: number) => {
         const newDays = days.filter((_, i) => i !== index).map((d, i) => ({ ...d, dayNumber: i + 1 }));
         setDays(newDays);
+    };
+
+    // --- Save/Load Handlers ---
+    const handleSaveItinerary = async () => {
+        if (!itineraryName.trim()) {
+            toast.error("Please enter a name.");
+            return;
+        }
+
+        const itineraryData = { clientInfo, days };
+        const res = await saveItinerary(itineraryName, clientName, itineraryData);
+
+        if (res.success) {
+            toast.success("Itinerary saved to Database!");
+            setItineraryName("");
+            setClientName("");
+            setIsSaveOpen(false);
+            loadItinerariesFromDB();
+        } else {
+            toast.error("Failed to save.");
+        }
+    };
+
+    const handleLoadItinerary = (save: DBItinerary) => {
+        if (confirm(`Load "${save.name}"? Unsaved changes will be lost.`)) {
+            const data = save.data;
+            if (data) {
+                setClientInfo(data.clientInfo);
+                setDays(data.days);
+                toast.success("Itinerary loaded successfully.");
+                setIsLoadOpen(false);
+            }
+        }
+    };
+
+    const handleDeleteItinerary = async (id: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (confirm("Delete this saved itinerary?")) {
+            await deleteItinerary(id);
+            toast.success("Deleted.");
+            loadItinerariesFromDB();
+        }
+    };
+
+    // --- Draft Import Logic ---
+    const [draftData, setDraftData] = useState<any>(null);
+
+    useEffect(() => {
+        const stored = localStorage.getItem('calculatorDraft');
+        if (stored) {
+            try {
+                setDraftData(JSON.parse(stored));
+            } catch (e) {
+                console.error("Failed to parse draft", e);
+            }
+        }
+    }, []);
+
+    const handleImportDraft = (tripType: 'Family' | 'Honeymoon' | 'Friends' | 'Corporate') => {
+        if (!draftData) return;
+
+        // 1. Basic Info
+        const totalRooms = draftData.hotels.reduce((acc: number, h: any) => acc + h.rooms, 0);
+        const vehicle = draftData.transport[0]?.type || '';
+
+        setClientInfo(prev => ({
+            ...prev,
+            totalCost: draftData.grandTotal.toLocaleString("en-IN"),
+            rooms: `${totalRooms} Rooms`,
+            vehicleType: vehicle,
+            pkgTitle: `Magical Kashmir ${tripType} Special`,
+            adults: '2', // Default assumption, editable
+            kids: '0'
+        }));
+
+        // 2. Helper to find best block
+        // Import BLOCKS from data/templates (Need to add import at top)
+        // For now, I will use a local logic or assume BLOCKS is imported. 
+        // Note: I will need to update imports in the next step. 
+
+        const getPayloadDay = (location: string, dayIndex: number, isArrival: boolean): { title: string, description: string, meals?: string, stay?: string } => {
+            // Dynamic import workaround or assume global access if I was in same file. 
+            // Since I am in page.tsx, I need to fetch from the imported BLOCKS.
+            // I will modify the Import logic to depend on the BLOCKS object being available.
+
+            // MAPPING LOGIC
+            // SRINAGAR
+            if (location === 'Srinagar') {
+                if (isArrival) {
+                    return tripType === 'Honeymoon' ? BLOCKS.arrivalSrinagarRomantic : BLOCKS.arrivalSrinagar;
+                }
+                // Subsequent Days in Srinagar
+                if (dayIndex === 0) return BLOCKS.srinagarLocal; // Day 1 (after arrival)
+                if (dayIndex === 1) return BLOCKS.srinagarOldCity;
+                if (dayIndex === 2) return BLOCKS.springsDay;
+                return BLOCKS.doodhpathriDay; // Fallback filler
+            }
+
+            // GULMARG
+            if (location === 'Gulmarg') {
+                if (dayIndex === 0) return BLOCKS.gulmargStay; // Transfer & Stay
+                if (dayIndex === 1) return tripType === 'Friends' ? BLOCKS.gulmargAdventure : BLOCKS.gulmargDay; // Gondola/Activities
+                return BLOCKS.gulmargAdventure;
+            }
+
+            // PAHALGAM
+            if (location === 'Pahalgam') {
+                if (dayIndex === 0) return BLOCKS.pahalgamStay; // Transfer & Stay
+                if (dayIndex === 1) return BLOCKS.pahalgamValleys; // ABC Valleys
+                if (dayIndex === 2) return BLOCKS.pahalgamLeisure; // Pony Ride/Mini Swiss
+                return BLOCKS.pahalgamValleys;
+            }
+
+            // SONMARG
+            if (location === 'Sonmarg') {
+                if (dayIndex === 0) return BLOCKS.sonamargStay;
+                return BLOCKS.sonamargDay;
+            }
+
+            return { title: `Explore ${location}`, description: `Enjoy your stay in ${location}.` };
+        };
+
+        const newDays: Day[] = [];
+        let dayCount = 1;
+        let isFirstHotel = true;
+
+        draftData.hotels.forEach((hotel: any) => {
+            const nights = hotel.nights;
+            const location = hotel.location || 'Srinagar';
+            const stayName = hotel.name || `${location} ${hotel.type}`;
+
+            let nightsToPlan = nights;
+
+            // Special handling for First Hotel (Arrival)
+            if (isFirstHotel) {
+                // Day 1 is ALWAYS Arrival
+                let day1Block = BLOCKS.arrivalSrinagar; // Default to Srinagar arrival
+
+                if (location === 'Srinagar' && tripType === 'Honeymoon') {
+                    day1Block = BLOCKS.arrivalSrinagarRomantic;
+                } else if (location !== 'Srinagar') {
+                    // If landing SXR but staying elsewhere (e.g., Pahalgam)
+                    day1Block = {
+                        title: `Arrival & Transfer to ${location}`,
+                        description: `Arrive at Srinagar Airport. Our representative will greet you and drive you directly to ${location}. Enjoy the scenic drive. Check into your hotel.`,
+                        meals: 'Dinner',
+                        stay: stayName
+                    };
+                }
+
+                newDays.push({
+                    dayNumber: dayCount++,
+                    title: day1Block.title,
+                    description: day1Block.description,
+                    meals: day1Block.meals || 'Dinner',
+                    stay: day1Block.stay || stayName
+                });
+
+                nightsToPlan--; // We used 1 night for arrival
+                isFirstHotel = false;
+            }
+
+            // Remaining Nights at this hotel
+            for (let i = 0; i < nightsToPlan; i++) {
+                const block = getPayloadDay(location, i, false);
+
+                newDays.push({
+                    dayNumber: dayCount++,
+                    title: block.title,
+                    description: block.description,
+                    meals: 'meals' in block ? block.meals : 'Breakfast & Dinner',
+                    stay: stayName // FORCE use of Calculator Hotel Name
+                });
+            }
+        });
+
+        // C. Departure
+        newDays.push({
+            dayNumber: dayCount,
+            title: BLOCKS.departure.title,
+            description: BLOCKS.departure.description,
+            meals: 'Breakfast',
+            stay: 'N/A'
+        });
+
+        setDays(newDays);
+        toast.success(`Generated ${tripType} Itinerary!`);
+        localStorage.removeItem('calculatorDraft');
+        setDraftData(null);
     };
 
     // Mobile Tab State
@@ -168,20 +492,97 @@ export default function ItineraryMakerPage() {
                 <div className="flex items-center justify-between mb-6">
                     <h1 className="text-2xl font-bold text-foreground">Itinerary Builder</h1>
                     <div className="flex gap-2">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setShowPreview(!showPreview)}
-                            className="hidden md:flex"
-                        >
-                            {showPreview ? <Eye className="w-4 h-4 mr-2" /> : <Eye className="w-4 h-4 mr-2" />}
-                            {showPreview ? 'Hide Preview' : 'Show Preview'}
-                        </Button>
-                        <Button variant="outline" size="sm" onClick={() => window.location.reload()}>
-                            <RefreshCw className="w-4 h-4 mr-2" /> Reset
-                        </Button>
+                        <Dialog open={isSaveOpen} onOpenChange={setIsSaveOpen}>
+                            <DialogTrigger asChild>
+                                <Button variant="outline" size="sm">
+                                    <Save className="w-4 h-4 mr-2" /> Save
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Save Itinerary</DialogTitle>
+                                </DialogHeader>
+                                <div className="space-y-4 pt-4">
+                                    <div className="space-y-2">
+                                        <Label>Client Name</Label>
+                                        <Input
+                                            placeholder="e.g. Rahul DB"
+                                            value={clientName}
+                                            onChange={(e) => setClientName(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Itinerary Name</Label>
+                                        <Input
+                                            placeholder="e.g. 5 Days Kashmir"
+                                            value={itineraryName}
+                                            onChange={(e) => setItineraryName(e.target.value)}
+                                        />
+                                    </div>
+                                    <Button onClick={handleSaveItinerary} className="w-full">Save to Database</Button>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
+
+                        <Dialog open={isLoadOpen} onOpenChange={setIsLoadOpen}>
+                            <DialogTrigger asChild>
+                                <Button variant="outline" size="sm">
+                                    <FolderOpen className="w-4 h-4 mr-2" /> Load
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
+                                <DialogHeader>
+                                    <DialogTitle>Team Itineraries</DialogTitle>
+                                </DialogHeader>
+                                <div className="space-y-2 pt-4">
+                                    {isLoading ? <p>Loading...</p> : savedItineraries.length === 0 ? (
+                                        <p className="text-center text-muted-foreground py-8">No saved itineraries.</p>
+                                    ) : (
+                                        savedItineraries.map(item => (
+                                            <div
+                                                key={item.id}
+                                                onClick={() => handleLoadItinerary(item)}
+                                                className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 cursor-pointer group transition-colors"
+                                            >
+                                                <div>
+                                                    <div className="font-semibold">{item.name}</div>
+                                                    <div className="text-xs text-muted-foreground">
+                                                        {item.clientName ? `${item.clientName} • ` : ''}
+                                                        {new Date(item.createdAt).toLocaleDateString()}
+                                                    </div>
+                                                </div>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                    onClick={(e) => handleDeleteItinerary(item.id, e)}
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </Button>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </DialogContent>
+                        </Dialog>
+
+                        <div className="hidden md:flex gap-2">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setShowPreview(!showPreview)}
+                            >
+                                {showPreview ? <Eye className="w-4 h-4 mr-2" /> : <Eye className="w-4 h-4 mr-2" />}
+                                {showPreview ? 'Hide Preview' : 'Show Preview'}
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={() => window.location.reload()}>
+                                <RefreshCw className="w-4 h-4 mr-2" /> Reset
+                            </Button>
+                        </div>
                     </div>
                 </div>
+
+
 
                 {/* Template Selection Section */}
                 <Card className="p-4 mb-6 bg-orange-50/50 dark:bg-orange-950/20 border-orange-100 dark:border-orange-900/50">

@@ -9,6 +9,8 @@ import { Separator } from "@/components/ui/separator";
 // --- Types ---
 export interface HotelItem {
     id: string;
+    type: string;
+    location: string;
     name: string;
     rate: number;
     rooms: number;
@@ -66,7 +68,7 @@ export function HotelCalculator({
     total: number;
 }) {
     const addRow = () => {
-        setItems([...items, { id: Date.now().toString(), name: "", rate: 0, rooms: 1, nights: 1 }]);
+        setItems([...items, { id: Date.now().toString(), type: "Hotel", location: "Srinagar", name: "", rate: 0, rooms: 1, nights: 1 }]);
     };
 
     const removeRow = (id: string) => {
@@ -93,44 +95,70 @@ export function HotelCalculator({
                 </div>
             </CardHeader>
             <CardContent className="p-6 space-y-4">
-                <div className="grid grid-cols-12 gap-3 text-xs uppercase tracking-wider font-semibold text-muted-foreground mb-2 px-1">
-                    <div className="col-span-4">Property Name</div>
-                    <div className="col-span-3">Rate (₹)</div>
-                    <div className="col-span-2">Rooms</div>
-                    <div className="col-span-2">Nights</div>
+                <div className="grid grid-cols-12 gap-2 text-xs uppercase tracking-wider font-semibold text-muted-foreground mb-2 px-1">
+                    <div className="col-span-2">Type</div>
+                    <div className="col-span-2">Location</div>
+                    <div className="col-span-3">Property Name</div>
+                    <div className="col-span-2">Rate (₹)</div>
+                    <div className="col-span-1">Rms</div>
+                    <div className="col-span-1">Nts</div>
                     <div className="col-span-1"></div>
                 </div>
 
                 {items.map((item, index) => (
-                    <div key={item.id} className="grid grid-cols-12 gap-3 items-center group">
-                        <div className="col-span-4">
+                    <div key={item.id} className="grid grid-cols-12 gap-2 items-center group">
+                        <div className="col-span-2">
+                            <select
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                value={item.type}
+                                onChange={(e) => updateRow(index, "type", e.target.value)}
+                            >
+                                <option value="Hotel">Hotel</option>
+                                <option value="Houseboat">Houseboat</option>
+                            </select>
+                        </div>
+                        <div className="col-span-2">
+                            <select
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                value={item.location}
+                                onChange={(e) => updateRow(index, "location", e.target.value)}
+                            >
+                                <option value="Srinagar">Srinagar</option>
+                                <option value="Gulmarg">Gulmarg</option>
+                                <option value="Pahalgam">Pahalgam</option>
+                                <option value="Sonmarg">Sonmarg</option>
+                            </select>
+                        </div>
+                        <div className="col-span-3">
                             <Input
-                                placeholder="e.g. Radisson"
+                                placeholder="Property Name"
                                 value={item.name}
                                 onChange={(e) => updateRow(index, "name", e.target.value)}
                                 className="bg-background"
                             />
                         </div>
-                        <div className="col-span-3">
+                        <div className="col-span-2">
                             <CurrencyInput
                                 value={item.rate}
                                 onChange={(val) => updateRow(index, "rate", val)}
                             />
                         </div>
-                        <div className="col-span-2">
+                        <div className="col-span-1">
                             <Input
                                 type="number"
                                 min="0"
                                 value={item.rooms || ""}
                                 onChange={(e) => updateRow(index, "rooms", parseInt(e.target.value) || 0)}
+                                className="px-2 text-center"
                             />
                         </div>
-                        <div className="col-span-2">
+                        <div className="col-span-1">
                             <Input
                                 type="number"
                                 min="0"
                                 value={item.nights || ""}
                                 onChange={(e) => updateRow(index, "nights", parseInt(e.target.value) || 0)}
+                                className="px-2 text-center"
                             />
                         </div>
                         <div className="col-span-1 text-center opacity-0 group-hover:opacity-100 transition-opacity">

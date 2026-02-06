@@ -15,7 +15,9 @@ export interface ItineraryTemplate {
 
 // --- BUILDING BLOCKS (Reusable Days) ---
 
-const BLOCKS = {
+// --- BUILDING BLOCKS (Reusable Days) ---
+
+export const BLOCKS = {
     arrivalSrinagar: {
         title: 'Arrival & Houseboat Check-in',
         description: 'Upon arrival at Srinagar Airport, our representative will greet you and transfer you to a luxurious Houseboat on Dal Lake. Enjoy a traditional welcome with Saffron Kahwa. In the evening, experience a mesmerizing 1-hour Shikara Ride on the glistening waters, witnessing the "Floating Vegetable Market" and the golden sunset behind the Zabarwan mountains. Dinner and overnight stay in the unparalleled comfort of the Houseboat.',
