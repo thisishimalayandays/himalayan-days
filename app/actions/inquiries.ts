@@ -1,7 +1,7 @@
 'use server';
 
 import { sendInquiryNotification } from '@/lib/email';
-import { sendTelegramNotification } from '@/lib/telegram';
+import { sendTelegramNotification, escapeHtml } from '@/lib/telegram';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
@@ -103,14 +103,14 @@ export async function createInquiry(data: InquiryInput) {
         const telegramMessage = `
 <b>🔔 New Lead Received!</b>
 
-<b>Name:</b> ${validated.name}
-<b>Phone:</b> ${validated.phone}
-<b>Type:</b> ${validated.type}
-<b>Budget:</b> ${validated.budget || 'N/A'}
+<b>Name:</b> ${escapeHtml(validated.name)}
+<b>Phone:</b> ${escapeHtml(validated.phone)}
+<b>Type:</b> ${escapeHtml(validated.type)}
+<b>Budget:</b> ${escapeHtml(validated.budget || 'N/A')}
 <b>Travelers:</b> ${validated.travelers || 'N/A'}
-<b>Date:</b> ${validated.startDate ? new Date(validated.startDate).toLocaleDateString() : 'N/A'}
-<b>Message:</b> ${validated.message || 'No message'}
-${packageTitle ? `<b>Package:</b> ${packageTitle}` : ''}
+<b>Date:</b> ${validated.startDate ? escapeHtml(new Date(validated.startDate).toLocaleDateString()) : 'N/A'}
+<b>Message:</b> ${escapeHtml(validated.message || 'No message')}
+${packageTitle ? `<b>Package:</b> ${escapeHtml(packageTitle)}` : ''}
 `;
         sendTelegramNotification(telegramMessage).catch(err => console.error('Background Telegram failed:', err));
 

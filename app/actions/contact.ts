@@ -2,6 +2,7 @@
 
 import { z } from 'zod';
 import { Resend } from 'resend';
+import { sendTelegramNotification, escapeHtml } from '@/lib/telegram';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -78,6 +79,17 @@ export async function sendContactEmail(formData: FormData) {
             `,
             reply_to: email, // Valid property name is reply_to or replyTo depending on SDK version? Resend Node SDK uses snake_case usually or camelCase. Let's check docs or assume camelCase 'replyTo' matches type definitions usually. Actually Resend SDK usually takes 'reply_to'. Let's try 'reply_to' as it's safer for the API.
         } as any); // Casting as any to avoid minor type strictness issues if types are outdated
+
+        // Send Telegram Notification
+        const telegramMessage = `
+<b>📩 New Contact Inquiry!</b>
+
+<b>Name:</b> ${escapeHtml(fullName)}
+<b>Email:</b> ${escapeHtml(email)}
+<b>Phone:</b> ${escapeHtml(phone)}
+<b>Message:</b> ${escapeHtml(message)}
+`;
+        sendTelegramNotification(telegramMessage).catch(err => console.error('Telegram failed:', err));
 
         return { success: true, message: "Message sent successfully!" };
     } catch (error: any) {

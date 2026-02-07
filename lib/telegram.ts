@@ -30,3 +30,12 @@ export async function sendTelegramNotification(message: string) {
         console.error("Failed to send Telegram notification:", error);
     }
 }
+
+export function escapeHtml(unsafe: string): string {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
