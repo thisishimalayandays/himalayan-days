@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { logActivity } from "./audit";
 
 export async function saveQuote(name: string, clientName: string | undefined, data: any) {
     try {
@@ -12,6 +13,14 @@ export async function saveQuote(name: string, clientName: string | undefined, da
                 data,
             },
         });
+
+        await logActivity(
+            'SAVED_QUOTE',
+            'Quote',
+            quote.id,
+            `Saved calculator quote: ${name}`
+        );
+
         revalidatePath("/admin/tools/calculator");
         return { success: true, quote };
     } catch (error) {

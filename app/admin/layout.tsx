@@ -19,12 +19,15 @@ export default async function AdminLayout({
         redirect("/api/auth/signin?callbackUrl=/admin");
     }
 
+    // Fallback: If role is missing from session (e.g. recent schema change), check email
+    const role = session.user.role || (session.user.email === 'sales@himalayandays.in' ? 'SALES' : 'ADMIN');
+
     const { pending: pendingInquiries } = await getInquiryStats();
     const unreadSubscribers = await prisma.subscriber.count({
         where: { isRead: false }
     });
     const pendingApplications = await prisma.jobApplication.count({
-        where: { status: { in: ['new', 'NEW'] } }
+        where: { isRead: false }
     });
 
     return (
@@ -37,6 +40,7 @@ export default async function AdminLayout({
                     pendingSubscribers={unreadSubscribers}
                     pendingApplications={pendingApplications}
                     className="h-full w-full"
+                    role={role}
                 />
             </aside>
 
@@ -58,6 +62,7 @@ export default async function AdminLayout({
                                 pendingInquiries={pendingInquiries}
                                 pendingSubscribers={unreadSubscribers}
                                 pendingApplications={pendingApplications}
+                                role={role}
                             />
                         </SheetContent>
                     </Sheet>

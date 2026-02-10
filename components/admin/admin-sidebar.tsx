@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Package, MapPin, Users, Calculator, FileText, LogOut, MessageSquare, Mail, CalendarDays, Briefcase } from "lucide-react";
+import { LayoutDashboard, Package, MapPin, Users, Calculator, FileText, LogOut, MessageSquare, Mail, CalendarDays, Briefcase, ShieldAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { ModeToggle } from "@/components/mode-toggle";
@@ -14,9 +14,10 @@ interface AdminSidebarProps {
     pendingApplications?: number;
     className?: string;
     onItemClick?: () => void;
+    role?: string;
 }
 
-export function AdminSidebar({ pendingInquiries, pendingSubscribers = 0, pendingApplications = 0, className, onItemClick }: AdminSidebarProps) {
+export function AdminSidebar({ pendingInquiries, pendingSubscribers = 0, pendingApplications = 0, className, onItemClick, role }: AdminSidebarProps) {
     const pathname = usePathname();
 
     const isActive = (path: string) => pathname === path || pathname?.startsWith(`${path}/`);
@@ -60,15 +61,34 @@ export function AdminSidebar({ pendingInquiries, pendingSubscribers = 0, pending
             items: [
                 { href: "/admin/tools/calculator", label: "Calculator", icon: Calculator },
                 { href: "/admin/tools/itinerary-maker", label: "Itinerary Maker", icon: FileText },
+                { href: "/admin/audit-logs", label: "Audit Logs", icon: ShieldAlert },
             ]
         },
     ];
+
+    const filteredLinks = links.map(category => {
+        if (!role || role === 'ADMIN') return category;
+
+        // Sales Role - Whitelist allowed items
+        if (role === 'SALES') {
+            const allowedLabels = ['Dashboard', 'Inquiries', 'Bookings', 'Customers', 'Calculator', 'Itinerary Maker'];
+            const filteredItems = category.items.filter(item => allowedLabels.includes(item.label));
+
+            if (filteredItems.length > 0) {
+                return { ...category, items: filteredItems };
+            }
+            return null;
+        }
+        return category;
+    }).filter(Boolean) as typeof links;
 
     return (
         <div className={cn("flex flex-col h-full bg-sidebar", className)}>
             <div className="p-6 border-b border-sidebar-border flex justify-between items-center">
                 <div>
-                    <h1 className="text-xl font-bold text-sidebar-foreground">Admin Panel</h1>
+                    <h1 className="text-xl font-bold text-sidebar-foreground">
+                        {role === 'SALES' ? 'Sales Team Panel' : 'Admin Panel'}
+                    </h1>
                     <p className="text-sm text-muted-foreground">Himalayan Days</p>
                 </div>
                 <ModeToggle />
@@ -80,7 +100,7 @@ export function AdminSidebar({ pendingInquiries, pendingSubscribers = 0, pending
                 style={{ backgroundColor: 'var(--sidebar)' }}
             >
                 <nav className="space-y-1 p-4 pb-0">
-                    {links.map((category, index) => (
+                    {filteredLinks.map((category, index) => (
                         <div key={category.label || `category-${index}`} className="space-y-1 mb-4 last:mb-0">
                             {category.label && (
                                 <h3 className="px-4 py-2 text-xs font-semibold uppercase text-muted-foreground">

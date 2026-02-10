@@ -15,6 +15,7 @@ model User {
   name      String?
   email     String   @unique
   password  String
+  role      String   @default("ADMIN") // "ADMIN", "SALES"
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -68,7 +69,9 @@ model Inquiry {
   message   String?
   type      String   // "GENERAL" or "PACKAGE_BOOKING"
   packageId String?
-  status    String   @default("PENDING") // "PENDING", "CONTACTED", "CONVERTED", "CLOSED"
+  status    String   @default("PENDING") // "PENDING", "CONTACTED", "INTERESTED", "BOOKED", "CLOSED", "SPAM"
+  notes     String?  // Internal notes for sales team
+  followUpDate DateTime?
   isDeleted Boolean  @default(false)
   deletedAt DateTime?
   isRead    Boolean  @default(false)
@@ -156,6 +159,7 @@ model JobApplication {
   resumeType  String?
   coverLetter String?
   status      String   @default("NEW") // NEW, REVIEWED, INTERVIEWING, REJECTED, HIRED
+  isRead      Boolean  @default(false)
   appliedAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -176,4 +180,17 @@ model Itinerary {
   data        Json
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model AuditLog {
+  id           String   @id @default(cuid())
+  action       String
+  resourceId   String?
+  resourceType String   @default("Inquiry")
+  details      String?
+  userId       String?
+  userEmail    String?
+  userName     String?
+  userRole     String?
+  createdAt    DateTime @default(now())
 }

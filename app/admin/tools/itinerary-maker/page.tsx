@@ -594,7 +594,7 @@ export default function ItineraryMakerPage() {
                             <div>
                                 <Label className="text-xs text-muted-foreground mb-1 block">1. Select Duration</Label>
                                 <select
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-orange-500"
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-orange-500 text-foreground"
                                     value={selectedDuration}
                                     onChange={(e) => {
                                         setSelectedDuration(e.target.value);
@@ -610,7 +610,7 @@ export default function ItineraryMakerPage() {
                             <div>
                                 <Label className="text-xs text-muted-foreground mb-1 block">2. Select Template</Label>
                                 <select
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-orange-500"
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-orange-500 text-foreground"
                                     value={selectedTemplateId}
                                     onChange={(e) => setSelectedTemplateId(e.target.value)}
                                     disabled={!selectedDuration}
@@ -643,7 +643,7 @@ export default function ItineraryMakerPage() {
                             <Label>Client Name</Label>
                             <div className="flex gap-2">
                                 <select
-                                    className="flex h-10 w-20 rounded-md border border-input bg-background px-2 py-2 text-sm focus:ring-2 focus:ring-orange-500"
+                                    className="flex h-10 w-20 rounded-md border border-input bg-background px-2 py-2 text-sm focus:ring-2 focus:ring-orange-500 text-foreground"
                                     value={clientInfo.clientTitle}
                                     onChange={(e) => setClientInfo({ ...clientInfo, clientTitle: e.target.value })}
                                 >

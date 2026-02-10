@@ -14,6 +14,7 @@ import {
     CurrencyInput
 } from "@/components/admin/calculator-components";
 import { saveQuote, getQuotes, deleteQuote } from "@/app/actions/quotes";
+import { logActivity } from "@/app/actions/audit";
 
 // Type matches DB return
 interface DBQuote {
@@ -180,6 +181,7 @@ export default function CalculatorPage() {
         text += `_Generated via Himalayan Days_`;
 
         navigator.clipboard.writeText(text);
+        logActivity('COPIED_CALCULATION', 'Calculator', null, `Copied calculation. Total: ${grandTotal}`);
         toast.success("Detailed quote copied!");
         setIsCopied(true);
         setTimeout(() => setIsCopied(false), 2000);

@@ -27,7 +27,7 @@ export function RecentActivity({
             {activities.map((item) => (
                 <div key={item.id} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
                     <div className="flex items-center gap-4">
-                        <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
+                        <div className="h-10 w-10 rounded-full bg-orange-100 dark:bg-orange-900/20 flex items-center justify-center text-orange-600 dark:text-orange-400">
                             <User className="h-5 w-5" />
                         </div>
                         <div>

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { NotesDialog } from './inquiries/notes-dialog';
 import {
     Table,
     TableBody,
@@ -16,6 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calendar } from '@/components/ui/calendar';
 import { Mail, Phone, Calendar as CalendarIcon, MapPin, Trash2, RefreshCcw, FileDown, Eye, Users, Wallet, Clock, MessageCircle, Copy, Check } from 'lucide-react';
 import { softDeleteInquiry, restoreInquiry, permanentDeleteInquiry, markInquiryAsRead, updateInquiryStatus } from '@/app/actions/inquiries';
+import { logActivity } from '@/app/actions/audit';
 import { useRouter } from 'next/navigation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from "@/hooks/use-toast";
@@ -36,14 +38,18 @@ interface Inquiry {
     isDeleted: boolean;
     deletedAt: Date | null;
     isRead: boolean;
+    notes: string | null;
+    followUpDate: Date | null;
 }
 
 interface InquiriesManagerProps {
     initialInquiries: Inquiry[];
     trashedInquiries: Inquiry[];
+    role?: string;
+    userEmail?: string;
 }
 
-export function InquiriesManager({ initialInquiries, trashedInquiries }: InquiriesManagerProps) {
+export function InquiriesManager({ initialInquiries, trashedInquiries, role = 'ADMIN', userEmail }: InquiriesManagerProps) {
     const router = useRouter();
     const { toast } = useToast();
     const [isExporting, setIsExporting] = useState(false);
@@ -212,6 +218,7 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
             e.stopPropagation();
             const text = `*Lead Details* 📋\nName: ${inquiry.name}\nPhone: ${inquiry.phone}\n${inquiry.startDate ? `Travel: ${new Date(inquiry.startDate).toLocaleDateString('en-GB')}` : ''}\n${inquiry.travelers ? `Guests: ${inquiry.travelers}` : ''}\n${inquiry.budget ? `Budget: ${inquiry.budget}` : ''}\n${inquiry.message ? `Note: ${inquiry.message}` : ''}`;
             navigator.clipboard.writeText(text);
+            logActivity('COPIED_LEAD', 'Inquiry', inquiry.id, `Copied lead details for ${inquiry.name}`);
             setCopied(true);
             toast({
                 title: "Copied!",
@@ -241,6 +248,7 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
                     <TableHead>Source</TableHead>
                     <TableHead>Contact</TableHead>
                     <TableHead>Details</TableHead>
+                    <TableHead>Notes</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -290,7 +298,10 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
                                             href={`https://wa.me/${inquiry.phone.replace(/[^0-9]/g, '')}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            onClick={e => e.stopPropagation()}
+                                            onClick={e => {
+                                                e.stopPropagation();
+                                                logActivity('CLICKED_WHATSAPP', 'Inquiry', inquiry.id, `Clicked WhatsApp for ${inquiry.name}`);
+                                            }}
                                             className="ml-auto inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-green-50 text-[10px] font-medium text-green-700 hover:bg-green-100 border border-green-200 transition-colors"
                                             title="Chat on WhatsApp"
                                         >
@@ -298,7 +309,10 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
                                         </a>
                                     </div>
                                     {inquiry.email && (
-                                        <a href={`mailto:${inquiry.email}`} onClick={e => e.stopPropagation()} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
+                                        <a href={`mailto:${inquiry.email}`} onClick={e => {
+                                            e.stopPropagation();
+                                            logActivity('CLICKED_EMAIL', 'Inquiry', inquiry.id, `Clicked Email for ${inquiry.name}`);
+                                        }} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
                                             <Mail className="w-3 h-3" /> {inquiry.email}
                                         </a>
                                     )}
@@ -355,6 +369,21 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
                                     )}
                                 </div>
                             </TableCell>
+                            <TableCell className="w-[80px]">
+                                {!isTrash && (
+                                    <NotesDialog
+                                        inquiryId={inquiry.id}
+                                        existingNotes={inquiry.notes}
+                                        customerName={inquiry.name}
+                                        userEmail={userEmail}
+                                    />
+                                )}
+                                {inquiry.notes && !isTrash && (
+                                    <div className="text-[10px] text-gray-500 mt-1 truncate max-w-[80px]">
+                                        {inquiry.notes.split('\n')[0]}
+                                    </div>
+                                )}
+                            </TableCell>
                             <TableCell className="w-[140px]" onClick={e => e.stopPropagation()}>
                                 <StatusSelector id={inquiry.id} status={inquiry.status} isTrash={isTrash} />
                             </TableCell>
@@ -384,15 +413,17 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
                                     ) : (
                                         <>
                                             <CopyButton inquiry={inquiry} />
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                onClick={(e) => handleSoftDelete(inquiry.id, e)}
-                                                title="Move to Trash"
-                                                className="h-8 w-8 text-gray-400 hover:text-red-600 hover:bg-red-50"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </Button>
+                                            {role !== 'SALES' && (
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={(e) => handleSoftDelete(inquiry.id, e)}
+                                                    title="Move to Trash"
+                                                    className="h-8 w-8 text-gray-400 hover:text-red-600 hover:bg-red-50"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </Button>
+                                            )}
                                         </>
                                     )}
                                 </div>
@@ -401,7 +432,7 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
                     ))
                 )}
             </TableBody>
-        </Table>
+        </Table >
     );
 
     return (
@@ -440,9 +471,11 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
                         <TabsTrigger value="calendar" className="px-4 py-2 gap-2">
                             <CalendarIcon className="w-4 h-4" /> Calendar
                         </TabsTrigger>
-                        <TabsTrigger value="trash" className="px-4 py-2 gap-2 data-[state=active]:bg-red-50 text-red-600">
-                            <Trash2 className="w-4 h-4" /> Trash ({trashedInquiries.length})
-                        </TabsTrigger>
+                        {role !== 'SALES' && (
+                            <TabsTrigger value="trash" className="px-4 py-2 gap-2 data-[state=active]:bg-red-50 text-red-600">
+                                <Trash2 className="w-4 h-4" /> Trash ({trashedInquiries.length})
+                            </TabsTrigger>
+                        )}
                     </TabsList>
                 </div>
 
@@ -555,21 +588,23 @@ export function InquiriesManager({ initialInquiries, trashedInquiries }: Inquiri
                     </TabsContent>
 
                     {/* TRASH */}
-                    <TabsContent value="trash" className="mt-0">
-                        <Card className="border-red-100">
-                            <CardHeader className="pb-3 bg-red-50/30">
-                                <CardTitle className="text-red-900 flex items-center gap-2">
-                                    <Trash2 className="w-5 h-5" /> Trash
-                                </CardTitle>
-                                <CardDescription className="text-red-700/80">
-                                    Deleted inquiries. You can restore them or permanently delete them.
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="p-0">
-                                <InquiriesTable data={trashedInquiries} isTrash={true} />
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
+                    {role !== 'SALES' && (
+                        <TabsContent value="trash" className="mt-0">
+                            <Card className="border-red-100">
+                                <CardHeader className="pb-3 bg-red-50/30">
+                                    <CardTitle className="text-red-900 flex items-center gap-2">
+                                        <Trash2 className="w-5 h-5" /> Trash
+                                    </CardTitle>
+                                    <CardDescription className="text-red-700/80">
+                                        Deleted inquiries. You can restore them or permanently delete them.
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="p-0">
+                                    <InquiriesTable data={trashedInquiries} isTrash={true} />
+                                </CardContent>
+                            </Card>
+                        </TabsContent>
+                    )}
                 </div>
             </Tabs>
         </div>

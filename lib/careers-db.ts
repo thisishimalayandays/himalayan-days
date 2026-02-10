@@ -10,6 +10,7 @@ export type JobApplication = {
     appliedAt: string
     status: 'new' | 'reviewed' | 'interviewing' | 'rejected' | 'hired'
     jobSlug?: string
+    isRead: boolean
 }
 
 export async function getApplications(): Promise<JobApplication[]> {
@@ -27,7 +28,8 @@ export async function getApplications(): Promise<JobApplication[]> {
             coverLetter: app.coverLetter || undefined,
             appliedAt: app.appliedAt.toISOString(),
             status: (app.status as any) || 'new',
-            jobSlug: app.job.slug
+            jobSlug: app.job.slug,
+            isRead: app.isRead
         }))
     } catch (error) {
         console.error("Error reading applications DB:", error)

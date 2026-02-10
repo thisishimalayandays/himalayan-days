@@ -131,3 +131,45 @@ export async function sendInquiryNotification(data: EmailPayload) {
         return { success: false, error };
     }
 }
+
+export async function sendAuditLogEmail({
+    actor,
+    action,
+    details,
+    resourceId,
+    timestamp
+}: {
+    actor: { name: string; email: string; role: string };
+    action: string;
+    details: string;
+    resourceId: string;
+    timestamp: Date;
+}) {
+    if (!process.env.RESEND_API_KEY) return;
+
+    try {
+        await resend.emails.send({
+            from: 'onboarding@resend.dev',
+            to: 'thisishimalayandays@gmail.com',
+            subject: `👮 Audit Log: ${actor.name} ${action}`,
+            html: `
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2>Audit Log Entry</h2>
+                    <p><strong>Time:</strong> ${timestamp.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}</p>
+                    <hr/>
+                    <p><strong>Actor:</strong> ${actor.name} (${actor.email}) - ${actor.role}</p>
+                    <p><strong>Action:</strong> ${action}</p>
+                    <p><strong>Resource ID:</strong> ${resourceId}</p>
+                    <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 10px;">
+                        <strong>Details:</strong><br/>
+                        ${details}
+                    </div>
+                </div>
+            `
+        });
+        return { success: true };
+    } catch (error) {
+        console.error('Failed to send audit email:', error);
+        return { success: false, error };
+    }
+}

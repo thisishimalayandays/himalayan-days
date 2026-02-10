@@ -2,6 +2,7 @@
 
 import { saveApplication, updateJobStatus, deleteApplication } from "@/lib/careers-db"
 import { revalidatePath } from "next/cache"
+import { prisma } from "@/lib/prisma"
 
 export type ApplicationState = {
     success: boolean
@@ -91,5 +92,13 @@ export async function updateJobStatusAction(slug: string, status: 'OPEN' | 'CLOS
 
 export async function deleteApplicationAction(id: string) {
     await deleteApplication(id)
+    revalidatePath('/admin/careers')
+}
+
+export async function markApplicationAsRead(id: string) {
+    await prisma.jobApplication.update({
+        where: { id },
+        data: { isRead: true }
+    })
     revalidatePath('/admin/careers')
 }

@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { logActivity } from "./audit";
 
 export async function saveItinerary(name: string, clientName: string | undefined, data: any) {
     try {
@@ -12,6 +13,14 @@ export async function saveItinerary(name: string, clientName: string | undefined
                 data,
             },
         });
+
+        await logActivity(
+            'SAVED_ITINERARY',
+            'Itinerary',
+            itinerary.id,
+            `Saved itinerary: ${name}`
+        );
+
         revalidatePath("/admin/tools/itinerary-maker");
         return { success: true, itinerary };
     } catch (error) {

@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { logActivity } from './audit';
 
 // --- CUSTOMERS ---
 
@@ -139,6 +140,15 @@ export async function createBooking(data: {
                 }
             });
 
+            // Audit
+            // We can't await external actions inside transaction easily without risk? 
+            // Actually logActivity uses its own separate prisma call, which is fine, 
+            // but usually we do it after transaction commits or we accept it's outside.
+            // Better to do it after tx block or use a fire-and-forget approach inside (but risk unawaited promise).
+            // Let's return the booking ID and do it after.
+            // But here we are inside transaction block.
+            // Let's just do it after revalidatePath for safety & non-blocking.
+
             if (data.initialPayment && data.initialPayment > 0) {
                 await tx.payment.create({
                     data: {
@@ -156,6 +166,17 @@ export async function createBooking(data: {
         if (data.customerId) {
             revalidatePath(`/admin/customers/${data.customerId}`);
         }
+
+        // Fire & Forget log (or await it, it's fast)
+        logActivity(
+            'CREATED_BOOKING',
+            'Booking',
+            null, // We don't have booking ID easily accessible since it was in tx... wait, we can't get it out easily without refactoring return.
+            // Actually, we can return it from tx if we change return type of tx.
+            // For now, let's just log details.
+            `Created booking: ${data.title} for ${data.newCustomer?.name || 'Customer'}`
+        );
+
         return { success: true };
     } catch (error) {
         console.error('Create Booking Error:', error);

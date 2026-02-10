@@ -1,6 +1,7 @@
 'use server';
 
 import { sendInquiryNotification } from '@/lib/email';
+import { auth } from '@/auth';
 import { sendTelegramNotification, escapeHtml } from '@/lib/telegram';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
@@ -139,10 +140,29 @@ export async function getInquiries() {
 
 export async function updateInquiryStatus(id: string, status: string) {
     try {
+        const session = await auth();
+
         await prisma.inquiry.update({
             where: { id },
             data: { status, isRead: true },
         });
+
+        // Audit Log (DB)
+        if (session?.user) {
+            await prisma.auditLog.create({
+                data: {
+                    action: 'UPDATED_STATUS',
+                    resourceId: id,
+                    resourceType: 'Inquiry',
+                    details: `Changed status to ${status}`,
+                    userId: session.user.id,
+                    userEmail: session.user.email,
+                    userName: session.user.name,
+                    userRole: session.user.role,
+                }
+            });
+        }
+
         revalidatePath('/admin/inquiries');
         revalidatePath('/admin/layout');
         return { success: true };
@@ -152,8 +172,60 @@ export async function updateInquiryStatus(id: string, status: string) {
     }
 }
 
+export async function updateInquiryNotes(id: string, notes: string) {
+    try {
+        const session = await auth();
+
+        await prisma.inquiry.update({
+            where: { id },
+            data: { notes },
+        });
+
+        // Audit Log (DB)
+        if (session?.user) {
+            await prisma.auditLog.create({
+                data: {
+                    action: 'ADDED_NOTE',
+                    resourceId: id,
+                    resourceType: 'Inquiry',
+                    details: `Note: ${notes}`,
+                    userId: session.user.id,
+                    userEmail: session.user.email,
+                    userName: session.user.name,
+                    userRole: session.user.role,
+                }
+            });
+        }
+
+        revalidatePath('/admin/inquiries');
+        return { success: true };
+    } catch (error) {
+        console.error('Error updating inquiry notes:', error);
+        return { success: false, error: 'Failed to update notes' };
+    }
+}
+
+export async function updateFollowUpDate(id: string, date: Date | null) {
+    try {
+        await prisma.inquiry.update({
+            where: { id },
+            data: { followUpDate: date },
+        });
+        revalidatePath('/admin/inquiries');
+        return { success: true };
+    } catch (error) {
+        console.error('Error updating follow-up date:', error);
+        return { success: false, error: 'Failed to update follow-up date' };
+    }
+}
+
 export async function softDeleteInquiry(id: string) {
     try {
+        const session = await auth();
+        if (session?.user?.role !== 'ADMIN') {
+            return { success: false, error: 'Unauthorized: Only Admins can delete inquiries.' };
+        }
+
         await prisma.inquiry.update({
             where: { id },
             data: { isDeleted: true, deletedAt: new Date() },
@@ -168,6 +240,11 @@ export async function softDeleteInquiry(id: string) {
 
 export async function restoreInquiry(id: string) {
     try {
+        const session = await auth();
+        if (session?.user?.role !== 'ADMIN') {
+            return { success: false, error: 'Unauthorized: Only Admins can restore inquiries.' };
+        }
+
         await prisma.inquiry.update({
             where: { id },
             data: { isDeleted: false, deletedAt: null },
@@ -182,6 +259,11 @@ export async function restoreInquiry(id: string) {
 
 export async function permanentDeleteInquiry(id: string) {
     try {
+        const session = await auth();
+        if (session?.user?.role !== 'ADMIN') {
+            return { success: false, error: 'Unauthorized: Only Admins can permanently delete inquiries.' };
+        }
+
         await prisma.inquiry.delete({
             where: { id },
         });
