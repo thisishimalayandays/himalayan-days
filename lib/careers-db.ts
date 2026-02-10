@@ -84,7 +84,8 @@ export async function saveApplication(data: CreateApplicationParams): Promise<Jo
         coverLetter: app.coverLetter || undefined,
         appliedAt: app.appliedAt.toISOString(),
         status: (app.status as any) || 'new',
-        jobSlug: data.jobSlug
+        jobSlug: data.jobSlug,
+        isRead: app.isRead
     }
 }
 
