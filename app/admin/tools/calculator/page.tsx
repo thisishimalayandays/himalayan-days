@@ -43,6 +43,7 @@ export default function CalculatorPage() {
 
     // --- Save/Load State ---
     const [savedQuotes, setSavedQuotes] = useState<DBQuote[]>([]);
+    const [currentQuoteId, setCurrentQuoteId] = useState<string | null>(null); // NEW: Track ID
     const [quoteName, setQuoteName] = useState("");
     const [clientName, setClientName] = useState(""); // NEW: Client Name
     const [isSaveOpen, setIsSaveOpen] = useState(false);
@@ -100,6 +101,9 @@ export default function CalculatorPage() {
             setTransport([{ id: "1", type: "Innova", rate: 0, days: 1 }]);
             setActivities([{ id: "1", name: "Shikara Ride", rate: 1000, quantity: 1 }]);
             setCommission(0);
+            setCurrentQuoteId(null); // Clear ID on reset
+            setQuoteName("");
+            setClientName("");
             toast.success("Calculator reset.");
         }
     };
@@ -112,16 +116,37 @@ export default function CalculatorPage() {
 
         const quoteData = { hotels, transport, activities, commission };
 
-        const res = await saveQuote(quoteName, clientName, quoteData);
+        // Pass ID if updating
+        const res = await saveQuote(quoteName, clientName, quoteData, currentQuoteId || undefined);
 
-        if (res.success) {
-            toast.success("Quote saved to Database!");
-            setQuoteName("");
-            setClientName("");
+        if (res.success && res.quote) {
+            toast.success(currentQuoteId ? "Quote Updated!" : "Quote Saved to Database!");
+            setCurrentQuoteId(res.quote.id); // Set ID
+            setQuoteName(res.quote.name);
             setIsSaveOpen(false);
             loadQuotesFromDB(); // Refresh
         } else {
             toast.error("Failed to save quote.");
+        }
+    };
+
+    const handleSaveAsNew = async () => {
+        if (!quoteName.trim()) {
+            toast.error("Please enter a NEW name.");
+            return;
+        }
+        const quoteData = { hotels, transport, activities, commission };
+        // Force create by NOT passing ID
+        const res = await saveQuote(quoteName, clientName, quoteData);
+
+        if (res.success && res.quote) {
+            toast.success("Saved as New Copy!");
+            setCurrentQuoteId(res.quote.id);
+            setQuoteName(res.quote.name);
+            setIsSaveOpen(false);
+            loadQuotesFromDB();
+        } else {
+            toast.error("Failed to save copy.");
         }
     };
 
@@ -133,7 +158,12 @@ export default function CalculatorPage() {
                 setTransport(data.transport || []);
                 setActivities(data.activities || []);
                 setCommission(data.commission || 0);
-                toast.success("Quote loaded!");
+
+                setCurrentQuoteId(quote.id); // Track ID
+                setQuoteName(quote.name);
+                setClientName(quote.clientName || "");
+
+                toast.success("Quote loaded! changes will update this record.");
                 setIsLoadOpen(false);
             }
         }
@@ -143,6 +173,7 @@ export default function CalculatorPage() {
         e.stopPropagation();
         if (confirm("Delete this saved quote?")) {
             await deleteQuote(id);
+            if (currentQuoteId === id) setCurrentQuoteId(null); // Clear active
             toast.success("Quote deleted.");
             loadQuotesFromDB();
         }
@@ -335,7 +366,19 @@ export default function CalculatorPage() {
                                         onChange={(e) => setQuoteName(e.target.value)}
                                     />
                                 </div>
-                                <Button onClick={handleSaveQuote} className="w-full">Save to Database</Button>
+
+                                {currentQuoteId ? (
+                                    <div className="space-y-3 pt-2">
+                                        <Button onClick={handleSaveQuote} className="w-full bg-orange-600 hover:bg-orange-700 text-white">
+                                            Update Existing
+                                        </Button>
+                                        <Button onClick={handleSaveAsNew} variant="outline" className="w-full">
+                                            Save as New Copy
+                                        </Button>
+                                    </div>
+                                ) : (
+                                    <Button onClick={handleSaveQuote} className="w-full">Save to Database</Button>
+                                )}
                             </div>
                         </DialogContent>
                     </Dialog>

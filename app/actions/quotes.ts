@@ -4,22 +4,41 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { logActivity } from "./audit";
 
-export async function saveQuote(name: string, clientName: string | undefined, data: any) {
+export async function saveQuote(name: string, clientName: string | undefined, data: any, id?: string) {
     try {
-        const quote = await db.quote.create({
-            data: {
-                name,
-                clientName,
-                data,
-            },
-        });
-
-        await logActivity(
-            'SAVED_QUOTE',
-            'Quote',
-            quote.id,
-            `Saved calculator quote: ${name}`
-        );
+        let quote;
+        if (id) {
+            // Update existing
+            quote = await db.quote.update({
+                where: { id },
+                data: {
+                    name,
+                    clientName,
+                    data,
+                },
+            });
+            await logActivity(
+                'UPDATED_QUOTE',
+                'Quote',
+                quote.id,
+                `Updated calculator quote: ${name}`
+            );
+        } else {
+            // Create new
+            quote = await db.quote.create({
+                data: {
+                    name,
+                    clientName,
+                    data,
+                },
+            });
+            await logActivity(
+                'SAVED_QUOTE',
+                'Quote',
+                quote.id,
+                `Created calculator quote: ${name}`
+            );
+        }
 
         revalidatePath("/admin/tools/calculator");
         return { success: true, quote };
