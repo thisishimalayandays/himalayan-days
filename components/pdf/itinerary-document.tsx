@@ -178,6 +178,14 @@ const styles = StyleSheet.create({
         fontSize: 10,
         color: COLORS.secondary,
         marginBottom: 10,
+        lineHeight: 1.4,
+    },
+    dayImage: {
+        width: '100%',
+        height: 120,
+        objectFit: 'cover',
+        borderRadius: 6,
+        marginBottom: 10,
     },
     metaContainer: {
         flexDirection: 'row',
@@ -270,8 +278,8 @@ const styles = StyleSheet.create({
     termItem: {
         fontSize: 7, // Small legible font
         color: COLORS.secondary,
-        marginBottom: 4,
-        lineHeight: 1.4,
+        marginBottom: 6, // Increased spacing for better UI
+        lineHeight: 1.5,
     },
 });
 
@@ -377,6 +385,19 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
                                 {/* Right: Content */}
                                 <View style={styles.dayContent}>
                                     <Text style={styles.dayTitle}>{day.title}</Text>
+
+                                    {/* Day Image */}
+                                    {day.image && (
+                                        <Image
+                                            src={
+                                                day.image.startsWith('data:')
+                                                    ? day.image
+                                                    : (typeof window !== 'undefined' ? `${window.location.origin}${day.image}` : day.image)
+                                            }
+                                            style={styles.dayImage}
+                                        />
+                                    )}
+
                                     <Text style={styles.dayDesc}>{day.description}</Text>
 
                                     {/* Meta Tags */}
@@ -436,19 +457,13 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
                     <Text style={styles.termsHeader}>Terms & Conditions</Text>
                     {[
                         "From your first enquiry until the completion of your tour, our travel advisors will be available to assist you 24×7.",
-                        "To confirm your booking, 30% advance payment of the total tour cost is required.",
-                        "The remaining 70% balance is payable upon arrival.",
-                        "All bookings are confirmed only after the advance payment is successfully received in our bank account or authorised online payment channel.",
-                        "In case of any government-imposed restrictions or lockdown, the amount paid will remain safe with us and can be utilised for a future travel date.",
-                        "If you decide to cancel your booking after confirmation, Himalayan Days does not charge any tour cancellation fee.",
-                        "However, hotel and driver cancellation charges (if applicable) must be borne by the guest as per their respective policies.",
-                        "We kindly request guests to make the advance payment soon after finalising the itinerary to ensure availability of hotels and transport, especially during peak season.",
-                        "As per Kashmir Tourism regulations, guests are required to hire local taxis for sightseeing in destinations such as Sonmarg, Pahalgam, Gulmarg and other restricted zones.",
-                        "Outside vehicles are not permitted for local sightseeing in these areas.",
-                        "Prepaid SIM cards generally do not function properly in Kashmir & Ladakh.",
-                        "Guests are advised to arrange a post-paid or converted pre-to-post SIM before arrival.",
-                        "All personal expenses, entry fees, pony rides, gondola tickets and optional activities not mentioned in the itinerary are not included in the tour cost.",
-                        "Check-in and check-out timings at hotels are subject to the respective hotel’s policies."
+                        "To confirm your booking, an advance payment of 30% of the total tour cost is required. The remaining 70% balance must be paid upon arrival.",
+                        "All bookings are considered confirmed only after the advance payment is successfully received in our bank account or through an authorised online payment channel.",
+                        "If you decide to cancel your booking after confirmation, Himalayan Days does not charge any tour cancellation fee. However, any hotel and driver cancellation charges (if applicable) will be borne by the guest as per the respective service providers’ policies.",
+                        "Guests are requested to make the advance payment soon after finalising the itinerary in order to ensure availability of hotels and transportation, especially during peak season.",
+                        "Prepaid SIM cards generally do not function properly in Kashmir & Ladakh. Guests are advised to arrange a post-paid SIM card or convert their prepaid SIM to post-paid before arrival.",
+                        "All personal expenses, entry fees, pony rides, gondola tickets and any optional activities not specifically mentioned in the itinerary are not included in the tour cost.",
+                        "Check-in and check-out timings at hotels are strictly subject to the respective hotel’s policies."
                     ].map((term, idx) => (
                         <Text key={idx} style={styles.termItem}>• {term}</Text>
                     ))}

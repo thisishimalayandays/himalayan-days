@@ -121,6 +121,18 @@ const ItineraryHTMLPreviewComponent = ({ data }: { data: ItineraryData }) => {
                             {/* Content */}
                             <div className="flex-1 pt-1.5">
                                 <h4 className="text-base font-bold text-gray-900 mb-2">{day.title}</h4>
+
+                                {/* Day Image */}
+                                {day.image && (
+                                    <div className="mb-3 w-full h-32 relative rounded-md overflow-hidden">
+                                        <img
+                                            src={day.image}
+                                            alt={day.title}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                )}
+
                                 <p className="text-sm text-gray-600 leading-relaxed mb-3">{day.description}</p>
 
                                 {/* Meta Tags */}
@@ -179,22 +191,16 @@ const ItineraryHTMLPreviewComponent = ({ data }: { data: ItineraryData }) => {
             {/* Terms & Conditions */}
             <div className="mb-8 bg-gray-50 rounded-lg p-5 border border-gray-100">
                 <h3 className="text-[10px] font-bold text-gray-900 uppercase tracking-widest mb-3 border-b border-gray-200 pb-2">Terms & Conditions</h3>
-                <ul className="space-y-1.5 list-disc pl-3">
+                <ul className="space-y-2 list-disc pl-3">
                     {[
                         "From your first enquiry until the completion of your tour, our travel advisors will be available to assist you 24×7.",
-                        "To confirm your booking, 30% advance payment of the total tour cost is required.",
-                        "The remaining 70% balance is payable upon arrival.",
-                        "All bookings are confirmed only after the advance payment is successfully received in our bank account or authorised online payment channel.",
-                        "In case of any government-imposed restrictions or lockdown, the amount paid will remain safe with us and can be utilised for a future travel date.",
-                        "If you decide to cancel your booking after confirmation, Himalayan Days does not charge any tour cancellation fee.",
-                        "However, hotel and driver cancellation charges (if applicable) must be borne by the guest as per their respective policies.",
-                        "We kindly request guests to make the advance payment soon after finalising the itinerary to ensure availability of hotels and transport, especially during peak season.",
-                        "As per Kashmir Tourism regulations, guests are required to hire local taxis for sightseeing in destinations such as Sonmarg, Pahalgam, Gulmarg and other restricted zones.",
-                        "Outside vehicles are not permitted for local sightseeing in these areas.",
-                        "Prepaid SIM cards generally do not function properly in Kashmir & Ladakh.",
-                        "Guests are advised to arrange a post-paid or converted pre-to-post SIM before arrival.",
-                        "All personal expenses, entry fees, pony rides, gondola tickets and optional activities not mentioned in the itinerary are not included in the tour cost.",
-                        "Check-in and check-out timings at hotels are subject to the respective hotel’s policies."
+                        "To confirm your booking, an advance payment of 30% of the total tour cost is required. The remaining 70% balance must be paid upon arrival.",
+                        "All bookings are considered confirmed only after the advance payment is successfully received in our bank account or through an authorised online payment channel.",
+                        "If you decide to cancel your booking after confirmation, Himalayan Days does not charge any tour cancellation fee. However, any hotel and driver cancellation charges (if applicable) will be borne by the guest as per the respective service providers’ policies.",
+                        "Guests are requested to make the advance payment soon after finalising the itinerary in order to ensure availability of hotels and transportation, especially during peak season.",
+                        "Prepaid SIM cards generally do not function properly in Kashmir & Ladakh. Guests are advised to arrange a post-paid SIM card or convert their prepaid SIM to post-paid before arrival.",
+                        "All personal expenses, entry fees, pony rides, gondola tickets and any optional activities not specifically mentioned in the itinerary are not included in the tour cost.",
+                        "Check-in and check-out timings at hotels are strictly subject to the respective hotel’s policies."
                     ].map((term, idx) => (
                         <li key={idx} className="text-[9px] text-gray-500 leading-relaxed pl-1">
                             <span className="text-gray-600">{term}</span>

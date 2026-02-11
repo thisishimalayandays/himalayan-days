@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Calculator, Copy, RefreshCcw, CheckCircle2, FileText, ArrowRight, Save, FolderOpen, Trash2, Plus } from "lucide-react";
+import { Calculator, Copy, RefreshCcw, CheckCircle2, FileText, ArrowRight, Save, FolderOpen, Trash2, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -48,6 +48,12 @@ export default function CalculatorPage() {
     const [isSaveOpen, setIsSaveOpen] = useState(false);
     const [isLoadOpen, setIsLoadOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [searchQuoteTerm, setSearchQuoteTerm] = useState("");
+
+    const filteredQuotes = savedQuotes.filter(quote =>
+        quote.name.toLowerCase().includes(searchQuoteTerm.toLowerCase()) ||
+        (quote.clientName && quote.clientName.toLowerCase().includes(searchQuoteTerm.toLowerCase()))
+    );
 
     // --- AI Prompt State ---
     const [promptTone, setPromptTone] = useState("Balanced");
@@ -344,34 +350,57 @@ export default function CalculatorPage() {
                             <DialogHeader>
                                 <DialogTitle>Team Quotes</DialogTitle>
                             </DialogHeader>
-                            <div className="space-y-2 pt-4">
-                                {isLoading ? <p>Loading...</p> : savedQuotes.length === 0 ? (
-                                    <p className="text-center text-muted-foreground py-8">No saved quotes found.</p>
-                                ) : (
-                                    savedQuotes.map(quote => (
-                                        <div
-                                            key={quote.id}
-                                            onClick={() => handleLoadQuote(quote)}
-                                            className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 cursor-pointer group transition-colors"
-                                        >
-                                            <div>
-                                                <div className="font-semibold">{quote.name}</div>
-                                                <div className="text-xs text-muted-foreground">
-                                                    {quote.clientName ? `${quote.clientName} • ` : ''}
-                                                    {new Date(quote.createdAt).toLocaleDateString()}
-                                                </div>
-                                            </div>
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                                onClick={(e) => handleDeleteQuote(quote.id, e)}
+                            <div className="space-y-3 pt-4">
+                                {/* Search Bar */}
+                                <div className="relative sticky top-0 bg-background z-10 pb-2 border-b">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none pb-2">
+                                        <Search className="h-4 w-4 text-muted-foreground" />
+                                    </div>
+                                    <Input
+                                        placeholder="Search by Name or Client..."
+                                        value={searchQuoteTerm}
+                                        onChange={(e) => setSearchQuoteTerm(e.target.value)}
+                                        className="pl-9"
+                                    />
+                                </div>
+
+                                <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-2">
+                                    {isLoading ? <p className="text-center py-4 text-sm text-muted-foreground">Loading...</p> : filteredQuotes.length === 0 ? (
+                                        <p className="text-center text-muted-foreground py-8 text-sm">No matching quotes found.</p>
+                                    ) : (
+                                        filteredQuotes.map(quote => (
+                                            <div
+                                                key={quote.id}
+                                                onClick={() => handleLoadQuote(quote)}
+                                                className="flex items-start justify-between p-3 rounded-lg border bg-card hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors relative group"
                                             >
-                                                <Trash2 className="w-4 h-4" />
-                                            </Button>
-                                        </div>
-                                    ))
-                                )}
+                                                <div className="flex-1 pr-8">
+                                                    <div className="font-semibold text-sm mb-1">{quote.name}</div>
+                                                    <div className="flex flex-wrap text-xs text-muted-foreground gap-x-2 gap-y-1">
+                                                        {quote.clientName && (
+                                                            <span className="flex items-center">
+                                                                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mr-1.5"></span>
+                                                                {quote.clientName}
+                                                            </span>
+                                                        )}
+                                                        <span className="break-words">
+                                                            {new Date(quote.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' })}
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8 text-muted-foreground hover:text-red-500 hover:bg-red-50 absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                    onClick={(e) => handleDeleteQuote(quote.id, e)}
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </Button>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
                             </div>
                         </DialogContent>
                     </Dialog>

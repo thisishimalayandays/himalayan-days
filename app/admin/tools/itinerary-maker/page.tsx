@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
-import { Plus, Trash2, Download, RefreshCw, FileText, Eye, Save, FolderOpen } from 'lucide-react';
+import { Plus, Trash2, Download, RefreshCw, FileText, Eye, Save, FolderOpen, Search } from 'lucide-react';
 import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 // Imports
@@ -28,7 +28,26 @@ export interface Day {
     description: string;
     meals?: string;
     stay?: string;
+    image?: string;
 }
+
+// Preset Images
+const ITINERARY_IMAGES = [
+    { label: "Srinagar (Dal Lake)", value: "/Destinations/Srinagar.jpeg" },
+    { label: "Gulmarg", value: "/Destinations/Gulmarg.jpeg" },
+    { label: "Pahalgam", value: "/Destinations/Pahalgham.jpeg" },
+    { label: "Sonmarg", value: "/Destinations/Sonmarg.jpeg" },
+    { label: "Houseboat (Dal Lake)", value: "/Luxury Houseboat Retreat/Luxury Houseboat Retreat (1).jpeg" },
+    { label: "Winter/Snow (Gulmarg)", value: "/Winter Wonderland Kashmir/Winter Wonderland Kashmir (1).jpeg" },
+    { label: "Tulip Garden", value: "/Tulip Festival Special/Tulip Festival Special (1).jpeg" },
+    { label: "Nature/Trekking", value: "/Kashmir Great Lakes Trek/Kashmir Great Lakes Trek (1).jpeg" },
+    { label: "Doodhpathri", value: "/Destinations/Doodhpathri.jpeg" },
+    { label: "Yusmarg", value: "/Destinations/Yusmarg Kashmir.jpeg" },
+    { label: "Gurez Valley", value: "/Destinations/Gurez Valley.jpeg" },
+    { label: "Aru Valley", value: "/Destinations/Aru Valley.jpeg" },
+    { label: "Sinthan Top", value: "/Destinations/Sinthan Top.jpeg" },
+    { label: "Verinag", value: "/Destinations/Verinag.jpeg" },
+];
 
 export interface ItineraryData {
     clientName: string;
@@ -70,6 +89,12 @@ export default function ItineraryMakerPage() {
     const [isSaveOpen, setIsSaveOpen] = useState(false);
     const [isLoadOpen, setIsLoadOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const filteredItineraries = savedItineraries.filter(itinerary =>
+        itinerary.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (itinerary.clientName && itinerary.clientName.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
 
     // Load DB
     const loadItinerariesFromDB = async () => {
@@ -244,7 +269,8 @@ export default function ItineraryMakerPage() {
             title: d.title,
             description: d.description,
             meals: d.meals || '',
-            stay: '' // User requested blank stays by default for "Normal" usage
+            stay: '',
+            image: '' // Default empty
         }));
 
         // APPLY STICKY CONTEXT
@@ -276,7 +302,8 @@ export default function ItineraryMakerPage() {
             title: '',
             description: '',
             meals: 'Breakfast & Dinner',
-            stay: ''
+            stay: '',
+            image: ''
         }]);
     };
 
@@ -633,34 +660,58 @@ export default function ItineraryMakerPage() {
                                 <DialogHeader>
                                     <DialogTitle>Team Itineraries</DialogTitle>
                                 </DialogHeader>
-                                <div className="space-y-2 pt-4">
-                                    {isLoading ? <p>Loading...</p> : savedItineraries.length === 0 ? (
-                                        <p className="text-center text-muted-foreground py-8">No saved itineraries.</p>
-                                    ) : (
-                                        savedItineraries.map(item => (
-                                            <div
-                                                key={item.id}
-                                                onClick={() => handleLoadItinerary(item)}
-                                                className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 cursor-pointer group transition-colors"
-                                            >
-                                                <div>
-                                                    <div className="font-semibold">{item.name}</div>
-                                                    <div className="text-xs text-muted-foreground">
-                                                        {item.clientName ? `${item.clientName} • ` : ''}
-                                                        {new Date(item.createdAt).toLocaleDateString()}
-                                                    </div>
-                                                </div>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                                    onClick={(e) => handleDeleteItinerary(item.id, e)}
+                                <div className="space-y-3 pt-4">
+                                    {/* Search Bar */}
+                                    <div className="relative sticky top-0 bg-background z-10 pb-2 border-b">
+                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none pb-2">
+                                            <Search className="h-4 w-4 text-muted-foreground" />
+                                        </div>
+                                        <Input
+                                            placeholder="Search by Name or Client..."
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                            className="pl-9"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-2">
+                                        {isLoading ? <p className="text-center py-4 text-sm text-muted-foreground">Loading...</p> : filteredItineraries.length === 0 ? (
+                                            <p className="text-center text-muted-foreground py-8 text-sm">No matching itineraries found.</p>
+                                        ) : (
+                                            filteredItineraries.map(item => (
+                                                <div
+                                                    key={item.id}
+                                                    onClick={() => handleLoadItinerary(item)}
+                                                    className="flex items-start justify-between p-3 rounded-lg border bg-card hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors relative group"
                                                 >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </Button>
-                                            </div>
-                                        ))
-                                    )}
+                                                    <div className="flex-1 pr-8">
+                                                        <div className="font-semibold text-sm mb-1">{item.name}</div>
+                                                        <div className="flex flex-wrap text-xs text-muted-foreground gap-x-2 gap-y-1">
+                                                            {item.clientName && (
+                                                                <span className="flex items-center">
+                                                                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500 mr-1.5"></span>
+                                                                    {item.clientName}
+                                                                </span>
+                                                            )}
+                                                            <span className="break-words">
+                                                                {new Date(item.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' })}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Using absolute positioning for delete to tackle layout shifts */}
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-muted-foreground hover:text-red-500 hover:bg-red-50 absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                        onClick={(e) => handleDeleteItinerary(item.id, e)}
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </Button>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
                                 </div>
                             </DialogContent>
                         </Dialog>
@@ -883,6 +934,23 @@ export default function ItineraryMakerPage() {
                                         onChange={e => updateDay(idx, 'stay', e.target.value)}
                                         placeholder="Stay (e.g. Houseboat)"
                                     />
+                                </div>
+
+                                {/* Image Selection */}
+                                <div>
+                                    <Label className="text-xs text-muted-foreground mb-1 block">Day Image (for PDF)</Label>
+                                    <select
+                                        className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors"
+                                        value={day.image || ""}
+                                        onChange={(e) => updateDay(idx, 'image', e.target.value)}
+                                    >
+                                        <option value="">-- No Image --</option>
+                                        {ITINERARY_IMAGES.map((img) => (
+                                            <option key={img.value} value={img.value}>
+                                                {img.label}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
                             </div>
                         </Card>
