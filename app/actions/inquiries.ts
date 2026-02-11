@@ -15,6 +15,7 @@ const InquirySchema = z.object({
     startDate: z.string().optional(), // We'll receive date as string
     travelers: z.coerce.number().optional(), // Coerce string input to number
     budget: z.string().optional(),
+    duration: z.string().optional(), // NEW: Duration of stay
     message: z.string().optional(),
     type: z.enum(["GENERAL", "PACKAGE_BOOKING", "PLAN_MY_TRIP"]),
     packageId: z.string().optional(),
@@ -55,6 +56,12 @@ export async function createInquiry(data: InquiryInput) {
             }
         }
 
+        // Append Duration to Message since DB doesn't have a column for it yet
+        let finalMessage = validated.message || '';
+        if (validated.duration) {
+            finalMessage = `[Duration: ${validated.duration}] ${finalMessage}`;
+        }
+
         const inquiryData = {
             name: validated.name,
             email: validated.email,
@@ -63,7 +70,7 @@ export async function createInquiry(data: InquiryInput) {
             startDate: validated.startDate ? new Date(validated.startDate) : null,
             travelers: validated.travelers,
             budget: validated.budget,
-            message: validated.message,
+            message: finalMessage,
             type: validated.type,
             packageId: validated.packageId
         };

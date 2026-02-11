@@ -19,8 +19,8 @@ export function WhatsAppButton() {
     const [isOpen, setIsOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [countryIso, setCountryIso] = useState('IN');
-    const [formData, setFormData] = useState({ name: '', phone: '', budget: '', travelDate: '' });
-    const [errors, setErrors] = useState({ name: '', phone: '', budget: '', travelDate: '' });
+    const [formData, setFormData] = useState({ name: '', phone: '', budget: '', travelDate: '', duration: '' });
+    const [errors, setErrors] = useState({ name: '', phone: '', budget: '', travelDate: '', duration: '' });
     const [showTooltip, setShowTooltip] = useState(false);
     const dateInputRef = useRef<HTMLInputElement>(null);
 
@@ -49,9 +49,79 @@ export function WhatsAppButton() {
 
     const isPackageDetail = pathname?.startsWith('/packages/') && pathname !== '/packages';
 
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        // Clear previous errors
+        setErrors({ name: '', phone: '', budget: '', travelDate: '', duration: '' });
+
+        if (!validate()) return;
+        if (!executeRecaptcha) return;
+
+        setIsSubmitting(true);
+
+        const selectedCountry = countryCodes.find(c => c.iso === countryIso);
+        const code = selectedCountry?.code || '+91';
+        const fullPhone = `${code} ${formData.phone}`;
+
+        try {
+            const token = await executeRecaptcha('whatsapp_quick_chat');
+
+            // 1. Save Lead quietly
+            // Format nice date for display
+            const niceDate = new Date(formData.travelDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+            await createInquiry({
+                name: formData.name,
+                phone: fullPhone,
+                message: `Started Quick Chat via WhatsApp Button (Budget: ${formData.budget}, Duration: ${formData.duration}, Travel: ${niceDate})`,
+                type: "GENERAL",
+                budget: formData.budget,
+                duration: formData.duration, // Pass to DB if schema supports or just in message
+                startDate: formData.travelDate, // Pass as string (YYYY-MM-DD)
+                captchaToken: token
+            });
+
+            // 2. Open WhatsApp
+            const phoneNumber = '919103901803';
+            const text = `Hi, I am ${formData.name}. I want to plan a trip for ${formData.duration} around ${niceDate}. My budget is ${formData.budget}.`;
+            // ... conversion tracking ...
+            const budgetValue = formData.budget.includes('18k') ? 18000
+                : formData.budget.includes('25k') ? 25000
+                    : formData.budget.includes('40k') ? 40000
+                        : 18000;
+
+            // Extract number of nights from duration string (e.g. "3 Nights / 4 Days" -> 3)
+            const durationMatch = formData.duration.match(/(\d+)\s*Night/i);
+            const nights = durationMatch ? parseInt(durationMatch[1]) : 1;
+
+            // Calculate Approximate Total Trip Value (Budget * Nights)
+            const totalValue = budgetValue * nights;
+
+            analytics.event('Lead', {
+                content_name: 'WhatsApp Quick Chat',
+                value: totalValue,
+                currency: 'INR',
+                num_nights: nights
+            });
+
+            const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+
+            // 3. Close & Reset
+            setIsOpen(false);
+            setFormData({ name: '', phone: '', budget: '', travelDate: '', duration: '' });
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     const validate = () => {
         let isValid = true;
-        const newErrors = { name: '', phone: '', budget: '', travelDate: '' };
+        const newErrors = { name: '', phone: '', budget: '', travelDate: '', duration: '' };
 
         // Name Validation
         if (formData.name.trim().length < 2) {
@@ -92,70 +162,17 @@ export function WhatsAppButton() {
             isValid = false;
         }
 
+        // Duration Validation
+        if (!formData.duration) {
+            newErrors.duration = "Please select duration";
+            isValid = false;
+        }
+
         setErrors(newErrors);
         return isValid;
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
 
-        // Clear previous errors
-        setErrors({ name: '', phone: '', budget: '', travelDate: '' });
-
-        if (!validate()) return;
-        if (!executeRecaptcha) return;
-
-        setIsSubmitting(true);
-
-        const selectedCountry = countryCodes.find(c => c.iso === countryIso);
-        const code = selectedCountry?.code || '+91';
-        const fullPhone = `${code} ${formData.phone}`;
-
-        try {
-            const token = await executeRecaptcha('whatsapp_quick_chat');
-
-            // 1. Save Lead quietly
-            // Format nice date for display
-            const niceDate = new Date(formData.travelDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-
-            await createInquiry({
-                name: formData.name,
-                phone: fullPhone,
-                message: `Started Quick Chat via WhatsApp Button (Budget: ${formData.budget}, Travel: ${niceDate})`,
-                type: "GENERAL",
-                budget: formData.budget,
-                startDate: formData.travelDate, // Pass as string (YYYY-MM-DD)
-                captchaToken: token
-            });
-
-            // 2. Open WhatsApp
-            const phoneNumber = '919103901803';
-            const text = `Hi, I am ${formData.name}. I want to plan a trip around ${niceDate}. My budget is ${formData.budget}.`;
-            // ... conversion tracking ...
-            const budgetValue = formData.budget.includes('18k') ? 18000
-                : formData.budget.includes('25k') ? 25000
-                    : formData.budget.includes('40k') ? 40000
-                        : 18000;
-
-            analytics.event('Lead', {
-                content_name: 'WhatsApp Quick Chat',
-                value: budgetValue,
-                currency: 'INR'
-            });
-
-            const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`;
-            window.open(url, '_blank');
-
-            // 3. Close & Reset
-            setIsOpen(false);
-            setFormData({ name: '', phone: '', budget: '', travelDate: '' });
-
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
 
     return (
         <div className={`fixed right-6 z-50 flex items-end justify-end gap-3 ${isPackageDetail ? 'bottom-24 md:bottom-6' : 'bottom-6'}`}>
@@ -282,6 +299,30 @@ export function WhatsAppButton() {
                                     />
                                 </div>
                                 {errors.travelDate && <p className="text-[10px] text-red-500 ml-1">{errors.travelDate}</p>}
+                            </div>
+
+                            <div className="space-y-1">
+                                <div className="relative">
+                                    <select
+                                        required
+                                        value={formData.duration}
+                                        onChange={(e) => {
+                                            setFormData({ ...formData, duration: e.target.value });
+                                            if (errors.duration) setErrors({ ...errors, duration: '' });
+                                        }}
+                                        className={`h-9 w-full pl-3 pr-8 text-sm rounded-md border bg-white focus:ring-2 focus:ring-green-500/20 outline-none transition-all appearance-none cursor-pointer ${errors.duration ? 'border-red-500' : 'border-gray-200 focus:border-green-500'} ${!formData.duration ? 'text-gray-500' : 'text-gray-900'}`}
+                                    >
+                                        <option value="" disabled>Duration of Trip</option>
+                                        <option value="3 Nights / 4 Days">3 Nights / 4 Days</option>
+                                        <option value="4 Nights / 5 Days">4 Nights / 5 Days</option>
+                                        <option value="5 Nights / 6 Days">5 Nights / 6 Days</option>
+                                        <option value="6 Nights / 7 Days">6 Nights / 7 Days</option>
+                                        <option value="7 Nights / 8 Days">7 Nights / 8 Days</option>
+                                        <option value="8 Nights+">8 Nights+</option>
+                                    </select>
+                                    <ChevronDown className="absolute right-2 top-2.5 w-4 h-4 text-gray-400 pointer-events-none" />
+                                </div>
+                                {errors.duration && <p className="text-[10px] text-red-500 ml-1">{errors.duration}</p>}
                             </div>
 
                             <div className="space-y-1">
