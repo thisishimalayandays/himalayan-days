@@ -37,7 +37,7 @@ const sections = [
 
 export function FeaturedPackages({ packages }: { packages: any[] }) {
     return (
-        <div className="py-20 space-y-24 bg-gray-50/30">
+        <div id="packages" className="py-20 space-y-24 bg-gray-50/30">
             {sections.map((section) => {
                 let filteredPackages = packages.filter(section.filter);
 
