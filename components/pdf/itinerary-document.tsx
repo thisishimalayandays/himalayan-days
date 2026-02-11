@@ -281,8 +281,24 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
     const formatDate = (dateStr: string) => {
         if (!dateStr) return 'TBD';
         try {
-            return new Date(dateStr).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+            return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         } catch (e) { return dateStr }
+    };
+
+    const formatDateRange = (start: string, end?: string) => {
+        if (!start) return 'TBD';
+        try {
+            const s = new Date(start);
+            if (!end) return formatDate(start);
+
+            const e = new Date(end);
+            if (s.getFullYear() === e.getFullYear()) {
+                const startStr = s.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                const endStr = e.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                return `${startStr} - ${endStr}`;
+            }
+            return `${formatDate(start)} - ${formatDate(end)}`;
+        } catch (e) { return start; }
     };
 
     return (
@@ -318,8 +334,10 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
                         <Text style={styles.label}>Package Name</Text>
                         <Text style={styles.value}>{data.pkgTitle || "Kashmir Tour Package"}</Text>
 
-                        <Text style={styles.label}>Travel Date</Text>
-                        <Text style={styles.value}>{formatDate(data.travelDate)}</Text>
+                        <Text style={styles.label}>Travel Dates</Text>
+                        <Text style={styles.value}>
+                            {formatDateRange(data.travelDate, data.endDate)}
+                        </Text>
                     </View>
                     <View style={styles.clientCol}>
                         <Text style={styles.label}>Duration</Text>

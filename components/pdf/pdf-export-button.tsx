@@ -8,7 +8,7 @@ import { ItineraryData } from '@/app/admin/tools/itinerary-maker/page';
 
 import React from 'react';
 
-const PDFExportButton = React.memo(({ data }: { data: ItineraryData }) => {
+const PDFExportButton = React.memo(({ data, onGenerate }: { data: ItineraryData; onGenerate?: () => boolean }) => {
     const [isGenerating, setIsGenerating] = React.useState(false);
 
     // Reset generation when data changes so user gets fresh PDF
@@ -22,7 +22,13 @@ const PDFExportButton = React.memo(({ data }: { data: ItineraryData }) => {
                 size="sm"
                 variant="default"
                 className="bg-orange-600 hover:bg-orange-700 text-white"
-                onClick={() => setIsGenerating(true)}
+                onClick={() => {
+                    if (onGenerate) {
+                        const isValid = onGenerate();
+                        if (!isValid) return;
+                    }
+                    setIsGenerating(true);
+                }}
             >
                 <Download className="w-4 h-4 mr-2" /> Generate PDF
             </Button>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Calculator, Copy, RefreshCcw, CheckCircle2, FileText, ArrowRight, Save, FolderOpen, Trash2 } from "lucide-react";
+import { Calculator, Copy, RefreshCcw, CheckCircle2, FileText, ArrowRight, Save, FolderOpen, Trash2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -39,6 +39,7 @@ export default function CalculatorPage() {
     ]);
     const [commission, setCommission] = useState<number>(0);
     const [isCopied, setIsCopied] = useState(false);
+    const [promptCopied, setPromptCopied] = useState(false);
 
     // --- Save/Load State ---
     const [savedQuotes, setSavedQuotes] = useState<DBQuote[]>([]);
@@ -47,6 +48,16 @@ export default function CalculatorPage() {
     const [isSaveOpen, setIsSaveOpen] = useState(false);
     const [isLoadOpen, setIsLoadOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+
+    // --- AI Prompt State ---
+    const [promptTone, setPromptTone] = useState("Balanced");
+    const [promptType, setPromptType] = useState("General");
+    const [tripHighlights, setTripHighlights] = useState("");
+    const [routeLegs, setRouteLegs] = useState<{ id: string; from: string; to: string }[]>([
+        { id: '1', from: 'Srinagar', to: '' }
+    ]);
+
+    const LOCATIONS = ["Srinagar", "Pahalgam", "Gulmarg", "Yusmarg", "Sonamarg"];
 
     // Load DB quotes on open
     const loadQuotesFromDB = async () => {
@@ -129,6 +140,71 @@ export default function CalculatorPage() {
             toast.success("Quote deleted.");
             loadQuotesFromDB();
         }
+    };
+
+    // Route Builder Handlers
+    const addRouteLeg = () => {
+        setRouteLegs([...routeLegs, { id: Date.now().toString(), from: '', to: '' }]);
+    };
+
+    const removeRouteLeg = (id: string) => {
+        setRouteLegs(routeLegs.filter(l => l.id !== id));
+    };
+
+    const updateRouteLeg = (id: string, field: 'from' | 'to', value: string) => {
+        setRouteLegs(routeLegs.map(l => l.id === id ? { ...l, [field]: value } : l));
+    };
+
+    const generateChatGPTPrompt = () => {
+        // Calculate dynamic duration based on nights
+        const totalNights = hotels.reduce((acc, h) => acc + (h.nights || 0), 0);
+        const days = totalNights + 1;
+        const durationStr = `${days} Days / ${totalNights} Nights`;
+
+        let prompt = `Create a detailed ${promptTone} ${promptType} itinerary for Kashmir.\n`;
+        prompt += `Duration: ${durationStr}\n`;
+        // Assumption: 2 Adults based on 1 room double occupancy logic if not specified, 
+        // but Calculator doesn't have Pax fields yet. We can assume generic or ask user to fill.
+        // For now, let's genericize or leave placeholders.
+        prompt += `Travelers: Couple/Family (Adjust as needed)\n\n`;
+
+        prompt += `Stays/Hotels:\n`;
+        hotels.forEach((h, i) => {
+            if (h.name) {
+                prompt += `- ${h.location}: ${h.name} (${h.nights} Nights)\n`;
+            }
+        });
+
+        // Append Route Plan
+        const hasRoutes = routeLegs.some(l => l.from && l.to);
+        if (hasRoutes) {
+            prompt += `\nRoute Plan:\n`;
+            routeLegs.forEach((leg, i) => {
+                if (leg.from && leg.to) {
+                    prompt += `- Day ${i + 1} (approx): ${leg.from} to ${leg.to}\n`;
+                }
+            });
+        }
+
+        if (tripHighlights.trim()) {
+            prompt += `\nSpecific Trip Highlights / Notes:\n${tripHighlights}\n`;
+        }
+
+        if (activities.length > 0) {
+            prompt += `\nIncluded Activities:\n`;
+            activities.forEach(a => {
+                if (a.name) prompt += `- ${a.name}\n`;
+            });
+        }
+
+        prompt += `\nPlease generate a day-by-day itinerary. For each day, provide a 'Title' and a 'Description'.\n`;
+        prompt += `Make the description engaging and illustrative. Valid markdown format.\n`;
+        prompt += `Tone: ${promptTone}. Focus on local experiences and the specific hotels mentioned.`;
+
+        navigator.clipboard.writeText(prompt);
+        setPromptCopied(true);
+        toast.success("AI Prompt copied to clipboard!");
+        setTimeout(() => setPromptCopied(false), 2000);
     };
 
     const copyToClipboard = () => {
@@ -384,6 +460,99 @@ export default function CalculatorPage() {
                                 Add a 10-15% margin on top of Net Cost to cover unexpected expenses and profit.
                             </p>
                         </div>
+
+                        {/* AI Prompt Generator */}
+                        <Card className="border-purple-100 dark:border-purple-900 shadow-lg ring-1 ring-purple-500/10">
+                            <CardHeader className="bg-gradient-to-br from-purple-50 to-white dark:from-purple-950/40 dark:to-background border-b border-purple-100 dark:border-purple-900/50">
+                                <CardTitle className="text-purple-800 dark:text-purple-400 flex items-center gap-2">
+                                    <span className="text-lg">✨</span> AI Content Prompt
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-6 space-y-4">
+                                <div className="space-y-3">
+                                    <div className="space-y-1">
+                                        <Label className="text-xs">Tone</Label>
+                                        <select
+                                            className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors"
+                                            value={promptTone}
+                                            onChange={(e) => setPromptTone(e.target.value)}
+                                        >
+                                            <option value="Balanced">Balanced</option>
+                                            <option value="Luxury">Luxury</option>
+                                            <option value="Adventure">Adventure</option>
+                                            <option value="Romantic">Romantic</option>
+                                            <option value="Relaxed">Relaxed</option>
+                                        </select>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <Label className="text-xs">Trip Type</Label>
+                                        <select
+                                            className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors"
+                                            value={promptType}
+                                            onChange={(e) => setPromptType(e.target.value)}
+                                        >
+                                            <option value="General">General</option>
+                                            <option value="Honeymoon">Honeymoon</option>
+                                            <option value="Family">Family</option>
+                                            <option value="Group">Group</option>
+                                            <option value="Solo">Solo</option>
+                                        </select>
+                                    </div>
+
+                                    <div className="space-y-2 border-t pt-2 mt-2">
+                                        <div className="flex items-center justify-between">
+                                            <Label className="text-xs font-semibold">Route Builder (Optional)</Label>
+                                            <Button variant="ghost" size="sm" onClick={addRouteLeg} className="h-6 text-xs text-blue-600">
+                                                <Plus className="w-3 h-3 mr-1" /> Add Leg
+                                            </Button>
+                                        </div>
+                                        <div className="space-y-2">
+                                            {routeLegs.map((leg, idx) => (
+                                                <div key={leg.id} className="flex gap-2 items-center">
+                                                    <span className="text-[10px] text-muted-foreground w-4">{idx + 1}.</span>
+                                                    <select
+                                                        className="flex h-8 w-full rounded-md border border-input bg-background px-2 text-xs"
+                                                        value={leg.from}
+                                                        onChange={(e) => updateRouteLeg(leg.id, 'from', e.target.value)}
+                                                    >
+                                                        <option value="">From...</option>
+                                                        {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
+                                                    </select>
+                                                    <ArrowRight className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                                                    <select
+                                                        className="flex h-8 w-full rounded-md border border-input bg-background px-2 text-xs"
+                                                        value={leg.to}
+                                                        onChange={(e) => updateRouteLeg(leg.id, 'to', e.target.value)}
+                                                    >
+                                                        <option value="">To...</option>
+                                                        {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
+                                                    </select>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-muted-foreground hover:text-red-500"
+                                                        onClick={() => removeRouteLeg(leg.id)}
+                                                    >
+                                                        <Trash2 className="w-3 h-3" />
+                                                    </Button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <Button
+                                    onClick={generateChatGPTPrompt}
+                                    className={`w-full text-white transition-all duration-300 ${promptCopied ? 'bg-purple-700' : 'bg-purple-600 hover:bg-purple-700'}`}
+                                >
+                                    {promptCopied ? <CheckCircle2 className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
+                                    {promptCopied ? "Prompt Copied" : "Copy ChatGPT Prompt"}
+                                </Button>
+                                <p className="text-[10px] text-muted-foreground text-center">
+                                    Paste this into ChatGPT to generate a day-wise itinerary, then copy-paste the text into the "Blank Canvas" template.
+                                </p>
+                            </CardContent>
+                        </Card>
                     </div>
                 </div>
             </div>

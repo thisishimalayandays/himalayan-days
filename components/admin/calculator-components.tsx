@@ -1,10 +1,27 @@
 "use client";
 
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    DragEndEvent
+} from '@dnd-kit/core';
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    verticalListSortingStrategy,
+    useSortable
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 // --- Types ---
 export interface HotelItem {
@@ -56,6 +73,113 @@ export const CurrencyInput = ({
     </div>
 );
 
+// --- Sortable Row Component ---
+function SortableHotelRow({
+    item,
+    index,
+    updateRow,
+    removeRow
+}: {
+    item: HotelItem;
+    index: number;
+    updateRow: (index: number, field: keyof HotelItem, value: any) => void;
+    removeRow: (id: string) => void;
+}) {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging
+    } = useSortable({ id: item.id });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        zIndex: isDragging ? 10 : 1,
+        position: 'relative' as const,
+    };
+
+    return (
+        <div ref={setNodeRef} style={style} className={`grid grid-cols-12 gap-2 items-center group bg-background ${isDragging ? "shadow-lg ring-1 ring-blue-500/20 rounded-md opacity-80" : ""}`}>
+            {/* Drag Handle */}
+            <div className="col-span-1 flex justify-center cursor-move touch-none" {...attributes} {...listeners}>
+                <GripVertical className="w-4 h-4 text-muted-foreground/50 hover:text-foreground transition-colors" />
+            </div>
+
+            <div className="col-span-2">
+                <select
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
+                    value={item.type}
+                    onChange={(e) => updateRow(index, "type", e.target.value)}
+                >
+                    <option value="Hotel">Hotel</option>
+                    <option value="Houseboat">Houseboat</option>
+                </select>
+            </div>
+            <div className="col-span-2">
+                <select
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
+                    value={item.location}
+                    onChange={(e) => updateRow(index, "location", e.target.value)}
+                >
+                    <option value="Srinagar">Srinagar</option>
+                    <option value="Gulmarg">Gulmarg</option>
+                    <option value="Pahalgam">Pahalgam</option>
+                    <option value="Sonmarg">Sonmarg</option>
+                </select>
+            </div>
+            <div className="col-span-3">
+                <Input
+                    placeholder="Property Name"
+                    value={item.name}
+                    onChange={(e) => updateRow(index, "name", e.target.value)}
+                    className="bg-background"
+                />
+            </div>
+            <div className="col-span-2">
+                <CurrencyInput
+                    value={item.rate}
+                    onChange={(val) => updateRow(index, "rate", val)}
+                />
+            </div>
+            <div className="col-span-1">
+                <Input
+                    type="number"
+                    min="0"
+                    value={item.rooms || ""}
+                    onChange={(e) => updateRow(index, "rooms", parseInt(e.target.value) || 0)}
+                    className="px-2 text-center"
+                />
+            </div>
+            <div className="col-span-1">
+                <Input
+                    type="number"
+                    min="0"
+                    value={item.nights || ""}
+                    onChange={(e) => updateRow(index, "nights", parseInt(e.target.value) || 0)}
+                    className="px-2 text-center"
+                    onKeyDown={(e) => {
+                        // Prevent drag trigger when typing/navigating in input
+                        e.stopPropagation();
+                    }}
+                />
+            </div>
+            <div className="absolute -right-8 top-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20"
+                    onClick={() => removeRow(item.id)}
+                >
+                    <Trash2 className="w-4 h-4" />
+                </Button>
+            </div>
+        </div>
+    );
+}
+
 // --- Section Components ---
 
 export function HotelCalculator({
@@ -67,6 +191,13 @@ export function HotelCalculator({
     setItems: (items: HotelItem[]) => void;
     total: number;
 }) {
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
+
     const addRow = () => {
         setItems([...items, { id: Date.now().toString(), type: "Hotel", location: "Srinagar", name: "", rate: 0, rooms: 1, nights: 1 }]);
     };
@@ -79,6 +210,16 @@ export function HotelCalculator({
         const newItems = [...items];
         (newItems[index] as any)[field] = value;
         setItems(newItems);
+    };
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+
+        if (over && active.id !== over.id) {
+            const oldIndex = items.findIndex((item) => item.id === active.id);
+            const newIndex = items.findIndex((item) => item.id === over.id);
+            setItems(arrayMove(items, oldIndex, newIndex));
+        }
     };
 
     return (
@@ -95,84 +236,37 @@ export function HotelCalculator({
                 </div>
             </CardHeader>
             <CardContent className="p-6 space-y-4">
-                <div className="grid grid-cols-12 gap-2 text-xs uppercase tracking-wider font-semibold text-muted-foreground mb-2 px-1">
+                <div className="grid grid-cols-12 gap-2 text-xs uppercase tracking-wider font-semibold text-muted-foreground mb-2 px-1 pl-6">
                     <div className="col-span-2">Type</div>
                     <div className="col-span-2">Location</div>
                     <div className="col-span-3">Property Name</div>
                     <div className="col-span-2">Rate (₹)</div>
                     <div className="col-span-1">Rms</div>
                     <div className="col-span-1">Nts</div>
-                    <div className="col-span-1"></div>
                 </div>
 
-                {items.map((item, index) => (
-                    <div key={item.id} className="grid grid-cols-12 gap-2 items-center group">
-                        <div className="col-span-2">
-                            <select
-                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
-                                value={item.type}
-                                onChange={(e) => updateRow(index, "type", e.target.value)}
-                            >
-                                <option value="Hotel">Hotel</option>
-                                <option value="Houseboat">Houseboat</option>
-                            </select>
+                <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                >
+                    <SortableContext
+                        items={items}
+                        strategy={verticalListSortingStrategy}
+                    >
+                        <div className="space-y-2">
+                            {items.map((item, index) => (
+                                <SortableHotelRow
+                                    key={item.id}
+                                    item={item}
+                                    index={index}
+                                    updateRow={updateRow}
+                                    removeRow={removeRow}
+                                />
+                            ))}
                         </div>
-                        <div className="col-span-2">
-                            <select
-                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
-                                value={item.location}
-                                onChange={(e) => updateRow(index, "location", e.target.value)}
-                            >
-                                <option value="Srinagar">Srinagar</option>
-                                <option value="Gulmarg">Gulmarg</option>
-                                <option value="Pahalgam">Pahalgam</option>
-                                <option value="Sonmarg">Sonmarg</option>
-                            </select>
-                        </div>
-                        <div className="col-span-3">
-                            <Input
-                                placeholder="Property Name"
-                                value={item.name}
-                                onChange={(e) => updateRow(index, "name", e.target.value)}
-                                className="bg-background"
-                            />
-                        </div>
-                        <div className="col-span-2">
-                            <CurrencyInput
-                                value={item.rate}
-                                onChange={(val) => updateRow(index, "rate", val)}
-                            />
-                        </div>
-                        <div className="col-span-1">
-                            <Input
-                                type="number"
-                                min="0"
-                                value={item.rooms || ""}
-                                onChange={(e) => updateRow(index, "rooms", parseInt(e.target.value) || 0)}
-                                className="px-2 text-center"
-                            />
-                        </div>
-                        <div className="col-span-1">
-                            <Input
-                                type="number"
-                                min="0"
-                                value={item.nights || ""}
-                                onChange={(e) => updateRow(index, "nights", parseInt(e.target.value) || 0)}
-                                className="px-2 text-center"
-                            />
-                        </div>
-                        <div className="col-span-1 text-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20"
-                                onClick={() => removeRow(item.id)}
-                            >
-                                <Trash2 className="w-4 h-4" />
-                            </Button>
-                        </div>
-                    </div>
-                ))}
+                    </SortableContext>
+                </DndContext>
 
                 <Button
                     variant="ghost"

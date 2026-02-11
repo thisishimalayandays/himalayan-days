@@ -43,6 +43,7 @@ export interface ItineraryData {
     rooms: string;
     upiId: string;
     days: Day[];
+    endDate?: string;
 }
 
 interface DBItinerary {
@@ -116,11 +117,34 @@ export default function ItineraryMakerPage() {
         return ITINERARY_TEMPLATES.filter(t => t.duration === selectedDuration);
     }, [selectedDuration]);
 
+    // Helper: Calculate End Date
+    const calculateEndDate = (startDate: string, durationStr: string) => {
+        if (!startDate || !durationStr) return '';
+        try {
+            const date = new Date(startDate);
+            const daysMatch = durationStr.match(/(\d+)\s*Days?/i);
+            const days = daysMatch ? parseInt(daysMatch[1]) : 0;
+
+            if (days > 0) {
+                // Tour ends on Day N. So Start + (N-1) days.
+                // e.g. 11th (Day 1) + 5 = 16th (Day 6)
+                date.setDate(date.getDate() + (days - 1));
+                return date.toISOString().split('T')[0];
+            }
+        } catch (e) {
+            console.error("Date calc error", e);
+        }
+        return '';
+    };
+
+    const endDate = useMemo(() => calculateEndDate(clientInfo.travelDate, clientInfo.duration), [clientInfo.travelDate, clientInfo.duration]);
+
     // Live Preview Data
     const previewData: ItineraryData = {
         ...clientInfo,
         clientName: `${clientInfo.clientTitle} ${clientInfo.clientName}`,
-        days
+        days,
+        endDate // Add calculated end date
     };
 
     // ... handlers ...
@@ -238,7 +262,7 @@ export default function ItineraryMakerPage() {
 
         setClientInfo(prev => ({
             ...prev,
-            pkgTitle: tpl.title,
+            pkgTitle: tpl.id.includes('blank') ? '' : tpl.title,
             duration: tpl.duration,
             // totalCost handled above if context exists
         }));
@@ -267,24 +291,86 @@ export default function ItineraryMakerPage() {
         setDays(newDays);
     };
 
+    // --- Validation ---
+    const validateForm = () => {
+        const errors: string[] = [];
+        if (!clientInfo.clientName.trim()) errors.push("Client Name");
+        if (!clientInfo.quoteId?.trim()) errors.push("Quote ID");
+        if (!clientInfo.travelDate) errors.push("Travel Date");
+        if (!clientInfo.duration?.trim()) errors.push("Duration");
+        if (!clientInfo.adults?.trim()) errors.push("Travellers (Adults)");
+        if (!clientInfo.vehicleType?.trim()) errors.push("Vehicle Type");
+        if (!clientInfo.rooms?.trim()) errors.push("Rooms");
+        if (!clientInfo.upiId?.trim()) errors.push("UPI ID");
+        if (!clientInfo.pkgTitle.trim()) errors.push("Package Title");
+        if (!clientInfo.totalCost?.trim()) errors.push("Total Cost");
+
+        if (errors.length > 0) {
+            toast.error(`Missing required fields: ${errors.join(", ")}`);
+            return false;
+        }
+        return true;
+    };
+
+    // --- Save/Load State & Logic ---
+    const [currentItineraryId, setCurrentItineraryId] = useState<string | null>(null);
+
     // --- Save/Load Handlers ---
     const handleSaveItinerary = async () => {
+        if (!validateForm()) return;
+
         if (!itineraryName.trim()) {
-            toast.error("Please enter a name.");
+            toast.error("Please enter an Itinerary Name (e.g., 'Anil Kumar 6D').");
             return;
         }
 
         const itineraryData = { clientInfo, days };
-        const res = await saveItinerary(itineraryName, clientName, itineraryData);
 
-        if (res.success) {
-            toast.success("Itinerary saved to Database!");
-            setItineraryName("");
-            setClientName("");
+        // If we have an ID, UPDATE it. Otherwise CREATE new.
+        let res;
+        if (currentItineraryId) {
+            // UPDATE EXISTING
+            // We need an update action. If not available, we can fallback or add it. 
+            // Assuming updateItinerary exists or reusing save with ID logic if possible. 
+            // For now, let's try to pass ID to saveItinerary if it supports upsert, OR call distinct update.
+            // Actually, the best UX is "Overwriting" 
+            // Let's assume we need to add updateItinerary to actions.
+            res = await saveItinerary(itineraryName, clientName, itineraryData, currentItineraryId);
+        } else {
+            // CREATE NEW
+            res = await saveItinerary(itineraryName, clientName, itineraryData);
+        }
+
+        if (res.success && res.itinerary) {
+            toast.success(currentItineraryId ? "Itinerary Updated!" : "New Itinerary Saved!");
+            setCurrentItineraryId(res.itinerary.id);
+            setItineraryName(res.itinerary.name);
             setIsSaveOpen(false);
             loadItinerariesFromDB();
         } else {
             toast.error("Failed to save.");
+        }
+    };
+
+    const handleSaveAsNew = async () => {
+        if (!validateForm()) return;
+        if (!itineraryName.trim()) {
+            toast.error("Please enter a NEW name.");
+            return;
+        }
+        // Force create by not passing ID
+        const itineraryData = { clientInfo, days };
+        const res = await saveItinerary(itineraryName, clientName, itineraryData); // No ID = Create
+
+        if (res.success && res.itinerary) {
+            toast.success("Saved as NEW Itinerary!");
+            setCurrentItineraryId(res.itinerary.id);
+            setItineraryName(res.itinerary.name); // Update name incase sanitized
+            // Keep client info same
+            setIsSaveOpen(false);
+            loadItinerariesFromDB();
+        } else {
+            toast.error("Failed to save copy.");
         }
     };
 
@@ -294,7 +380,10 @@ export default function ItineraryMakerPage() {
             if (data) {
                 setClientInfo(data.clientInfo);
                 setDays(data.days);
-                toast.success("Itinerary loaded successfully.");
+                setCurrentItineraryId(save.id); // Track ID for autosave
+                setItineraryName(save.name); // Pre-fill name for convenience
+                setClientName(save.clientName || "");
+                toast.success("Itinerary loaded. Modifications will auto-save to this record.");
                 setIsLoadOpen(false);
             }
         }
@@ -304,6 +393,7 @@ export default function ItineraryMakerPage() {
         e.stopPropagation();
         if (confirm("Delete this saved itinerary?")) {
             await deleteItinerary(id);
+            if (currentItineraryId === id) setCurrentItineraryId(null); // Clear active if deleted
             toast.success("Deleted.");
             loadItinerariesFromDB();
         }
@@ -519,7 +609,16 @@ export default function ItineraryMakerPage() {
                                             onChange={(e) => setItineraryName(e.target.value)}
                                         />
                                     </div>
-                                    <Button onClick={handleSaveItinerary} className="w-full">Save to Database</Button>
+                                    <div className="flex flex-col gap-2">
+                                        <Button onClick={handleSaveItinerary} className="w-full">
+                                            {currentItineraryId ? "Update Existing" : "Save to Database"}
+                                        </Button>
+                                        {currentItineraryId && (
+                                            <Button onClick={handleSaveAsNew} variant="outline" className="w-full">
+                                                Save as New Copy
+                                            </Button>
+                                        )}
+                                    </div>
                                 </div>
                             </DialogContent>
                         </Dialog>
@@ -640,7 +739,7 @@ export default function ItineraryMakerPage() {
                     <h2 className="text-lg font-semibold border-b pb-2">Client Details</h2>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label>Client Name</Label>
+                            <Label>Client Name <span className="text-red-500">*</span></Label>
                             <div className="flex gap-2">
                                 <select
                                     className="flex h-10 w-20 rounded-md border border-input bg-background px-2 py-2 text-sm focus:ring-2 focus:ring-orange-500 text-foreground"
@@ -662,14 +761,14 @@ export default function ItineraryMakerPage() {
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <Label>Quote ID</Label>
+                            <Label>Quote ID <span className="text-red-500">*</span></Label>
                             <Input
                                 value={clientInfo.quoteId}
                                 onChange={e => setClientInfo({ ...clientInfo, quoteId: e.target.value })}
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label>Travel Date</Label>
+                            <Label>Travel Date <span className="text-red-500">*</span></Label>
                             <Input
                                 type="date"
                                 value={clientInfo.travelDate}
@@ -677,7 +776,7 @@ export default function ItineraryMakerPage() {
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label>Duration</Label>
+                            <Label>Duration <span className="text-red-500">*</span></Label>
                             <Input
                                 value={clientInfo.duration}
                                 onChange={e => setClientInfo({ ...clientInfo, duration: e.target.value })}
@@ -686,7 +785,7 @@ export default function ItineraryMakerPage() {
                         </div>
                         {/* New Fields */}
                         <div className="space-y-2">
-                            <Label>Start Date (Pax)</Label>
+                            <Label>Travellers (Pax) <span className="text-red-500">*</span></Label>
                             <div className="flex gap-2">
                                 <Input
                                     value={clientInfo.adults}
@@ -701,7 +800,7 @@ export default function ItineraryMakerPage() {
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <Label>Vehicle Type</Label>
+                            <Label>Vehicle Type <span className="text-red-500">*</span></Label>
                             <Input
                                 value={clientInfo.vehicleType}
                                 onChange={e => setClientInfo({ ...clientInfo, vehicleType: e.target.value })}
@@ -709,7 +808,7 @@ export default function ItineraryMakerPage() {
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label>Rooms</Label>
+                            <Label>Rooms <span className="text-red-500">*</span></Label>
                             <Input
                                 value={clientInfo.rooms}
                                 onChange={e => setClientInfo({ ...clientInfo, rooms: e.target.value })}
@@ -717,7 +816,7 @@ export default function ItineraryMakerPage() {
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label>UPI ID (Payment)</Label>
+                            <Label>UPI ID (Payment) <span className="text-red-500">*</span></Label>
                             <Input
                                 value={clientInfo.upiId}
                                 onChange={e => setClientInfo({ ...clientInfo, upiId: e.target.value })}
@@ -725,16 +824,16 @@ export default function ItineraryMakerPage() {
                             />
                         </div>
                     </div>
+                    <Label className="flex items-center gap-1">
+                        Package Title (for PDF) <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                        value={clientInfo.pkgTitle}
+                        onChange={e => setClientInfo({ ...clientInfo, pkgTitle: e.target.value })}
+                        placeholder="e.g. Premium Kashmir Honeymoon"
+                    />
                     <div className="space-y-2">
-                        <Label>Package Title (for PDF)</Label>
-                        <Input
-                            value={clientInfo.pkgTitle}
-                            onChange={e => setClientInfo({ ...clientInfo, pkgTitle: e.target.value })}
-                            placeholder="e.g. Premium Kashmir Honeymoon"
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label>Total Cost (₹)</Label>
+                        <Label>Total Cost (₹) <span className="text-red-500">*</span></Label>
                         <Input
                             value={clientInfo.totalCost}
                             onChange={e => setClientInfo({ ...clientInfo, totalCost: e.target.value })}
@@ -804,7 +903,7 @@ export default function ItineraryMakerPage() {
                     </div>
 
                     {/* Explicit Download Button - Lazy Generation ensures performance */}
-                    <PDFExportButton data={previewData} />
+                    <PDFExportButton data={previewData} onGenerate={validateForm} />
                 </div>
                 <div className="flex-1 w-full h-full bg-gray-200 p-2 md:p-8 overflow-hidden relative">
                     {/* HTML Preview Wrapper */}
@@ -817,6 +916,6 @@ export default function ItineraryMakerPage() {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

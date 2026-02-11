@@ -219,7 +219,39 @@ const generateTemplates = (): ItineraryTemplate[] => {
     );
 
 
-    return templates.concat(generateLongDurations());
+    return templates.concat(generateLongDurations()).concat(generateBlankTemplates());
+};
+
+const generateBlankTemplates = (): ItineraryTemplate[] => {
+    const templates: ItineraryTemplate[] = [];
+
+    // Generate for 3 to 12 days
+    for (let days = 3; days <= 12; days++) {
+        const nights = days - 1;
+        const duration = `${days} Days / ${nights} Nights`;
+
+        const itineraryDays = [];
+        for (let d = 1; d <= days; d++) {
+            itineraryDays.push({
+                title: '', // User requested blank title
+                description: ' ', // Empty space for blank
+                meals: 'Breakfast & Dinner',
+                stay: 'Hotel in Srinagar' // Default placeholder
+            });
+        }
+
+        templates.push({
+            id: `${days}d-blank`,
+            title: 'Blank Canvas (Paste Your Own)',
+            type: 'General',
+            duration: duration,
+            durationDays: days,
+            description: 'A clean slate with pre-defined days but empty descriptions. Perfect for pasting your own itinerary from AI or other sources.',
+            days: itineraryDays
+        });
+    }
+
+    return templates;
 };
 
 const generateLongDurations = (): ItineraryTemplate[] => {

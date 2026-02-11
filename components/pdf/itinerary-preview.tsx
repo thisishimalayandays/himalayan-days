@@ -12,8 +12,25 @@ const ItineraryHTMLPreviewComponent = ({ data }: { data: ItineraryData }) => {
     const formatDate = (dateStr: string) => {
         if (!dateStr) return 'TBD';
         try {
-            return new Date(dateStr).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+            return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         } catch (e) { return dateStr }
+    };
+
+    const formatDateRange = (start: string, end?: string) => {
+        if (!start) return 'TBD';
+        try {
+            const s = new Date(start);
+            if (!end) return formatDate(start);
+
+            const e = new Date(end);
+            if (s.getFullYear() === e.getFullYear()) {
+                // Same year: "Mar 16 - Mar 21, 2026"
+                const startStr = s.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                const endStr = e.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                return `${startStr} - ${endStr}`;
+            }
+            return `${formatDate(start)} - ${formatDate(end)}`;
+        } catch (e) { return start; }
     };
 
     return (
@@ -47,8 +64,10 @@ const ItineraryHTMLPreviewComponent = ({ data }: { data: ItineraryData }) => {
                         <p className="text-sm font-bold text-gray-900">{data.pkgTitle || "Kashmir Tour Package"}</p>
                     </div>
                     <div>
-                        <p className="text-[10px] uppercase font-bold text-gray-500 mb-0.5">Travel Date</p>
-                        <p className="text-sm font-bold text-gray-900">{formatDate(data.travelDate)}</p>
+                        <p className="text-[10px] uppercase font-bold text-gray-500 mb-0.5">Travel Dates</p>
+                        <p className="text-sm font-bold text-gray-900">
+                            {formatDateRange(data.travelDate, data.endDate)}
+                        </p>
                     </div>
                 </div>
                 {/* Column 2 */}

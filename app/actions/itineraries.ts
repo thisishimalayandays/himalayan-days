@@ -4,15 +4,29 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { logActivity } from "./audit";
 
-export async function saveItinerary(name: string, clientName: string | undefined, data: any) {
+export async function saveItinerary(name: string, clientName: string | undefined, data: any, id?: string) {
     try {
-        const itinerary = await db.itinerary.create({
-            data: {
-                name,
-                clientName,
-                data,
-            },
-        });
+        let itinerary;
+        if (id) {
+            // Update existing
+            itinerary = await db.itinerary.update({
+                where: { id },
+                data: {
+                    name,
+                    clientName,
+                    data,
+                },
+            });
+        } else {
+            // Create new
+            itinerary = await db.itinerary.create({
+                data: {
+                    name,
+                    clientName,
+                    data,
+                },
+            });
+        }
 
         await logActivity(
             'SAVED_ITINERARY',
