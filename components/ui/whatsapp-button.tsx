@@ -91,18 +91,10 @@ export function WhatsAppButton() {
                     : formData.budget.includes('40k') ? 40000
                         : 18000;
 
-            // Extract number of nights from duration string (e.g. "3 Nights / 4 Days" -> 3)
-            const durationMatch = formData.duration.match(/(\d+)\s*Night/i);
-            const nights = durationMatch ? parseInt(durationMatch[1]) : 1;
-
-            // Calculate Approximate Total Trip Value (Budget * Nights)
-            const totalValue = budgetValue * nights;
-
             analytics.event('Lead', {
                 content_name: 'WhatsApp Quick Chat',
-                value: totalValue,
-                currency: 'INR',
-                num_nights: nights
+                value: budgetValue,
+                currency: 'INR'
             });
 
             const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`;
