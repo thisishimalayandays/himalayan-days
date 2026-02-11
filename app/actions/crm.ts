@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { logActivity } from './audit';
+import { auth } from '@/auth';
 
 // --- CUSTOMERS ---
 
@@ -44,6 +45,11 @@ export async function getCustomers() {
 
 export async function deleteCustomer(id: string) {
     try {
+        const session = await auth();
+        if (session?.user?.role !== 'ADMIN') {
+            return { success: false, error: 'Unauthorized: Only Admins can delete customers.' };
+        }
+
         await prisma.$transaction(async (tx) => {
             // 1. Unlink Inquiries (optional, or delete them? Usually unlink is safer / inquire history)
             await tx.inquiry.updateMany({
@@ -259,6 +265,11 @@ export async function getBookingById(id: string) {
 
 export async function deleteBooking(id: string) {
     try {
+        const session = await auth();
+        if (session?.user?.role !== 'ADMIN') {
+            return { success: false, error: 'Unauthorized: Only Admins can delete bookings.' };
+        }
+
         await prisma.booking.update({
             where: { id },
             data: {
