@@ -86,7 +86,7 @@ export function NotesDialog({ inquiryId, existingNotes, customerName, userEmail 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild onClick={(e) => e.stopPropagation()}>
-                <Button variant="ghost" size="icon" className={`h-8 w-8 ${notes ? 'text-blue-600 bg-blue-50' : 'text-gray-400 hover:text-gray-600'}`} title="Notes">
+                <Button variant="ghost" size="icon" className={`h-8 w-8 ${notes ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'}`} title="Notes">
                     <NotebookPen className="w-4 h-4" />
                 </Button>
             </DialogTrigger>
@@ -101,7 +101,7 @@ export function NotesDialog({ inquiryId, existingNotes, customerName, userEmail 
                 <div className="space-y-4 py-4">
                     {/* New Note Input */}
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700">Add New Note</label>
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Add New Note</label>
                         <Textarea
                             value={newNote}
                             onChange={(e) => setNewNote(e.target.value)}
@@ -122,18 +122,18 @@ export function NotesDialog({ inquiryId, existingNotes, customerName, userEmail 
                     </div>
 
                     <div className="border-t pt-4">
-                        <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-2">
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2 mb-2">
                             <History className="w-4 h-4" /> History
                         </label>
-                        <div className="h-[250px] w-full rounded-md border bg-gray-50 overflow-y-auto custom-scrollbar flex flex-col gap-2 p-2">
+                        <div className="h-[250px] w-full rounded-md border dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 overflow-y-auto custom-scrollbar flex flex-col gap-2 p-2">
                             {noteEntries.length > 0 ? (
                                 noteEntries.map((entry, index) => (
-                                    <div key={index} className="bg-white p-3 rounded border shadow-sm relative group text-sm text-gray-700 whitespace-pre-wrap">
+                                    <div key={index} className="bg-white dark:bg-gray-800 p-3 rounded border dark:border-gray-700 shadow-sm relative group text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
                                         {entry}
                                         {canDelete && (
                                             <button
                                                 onClick={() => handleDeleteNote(index)}
-                                                className="absolute top-2 right-2 p-1 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded transition-colors"
+                                                className="absolute top-2 right-2 p-1 text-gray-300 dark:text-gray-500 hover:text-red-500 hover:bg-red-50 rounded transition-colors"
                                                 title="Delete Note"
                                             >
                                                 <X className="w-3.5 h-3.5" />
@@ -142,7 +142,7 @@ export function NotesDialog({ inquiryId, existingNotes, customerName, userEmail 
                                     </div>
                                 ))
                             ) : (
-                                <div className="text-center text-gray-400 text-sm py-8">
+                                <div className="text-center text-gray-400 dark:text-gray-500 text-sm py-8">
                                     No notes yet.
                                 </div>
                             )}

@@ -3,6 +3,7 @@
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { Resend } from 'resend';
+import { sendTelegramNotification, escapeHtml } from '@/lib/telegram';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -48,6 +49,19 @@ export async function submitAiInquiry(formData: FormData) {
                 status: "PENDING"
             }
         });
+
+        // Send Telegram Notification (Fire and forget)
+        const telegramMessage = `
+<b>🧙‍♂️ New AI Trip Wizard Lead!</b>
+
+<b>Name:</b> ${escapeHtml(name)}
+<b>Phone:</b> ${escapeHtml(phone)}
+<b>Travelers:</b> ${travelers}
+<b>Duration:</b> ${escapeHtml(duration)}
+<b>Budget:</b> ${escapeHtml(budget)}
+<b>Season:</b> ${escapeHtml(season || 'Flexible')}
+`;
+        sendTelegramNotification(telegramMessage).catch(err => console.error('Background Telegram failed:', err));
 
         // Send Email Notification
         await resend.emails.send({
