@@ -189,7 +189,8 @@ export default function ItineraryMakerPage() {
                 const urlParams = new URLSearchParams(window.location.search);
                 if (urlParams.get('import') === 'true') {
                     // Auto-fill Client Info from Calculator Draft
-                    const totalRooms = draft.hotels.reduce((acc: number, h: any) => acc + h.rooms, 0);
+                    // Use MAX rooms needed at any point, not sum of all hotels
+                    const totalRooms = Math.max(...draft.hotels.map((h: any) => h.rooms || 0), 0);
                     const vehicle = draft.transport[0]?.type || '';
                     // Default assumption for pax if not in draft
                     const adults = '2';
