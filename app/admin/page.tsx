@@ -7,6 +7,10 @@ import { AnalyticsChart as Overview } from "@/components/admin/dashboard/analyti
 import { RecentActivity as RecentInquiries } from "@/components/admin/dashboard/recent-activity";
 import { UpcomingTrips } from "@/components/admin/upcoming-trips";
 
+import { RevenueChart } from "@/components/admin/dashboard/revenue-chart";
+import { LeadSourceChart } from "@/components/admin/dashboard/lead-source-chart";
+import { ConversionGauge } from "@/components/admin/dashboard/conversion-gauge";
+
 export default async function AdminDashboard() {
     const [analyticsData, upcomingTripsData, crmStatsResult] = await Promise.all([
         getInquiryAnalytics(),
@@ -19,7 +23,10 @@ export default async function AdminDashboard() {
         leadsMonth: 0,
         bookingsToday: 0,
         bookingsMonth: 0,
-        paymentBalance: 0
+        paymentBalance: 0,
+        revenueData: [],
+        sourceData: [],
+        conversionRate: 0
     };
 
     return (
@@ -85,27 +92,53 @@ export default async function AdminDashboard() {
                 </Card>
             </div>
 
-            {/* NEW LAYOUT: Inquiries & Upcoming Trips First */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
-                {/* Recent Inquiries (Takes Priority - Space where graph was) */}
-                <div className="col-span-4">
-                    <RecentInquiries activities={analyticsData.recentActivity} />
-                </div>
+            {/* Charts Row */}
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+                <Card className="col-span-4">
+                    <CardHeader>
+                        <CardTitle>Revenue Trends</CardTitle>
+                        <CardDescription>Monthly revenue from confirmed bookings (Last 6 months)</CardDescription>
+                    </CardHeader>
+                    <CardContent className="pl-2">
+                        <RevenueChart data={crmStats.revenueData} />
+                    </CardContent>
+                </Card>
+                <Card className="col-span-3">
+                    <CardHeader>
+                        <CardTitle>Lead Source Distribution</CardTitle>
+                        <CardDescription>Where your inquiries are coming from</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <LeadSourceChart data={crmStats.sourceData} />
+                    </CardContent>
+                </Card>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+                <Card className="col-span-3">
+                    <CardHeader>
+                        <CardTitle>Conversion Rate</CardTitle>
+                        <CardDescription>Inquiry to Booking Success Rate</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <ConversionGauge value={crmStats.conversionRate} />
+                    </CardContent>
+                </Card>
                 {/* Upcoming Trips (Side) */}
-                <div className="col-span-3">
+                <div className="col-span-4">
                     <UpcomingTrips trips={upcomingTripsData.success ? upcomingTripsData.upcomingTrips : []} />
                 </div>
             </div>
 
-            {/* Graph at Bottom (Full Width) */}
-            <Card className="col-span-full">
-                <CardHeader>
-                    <CardTitle>Inquiry Overview</CardTitle>
-                </CardHeader>
-                <CardContent className="pl-2 h-[350px]">
-                    <Overview data={analyticsData.chartData} />
-                </CardContent>
-            </Card>
+            {/* Recent Inquiries & Old Chart (Kept or Removed? Let's keep Recent Inquiries below everything or move above?)
+                The user asked to ADD these widgets. Replacing the old "Inquiry Overview" graph with Revenue makes sense as revenue is more important.
+                The old "Recent Inquiries" is useful. Let's keep it at the bottom full width.
+            */}
+            <div className="grid gap-4 md:grid-cols-1">
+                <RecentInquiries activities={analyticsData.recentActivity} />
+            </div>
+
         </div>
     )
 }
+
