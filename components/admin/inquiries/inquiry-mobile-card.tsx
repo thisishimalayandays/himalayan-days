@@ -62,10 +62,20 @@ export function InquiryMobileCard({ inquiry, isTrash = false, onMarkAsRead, onSo
     };
 
     const TypeBadge = ({ type }: { type: string }) => {
-        const isPlanMyTrip = type === 'PLAN_MY_TRIP';
-        const isPackage = type === 'PACKAGE_BOOKING';
+        if (type === 'PACKAGE_BOOKING') {
+            return <Badge className="bg-orange-500 hover:bg-orange-600 text-white border-none rounded-full px-2 py-0.5 text-[10px] h-auto font-medium">Package Booking</Badge>;
+        }
+        if (type === 'PLAN_MY_TRIP') {
+            return <Badge className="bg-blue-500 hover:bg-blue-600 text-white border-none rounded-full px-2 py-0.5 text-[10px] h-auto font-medium">Plan My Trip</Badge>;
+        }
+        if (type === 'AI_WIZARD_LEAD') {
+            return <Badge className="bg-purple-500 hover:bg-purple-600 text-white border-none rounded-full px-2 py-0.5 text-[10px] h-auto font-medium">AI Wizard</Badge>;
+        }
+        if (type === 'GENERAL') {
+            return <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50 rounded-full px-2 py-0.5 text-[10px] h-auto font-medium">WhatsApp</Badge>;
+        }
         return (
-            <Badge variant={isPackage ? 'default' : isPlanMyTrip ? 'secondary' : 'outline'} className="capitalize whitespace-nowrap text-[10px] px-1.5 h-5">
+            <Badge variant="outline" className="capitalize whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] h-auto text-muted-foreground border-border">
                 {type.replace(/_/g, ' ').toLowerCase()}
             </Badge>
         );

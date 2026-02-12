@@ -172,10 +172,20 @@ export function InquiriesManager({ initialInquiries, trashedInquiries, role = 'A
 
 
     const TypeBadge = ({ type }: { type: string }) => {
-        const isPlanMyTrip = type === 'PLAN_MY_TRIP';
-        const isPackage = type === 'PACKAGE_BOOKING';
+        if (type === 'PACKAGE_BOOKING') {
+            return <Badge className="bg-orange-500 hover:bg-orange-600 text-white border-none rounded-full px-3 font-medium">Package Booking</Badge>;
+        }
+        if (type === 'PLAN_MY_TRIP') {
+            return <Badge className="bg-blue-500 hover:bg-blue-600 text-white border-none rounded-full px-3 font-medium">Plan My Trip</Badge>;
+        }
+        if (type === 'AI_WIZARD_LEAD') {
+            return <Badge className="bg-purple-500 hover:bg-purple-600 text-white border-none rounded-full px-3 font-medium">AI Wizard</Badge>;
+        }
+        if (type === 'GENERAL') {
+            return <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50 rounded-full px-3 font-medium">WhatsApp</Badge>;
+        }
         return (
-            <Badge variant={isPackage ? 'default' : isPlanMyTrip ? 'secondary' : 'outline'} className="capitalize whitespace-nowrap">
+            <Badge variant="outline" className="capitalize whitespace-nowrap rounded-full px-3 text-muted-foreground">
                 {type.replace(/_/g, ' ').toLowerCase()}
             </Badge>
         );
@@ -250,8 +260,8 @@ export function InquiriesManager({ initialInquiries, trashedInquiries, role = 'A
                 <Table>
                     <TableHeader>
                         <TableRow className="hover:bg-transparent border-b-2 border-border/60">
-                            <TableHead className="w-[80px]">Source</TableHead>
-                            <TableHead className="w-[300px]">Contact</TableHead>
+                            <TableHead className="w-[140px]">Type</TableHead>
+                            <TableHead className="w-[280px]">Contact</TableHead>
                             <TableHead className="w-[120px]">Date</TableHead>
                             <TableHead>Details</TableHead>
                             <TableHead className="w-[80px]">Notes</TableHead>
@@ -280,20 +290,8 @@ export function InquiriesManager({ initialInquiries, trashedInquiries, role = 'A
                                         onClick={() => !isTrash && handleMarkAsRead(inquiry.id, inquiry.isRead)}
                                     >
                                         <TableCell>
-                                            <div className="flex justify-center" title={inquiry.type}>
-                                                {inquiry.type === 'GENERAL' ? (
-                                                    <div className="bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300 p-2 rounded-full">
-                                                        <Globe className="w-4 h-4" />
-                                                    </div>
-                                                ) : inquiry.type === 'PLAN_MY_TRIP' ? (
-                                                    <div className="bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-300 p-2 rounded-full">
-                                                        <Globe className="w-4 h-4" />
-                                                    </div>
-                                                ) : (
-                                                    <div className="bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-300 p-2 rounded-full">
-                                                        <Smartphone className="w-4 h-4" />
-                                                    </div>
-                                                )}
+                                            <div className="flex justify-start">
+                                                <TypeBadge type={inquiry.type} />
                                             </div>
                                         </TableCell>
 
