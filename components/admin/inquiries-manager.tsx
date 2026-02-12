@@ -1,10 +1,16 @@
 'use client';
 
+import { cn } from '@/lib/utils';
+
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { StatusSelector } from './inquiries/status-selector';
+import { InquiryMobileCard } from './inquiries/inquiry-mobile-card';
+
 import { NotesDialog } from './inquiries/notes-dialog';
+import { InquiryAvatar } from './inquiries/inquiry-avatar';
 import {
     Table,
     TableBody,
@@ -15,14 +21,14 @@ import {
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calendar } from '@/components/ui/calendar';
-import { Mail, Phone, Calendar as CalendarIcon, MapPin, Trash2, RefreshCcw, FileDown, Eye, Users, Wallet, Clock, MessageCircle, Copy, Check } from 'lucide-react';
+import { Mail, Phone, Calendar as CalendarIcon, MapPin, Trash2, RefreshCcw, FileDown, Eye, Users, Wallet, Clock, MessageCircle, Copy, Check, Globe, Smartphone, User } from 'lucide-react';
 import { softDeleteInquiry, restoreInquiry, permanentDeleteInquiry, markInquiryAsRead, updateInquiryStatus } from '@/app/actions/inquiries';
 import { logActivity } from '@/app/actions/audit';
 import { useRouter } from 'next/navigation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from "@/hooks/use-toast";
 
-interface Inquiry {
+export interface Inquiry {
     id: string;
     name: string;
     phone: string;
@@ -163,57 +169,7 @@ export function InquiriesManager({ initialInquiries, trashedInquiries, role = 'A
         }
     };
 
-    const StatusSelector = ({ id, status, isTrash }: { id: string, status: string, isTrash: boolean }) => {
-        if (isTrash) {
-            return <Badge variant="outline" className="bg-gray-100 text-gray-800 border-gray-200 capitalize">{status.toLowerCase()}</Badge>;
-        }
 
-        const handleStatusChange = async (newStatus: string) => {
-            // Optimistic update could go here, but router.refresh() is safer for now
-            const result = await updateInquiryStatus(id, newStatus);
-            if (result.success) {
-                toast({
-                    title: "Status Updated",
-                    description: `Status updated to ${newStatus.toLowerCase()}`,
-                    className: "bg-green-50 border-green-200 text-green-800"
-                });
-                router.refresh();
-            } else {
-                toast({
-                    variant: "destructive",
-                    title: "Error",
-                    description: "Failed to update status"
-                });
-            }
-        };
-
-        const variants: any = {
-            'PENDING': 'bg-yellow-100 text-yellow-800 border-yellow-200',
-            'CONTACTED': 'bg-blue-100 text-blue-800 border-blue-200',
-            'INTERESTED': 'bg-purple-100 text-purple-800 border-purple-200',
-            'BOOKED': 'bg-green-100 text-green-800 border-green-200',
-            'CLOSED': 'bg-gray-100 text-gray-800 border-gray-200',
-            'SPAM': 'bg-red-100 text-red-800 border-red-200',
-        };
-
-        return (
-            <div onClick={e => e.stopPropagation()}>
-                <Select defaultValue={status} onValueChange={handleStatusChange}>
-                    <SelectTrigger className={`h-8 w-[130px] text-xs font-medium border-0 focus:ring-0 focus:ring-offset-0 capitalize ${variants[status] || ''}`}>
-                        <SelectValue placeholder="Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="PENDING">Pending</SelectItem>
-                        <SelectItem value="CONTACTED">Contacted</SelectItem>
-                        <SelectItem value="INTERESTED">Interested</SelectItem>
-                        <SelectItem value="BOOKED">Booked</SelectItem>
-                        <SelectItem value="CLOSED">Closed/Lost</SelectItem>
-                        <SelectItem value="SPAM">Spam</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
-        );
-    };
 
     const TypeBadge = ({ type }: { type: string }) => {
         const isPlanMyTrip = type === 'PLAN_MY_TRIP';
@@ -265,198 +221,231 @@ export function InquiriesManager({ initialInquiries, trashedInquiries, role = 'A
     };
 
     const InquiriesTable = ({ data, isTrash = false }: { data: Inquiry[], isTrash?: boolean }) => (
-        <Table>
-            <TableHeader>
-                <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Source</TableHead>
-                    <TableHead>Contact</TableHead>
-                    <TableHead>Details</TableHead>
-                    <TableHead>Notes</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
+        <>
+            {/* Mobile View */}
+            <div className="md:hidden">
                 {data.length === 0 ? (
-                    <TableRow>
-                        <TableCell colSpan={6} className="text-center py-12 text-muted-foreground">
-                            {isTrash ? "Trash is empty" : "No active inquiries found"}
-                        </TableCell>
-                    </TableRow>
+                    <div className="text-center py-12 text-muted-foreground p-4 bg-muted/20 rounded-lg">
+                        {isTrash ? "Trash is empty" : "No active inquiries found"}
+                    </div>
                 ) : (
                     data.map((inquiry) => (
-                        <TableRow
+                        <InquiryMobileCard
                             key={inquiry.id}
-                            className={`
-                                cursor-pointer transition-colors
-                                ${isTrash ? "opacity-75 bg-muted/30" : "hover:bg-muted/50"}
-                                ${!isTrash && !inquiry.isRead ? "bg-orange-50/10 dark:bg-orange-950/20" : "opacity-90"}
-                            `}
-                            onClick={() => !isTrash && handleMarkAsRead(inquiry.id, inquiry.isRead)}
-                        >
-                            <TableCell className="whitespace-nowrap w-[120px]">
-                                <div className={`font-medium ${!isTrash && !inquiry.isRead ? "text-foreground font-bold" : "text-muted-foreground"}`}>
-                                    {new Date(inquiry.createdAt).toLocaleDateString('en-GB')}
-                                </div>
-                                <div className={`text-xs ${!isTrash && !inquiry.isRead ? "text-foreground/80 font-semibold" : "text-muted-foreground"}`} suppressHydrationWarning>
-                                    {new Date(inquiry.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                </div>
-                            </TableCell>
-                            <TableCell className="w-[140px]">
-                                <TypeBadge type={inquiry.type} />
-                                {!isTrash && !inquiry.isRead && (
-                                    <span className="ml-2 inline-block w-2 h-2 bg-blue-500 rounded-full animate-pulse" title="New Inquiry"></span>
-                                )}
-                            </TableCell>
-                            <TableCell className="min-w-[200px]">
-                                <div className={`font-semibold ${!isTrash && !inquiry.isRead ? "text-foreground" : "text-muted-foreground"}`}>
-                                    {inquiry.name}
-                                </div>
-                                <div className="flex flex-col gap-1 mt-1">
-                                    <div className="flex items-center gap-2">
-                                        <a href={`tel:${inquiry.phone}`} onClick={e => e.stopPropagation()} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
-                                            <Phone className="w-3 h-3" /> {inquiry.phone}
-                                        </a>
-                                        <a
-                                            href={`https://wa.me/${inquiry.phone.replace(/[^0-9]/g, '')}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            onClick={e => {
-                                                e.stopPropagation();
-                                                logActivity('CLICKED_WHATSAPP', 'Inquiry', inquiry.id, `Clicked WhatsApp for ${inquiry.name}`);
-                                            }}
-                                            className="ml-auto inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-green-50 text-[10px] font-medium text-green-700 hover:bg-green-100 border border-green-200 transition-colors"
-                                            title="Chat on WhatsApp"
-                                        >
-                                            <MessageCircle className="w-3 h-3" /> Chat
-                                        </a>
-                                    </div>
-                                    {inquiry.email && (
-                                        <a href={`mailto:${inquiry.email}`} onClick={e => {
-                                            e.stopPropagation();
-                                            logActivity('CLICKED_EMAIL', 'Inquiry', inquiry.id, `Clicked Email for ${inquiry.name}`);
-                                        }} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
-                                            <Mail className="w-3 h-3" /> {inquiry.email}
-                                        </a>
-                                    )}
-                                </div>
-                            </TableCell>
-                            <TableCell className="max-w-[300px]">
-                                <div className="space-y-2">
-                                    <div className="flex flex-wrap gap-2">
-                                        {inquiry.startDate && (
-                                            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 h-6 font-normal">
-                                                <CalendarIcon className="w-3 h-3 mr-1 opacity-70" />
-                                                {new Date(inquiry.startDate).toLocaleDateString('en-GB')}
-                                            </Badge>
-                                        )}
-                                        {!!inquiry.travelers && (
-                                            <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 h-6 font-normal">
-                                                <Users className="w-3 h-3 mr-1 opacity-70" />
-                                                {inquiry.travelers} Guests
-                                            </Badge>
-                                        )}
-                                        {!!inquiry.budget && (
-                                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 h-6 font-normal">
-                                                <Wallet className="w-3 h-3 mr-1 opacity-70" />
-                                                {inquiry.budget}
-                                            </Badge>
-                                        )}
-                                    </div>
-
-                                    {inquiry.message && (
-                                        <div className="text-xs text-muted-foreground">
-                                            {inquiry.type === 'AI_WIZARD_LEAD' || inquiry.type === 'PLAN_MY_TRIP' ? (
-                                                <div className="flex flex-wrap gap-1.5 mt-1">
-                                                    {inquiry.message.split(', ').map((part, i) => {
-                                                        // AI Wizard uses newlines, Plan My Trip uses comma-space
-                                                        // Let's handle both broadly if needed, but here we target the comma-sep
-
-                                                        // Fallback for AI Wizard if it falls into this check (though strict line splitting is above? No, let's merge logic or just add a separate block)
-                                                        // Actually, let's keep it simple. Plan My Trip msg: "Duration: X days, Type: Y"
-
-                                                        if (part.includes('Duration')) return <Badge key={i} variant="secondary" className="px-1.5 h-5 text-[10px] bg-blue-50 text-blue-700 border-blue-100">{part.trim()}</Badge>;
-                                                        if (part.includes('Type')) return <Badge key={i} variant="secondary" className="px-1.5 h-5 text-[10px] bg-indigo-50 text-indigo-700 border-indigo-100">{part.replace('Type:', 'Style:').trim()}</Badge>;
-                                                        if (part.includes('Season')) return <Badge key={i} variant="secondary" className="px-1.5 h-5 text-[10px] bg-amber-50 text-amber-700 border-amber-100">{part.trim()}</Badge>;
-
-                                                        // AI Wizard fallback if mixing
-                                                        return <span key={i} className="text-[10px] text-gray-500">{part}</span>;
-                                                    })}
-                                                </div>
-                                            ) : (
-                                                <div className="bg-muted/30 p-2 rounded text-[11px] leading-relaxed border border-border/50 whitespace-pre-wrap">
-                                                    {inquiry.message.replace('Booking Inquiry for Package:', '').trim()}
-                                                </div>
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
-                            </TableCell>
-                            <TableCell className="w-[80px]">
-                                {!isTrash && (
-                                    <NotesDialog
-                                        inquiryId={inquiry.id}
-                                        existingNotes={inquiry.notes}
-                                        customerName={inquiry.name}
-                                        userEmail={userEmail}
-                                    />
-                                )}
-                                {inquiry.notes && !isTrash && (
-                                    <div className="text-[10px] text-gray-500 mt-1 truncate max-w-[80px]">
-                                        {inquiry.notes.split('\n')[0]}
-                                    </div>
-                                )}
-                            </TableCell>
-                            <TableCell className="w-[140px]" onClick={e => e.stopPropagation()}>
-                                <StatusSelector id={inquiry.id} status={inquiry.status} isTrash={isTrash} />
-                            </TableCell>
-                            <TableCell className="text-right w-[100px]">
-                                <div className="flex justify-end gap-2">
-                                    {isTrash ? (
-                                        <>
-                                            <Button
-                                                variant="outline"
-                                                size="icon"
-                                                onClick={(e) => handleRestore(inquiry.id, e)}
-                                                title="Restore"
-                                                className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
-                                            >
-                                                <RefreshCcw className="w-4 h-4" />
-                                            </Button>
-                                            <Button
-                                                variant="outline"
-                                                size="icon"
-                                                onClick={(e) => handlePermanentDelete(inquiry.id, e)}
-                                                title="Delete Permanently"
-                                                className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </Button>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <CopyButton inquiry={inquiry} />
-                                            {role !== 'SALES' && (
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    onClick={(e) => handleSoftDelete(inquiry.id, e)}
-                                                    title="Move to Trash"
-                                                    className="h-8 w-8 text-gray-400 hover:text-red-600 hover:bg-red-50"
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </Button>
-                                            )}
-                                        </>
-                                    )}
-                                </div>
-                            </TableCell>
-                        </TableRow>
+                            inquiry={inquiry}
+                            isTrash={isTrash}
+                            onMarkAsRead={handleMarkAsRead}
+                            onSoftDelete={handleSoftDelete}
+                            onRestore={handleRestore}
+                            onPermanentDelete={handlePermanentDelete}
+                            userEmail={userEmail}
+                            role={role}
+                        />
                     ))
                 )}
-            </TableBody>
-        </Table >
+            </div>
+
+            {/* Desktop View */}
+            <div className="hidden md:block">
+                <Table>
+                    <TableHeader>
+                        <TableRow className="hover:bg-transparent border-b-2 border-border/60">
+                            <TableHead className="w-[80px]">Source</TableHead>
+                            <TableHead className="w-[300px]">Contact</TableHead>
+                            <TableHead className="w-[120px]">Date</TableHead>
+                            <TableHead>Details</TableHead>
+                            <TableHead className="w-[80px]">Notes</TableHead>
+                            <TableHead className="w-[140px]">Status</TableHead>
+                            <TableHead className="text-right w-[100px]">Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {data.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">
+                                    {isTrash ? "Trash is empty" : "No active inquiries found"}
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            data.map((inquiry) => {
+                                const isUnread = !isTrash && !inquiry.isRead;
+                                return (
+                                    <TableRow
+                                        key={inquiry.id}
+                                        className={`
+                                            cursor-pointer transition-all group
+                                            ${isTrash ? "opacity-75 bg-muted/30" : "hover:bg-muted/30"}
+                                            ${isUnread ? "bg-orange-50/10 dark:bg-orange-950/10" : ""}
+                                        `}
+                                        onClick={() => !isTrash && handleMarkAsRead(inquiry.id, inquiry.isRead)}
+                                    >
+                                        <TableCell>
+                                            <div className="flex justify-center" title={inquiry.type}>
+                                                {inquiry.type === 'GENERAL' ? (
+                                                    <div className="bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300 p-2 rounded-full">
+                                                        <Globe className="w-4 h-4" />
+                                                    </div>
+                                                ) : inquiry.type === 'PLAN_MY_TRIP' ? (
+                                                    <div className="bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-300 p-2 rounded-full">
+                                                        <Globe className="w-4 h-4" />
+                                                    </div>
+                                                ) : (
+                                                    <div className="bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-300 p-2 rounded-full">
+                                                        <Smartphone className="w-4 h-4" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <div className="flex items-center gap-3">
+                                                <InquiryAvatar name={inquiry.name} className="h-9 w-9 text-[10px]" />
+                                                <div className="flex flex-col min-w-0">
+                                                    <div className={cn("font-medium truncate flex items-center gap-2", isUnread && "font-bold text-foreground")}>
+                                                        {inquiry.name}
+                                                        {isUnread && (
+                                                            <span className="h-2 w-2 rounded-full bg-brand-primary animate-pulse" />
+                                                        )}
+                                                    </div>
+                                                    <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
+                                                        <a href={`tel:${inquiry.phone}`} onClick={e => e.stopPropagation()} className="hover:text-primary flex items-center gap-1">
+                                                            <Phone className="w-3 h-3" /> {inquiry.phone}
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <div className="flex flex-col text-xs text-muted-foreground">
+                                                <span className="font-medium text-foreground">{new Date(inquiry.createdAt).toLocaleDateString('en-GB')}</span>
+                                                <span>{new Date(inquiry.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                            </div>
+                                        </TableCell>
+
+                                        <TableCell className="min-w-[350px]">
+                                            <div className="space-y-1.5">
+                                                {(inquiry.startDate || inquiry.travelers || inquiry.budget) && (
+                                                    <div className="flex flex-wrap gap-1.5">
+                                                        {inquiry.startDate && (
+                                                            <Badge variant="secondary" className="h-5 px-1.5 text-[10px] font-normal bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300 rounded hover:bg-blue-100">
+                                                                {new Date(inquiry.startDate).toLocaleDateString('en-GB')}
+                                                            </Badge>
+                                                        )}
+                                                        {!!inquiry.travelers && (
+                                                            <Badge variant="secondary" className="h-5 px-1.5 text-[10px] font-normal bg-orange-50 text-orange-700 dark:bg-orange-900/20 dark:text-orange-300 rounded hover:bg-orange-100">
+                                                                {inquiry.travelers} G
+                                                            </Badge>
+                                                        )}
+                                                        {!!inquiry.budget && (
+                                                            <Badge variant="secondary" className="h-5 px-1.5 text-[10px] font-normal bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-300 rounded hover:bg-green-100">
+                                                                {inquiry.budget}
+                                                            </Badge>
+                                                        )}
+                                                    </div>
+                                                )}
+
+                                                {/* Message Preview - Always visible fully */}
+                                                {inquiry.message && (
+                                                    <div className="text-[11px] text-muted-foreground mt-1.5 leading-relaxed whitespace-pre-wrap">
+                                                        {inquiry.message.replace('Booking Inquiry for Package:', '').trim()}
+                                                    </div>
+                                                )}
+
+                                                {/* Action Buttons - Always Visible */}
+                                                <div className="flex items-center gap-3 mt-2">
+                                                    <a
+                                                        href={`https://wa.me/${inquiry.phone.replace(/[^0-9]/g, '')}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        onClick={e => {
+                                                            e.stopPropagation();
+                                                            logActivity('CLICKED_WHATSAPP', 'Inquiry', inquiry.id, `Clicked WhatsApp for ${inquiry.name}`);
+                                                        }}
+                                                        className="text-[10px] font-medium text-green-600 flex items-center gap-1 hover:underline bg-green-50 px-2 py-1 rounded-full border border-green-100"
+                                                    >
+                                                        <MessageCircle className="w-3 h-3" /> WhatsApp
+                                                    </a>
+                                                    {inquiry.email && (
+                                                        <a href={`mailto:${inquiry.email}`} onClick={e => {
+                                                            e.stopPropagation();
+                                                            logActivity('CLICKED_EMAIL', 'Inquiry', inquiry.id, `Clicked Email for ${inquiry.name}`);
+                                                        }} className="text-[10px] font-medium text-blue-600 flex items-center gap-1 hover:underline bg-blue-50 px-2 py-1 rounded-full border border-blue-100">
+                                                            <Mail className="w-3 h-3" /> Email
+                                                        </a>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </TableCell>
+
+                                        <TableCell>
+                                            {!isTrash && (
+                                                <NotesDialog
+                                                    inquiryId={inquiry.id}
+                                                    existingNotes={inquiry.notes}
+                                                    customerName={inquiry.name}
+                                                    userEmail={userEmail}
+                                                />
+                                            )}
+                                            {inquiry.notes && !isTrash && (
+                                                <div className="text-[10px] text-gray-500 mt-1 truncate max-w-[80px]">
+                                                    {inquiry.notes.split('\n')[0]}
+                                                </div>
+                                            )}
+                                        </TableCell>
+
+                                        <TableCell onClick={e => e.stopPropagation()}>
+                                            <StatusSelector id={inquiry.id} status={inquiry.status} isTrash={isTrash} />
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <div className="flex justify-end gap-1">
+                                                {isTrash ? (
+                                                    <>
+                                                        <Button
+                                                            variant="outline"
+                                                            size="icon"
+                                                            onClick={(e) => handleRestore(inquiry.id, e)}
+                                                            className="h-8 w-8 text-green-600"
+                                                            title="Restore"
+                                                        >
+                                                            <RefreshCcw className="w-3.5 h-3.5" />
+                                                        </Button>
+                                                        <Button
+                                                            variant="outline"
+                                                            size="icon"
+                                                            onClick={(e) => handlePermanentDelete(inquiry.id, e)}
+                                                            className="h-8 w-8 text-red-600"
+                                                            title="Permanently Delete"
+                                                        >
+                                                            <Trash2 className="w-3.5 h-3.5" />
+                                                        </Button>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <CopyButton inquiry={inquiry} />
+                                                        {role !== 'SALES' && (
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                onClick={(e) => handleSoftDelete(inquiry.id, e)}
+                                                                className="h-8 w-8 text-muted-foreground hover:text-red-600 hover:bg-red-50"
+                                                            >
+                                                                <Trash2 className="w-3.5 h-3.5" />
+                                                            </Button>
+                                                        )}
+                                                    </>
+                                                )}
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                );
+                            })
+                        )}
+                    </TableBody>
+                </Table >
+            </div>
+        </>
     );
 
     return (
