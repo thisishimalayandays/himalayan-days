@@ -478,19 +478,19 @@ export function InquiriesManager({ initialInquiries, trashedInquiries, role = 'A
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                     <TabsList className="bg-card border shadow-sm h-auto p-1 flex-wrap justify-start">
                         <TabsTrigger value="all" className="px-4 py-2">
-                            All Active <Badge variant="secondary" className="ml-2 bg-slate-100">{initialInquiries.length}</Badge>
+                            All Active <Badge variant="secondary" className="ml-2 bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">{initialInquiries.length}</Badge>
                         </TabsTrigger>
                         <TabsTrigger value="package" className="px-4 py-2">
-                            Packages <Badge variant="secondary" className="ml-2 bg-blue-50 text-blue-700">{initialInquiries.filter(i => i.type === 'PACKAGE_BOOKING').length}</Badge>
+                            Packages <Badge variant="secondary" className="ml-2 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">{initialInquiries.filter(i => i.type === 'PACKAGE_BOOKING').length}</Badge>
                         </TabsTrigger>
                         <TabsTrigger value="whatsapp" className="px-4 py-2">
-                            WhatsApp <Badge variant="secondary" className="ml-2 bg-green-50 text-green-700">{initialInquiries.filter(i => i.type === 'GENERAL').length}</Badge>
+                            WhatsApp <Badge variant="secondary" className="ml-2 bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300">{initialInquiries.filter(i => i.type === 'GENERAL').length}</Badge>
                         </TabsTrigger>
                         <TabsTrigger value="ai_wizard" className="px-4 py-2">
-                            AI Wizard <Badge variant="secondary" className="ml-2 bg-purple-50 text-purple-700">{initialInquiries.filter(i => i.type === 'AI_WIZARD_LEAD').length}</Badge>
+                            AI Wizard <Badge variant="secondary" className="ml-2 bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">{initialInquiries.filter(i => i.type === 'AI_WIZARD_LEAD').length}</Badge>
                         </TabsTrigger>
                         <TabsTrigger value="custom" className="px-4 py-2">
-                            Plan My Trip <Badge variant="secondary" className="ml-2 bg-orange-50 text-orange-700">{initialInquiries.filter(i => i.type === 'PLAN_MY_TRIP').length}</Badge>
+                            Plan My Trip <Badge variant="secondary" className="ml-2 bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300">{initialInquiries.filter(i => i.type === 'PLAN_MY_TRIP').length}</Badge>
                         </TabsTrigger>
                         <TabsTrigger value="calendar" className="px-4 py-2 gap-2">
                             <CalendarIcon className="w-4 h-4" /> Calendar

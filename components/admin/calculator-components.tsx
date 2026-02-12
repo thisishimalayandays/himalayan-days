@@ -236,13 +236,14 @@ export function HotelCalculator({
                 </div>
             </CardHeader>
             <CardContent className="p-6 space-y-4">
-                <div className="grid grid-cols-12 gap-2 text-xs uppercase tracking-wider font-semibold text-muted-foreground mb-2 px-1 pl-6">
+                <div className="grid grid-cols-12 gap-2 text-xs uppercase tracking-wider font-semibold text-muted-foreground mb-2 px-1 items-center">
+                    <div className="col-span-1"></div> {/* Drag Handle Spacer */}
                     <div className="col-span-2">Type</div>
                     <div className="col-span-2">Location</div>
                     <div className="col-span-3">Property Name</div>
                     <div className="col-span-2">Rate (₹)</div>
-                    <div className="col-span-1">Rms</div>
-                    <div className="col-span-1">Nts</div>
+                    <div className="col-span-1 text-center">Rms</div>
+                    <div className="col-span-1 text-center">Nts</div>
                 </div>
 
                 <DndContext
@@ -321,7 +322,7 @@ export function TransportCalculator({
                 <div className="grid grid-cols-12 gap-3 text-xs uppercase tracking-wider font-semibold text-muted-foreground mb-2 px-1">
                     <div className="col-span-5">Vehicle Type</div>
                     <div className="col-span-3">Rate/Day (₹)</div>
-                    <div className="col-span-3">Days</div>
+                    <div className="col-span-3 text-center">Days</div>
                     <div className="col-span-1"></div>
                 </div>
 
@@ -346,6 +347,7 @@ export function TransportCalculator({
                                 min="0"
                                 value={item.days || ""}
                                 onChange={(e) => updateRow(index, "days", parseInt(e.target.value) || 0)}
+                                className="text-center"
                             />
                         </div>
                         <div className="col-span-1 text-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -414,7 +416,7 @@ export function ActivityCalculator({
                 <div className="grid grid-cols-12 gap-3 text-xs uppercase tracking-wider font-semibold text-muted-foreground mb-2 px-1">
                     <div className="col-span-5">Activity</div>
                     <div className="col-span-3">Rate (₹)</div>
-                    <div className="col-span-3">Quantity</div>
+                    <div className="col-span-3 text-center">Quantity</div>
                     <div className="col-span-1"></div>
                 </div>
 
@@ -439,6 +441,7 @@ export function ActivityCalculator({
                                 min="0"
                                 value={item.quantity || ""}
                                 onChange={(e) => updateRow(index, "quantity", parseInt(e.target.value) || 0)}
+                                className="text-center"
                             />
                         </div>
                         <div className="col-span-1 text-center opacity-0 group-hover:opacity-100 transition-opacity">

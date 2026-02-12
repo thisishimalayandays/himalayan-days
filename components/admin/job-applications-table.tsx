@@ -97,7 +97,7 @@ export function JobApplicationsTable({ applications }: JobApplicationsTableProps
                                             e.stopPropagation(); // Don't trigger row click if just downloading
                                             handleMarkAsRead(app.id, app.isRead); // But normally downloading implies reading? let's keep it safe.
                                         }}
-                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-brand-primary rounded-lg text-xs font-medium hover:bg-blue-100 transition-colors"
+                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 rounded-lg text-xs font-medium hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
                                     >
                                         <Download className="w-3.5 h-3.5" />
                                         Download
@@ -120,7 +120,7 @@ export function JobApplicationsTable({ applications }: JobApplicationsTableProps
                                             // router.refresh(); // Action handles revalidation
                                         }
                                     }}
-                                    className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                    className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                                     title="Delete Application"
                                 >
                                     <Trash2 className="w-4 h-4" />

@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 // Imports
 import { ITINERARY_TEMPLATES, ItineraryTemplate, BLOCKS } from './data/templates';
+import { PACKAGE_CATEGORIES } from './data/package-titles';
 import { ItineraryHTMLPreview } from '@/components/pdf/itinerary-preview';
 import { saveItinerary, getItineraries, deleteItinerary } from "@/app/actions/itineraries";
 
@@ -919,14 +920,36 @@ export default function ItineraryMakerPage() {
                             />
                         </div>
                     </div>
-                    <Label className="flex items-center gap-1">
-                        Package Title (for PDF) <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                        value={clientInfo.pkgTitle}
-                        onChange={e => setClientInfo({ ...clientInfo, pkgTitle: e.target.value })}
-                        placeholder="e.g. Premium Kashmir Honeymoon"
-                    />
+                    <div className="space-y-2">
+                        <Label className="flex items-center gap-1">
+                            Package Title (for PDF) <span className="text-red-500">*</span>
+                        </Label>
+                        <select
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-orange-500 text-foreground mb-2"
+                            onChange={(e) => {
+                                if (e.target.value) {
+                                    // Remove the "3★ " prefix if present before setting state
+                                    const cleanTitle = e.target.value.replace(/^\d+★\s*/, '');
+                                    setClientInfo(prev => ({ ...prev, pkgTitle: cleanTitle }));
+                                }
+                            }}
+                            defaultValue=""
+                        >
+                            <option value="" disabled>-- Select a Preset Title --</option>
+                            {PACKAGE_CATEGORIES.map((cat, i) => (
+                                <optgroup key={i} label={cat.category}>
+                                    {cat.titles.map((title, j) => (
+                                        <option key={j} value={title}>{title}</option>
+                                    ))}
+                                </optgroup>
+                            ))}
+                        </select>
+                        <Input
+                            value={clientInfo.pkgTitle}
+                            onChange={e => setClientInfo({ ...clientInfo, pkgTitle: e.target.value })}
+                            placeholder="e.g. Premium Kashmir Honeymoon"
+                        />
+                    </div>
                     <div className="space-y-2">
                         <Label>Total Cost (₹) <span className="text-red-500">*</span></Label>
                         <Input
