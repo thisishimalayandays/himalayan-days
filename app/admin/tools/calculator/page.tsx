@@ -312,7 +312,9 @@ export default function CalculatorPage() {
             activities,
             netTotal,
             commission,
-            grandTotal
+            grandTotal,
+            totalNights: hotels.reduce((acc, h) => acc + (h.nights || 0), 0),
+            totalDays: hotels.reduce((acc, h) => acc + (h.nights || 0), 0) + 1
         };
         localStorage.setItem('calculatorDraft', JSON.stringify(calculatorData));
         toast.success("Redirecting to Itinerary Maker...");

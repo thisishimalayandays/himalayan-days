@@ -192,17 +192,44 @@ export default function ItineraryMakerPage() {
                     // Use MAX rooms needed at any point, not sum of all hotels
                     const totalRooms = Math.max(...draft.hotels.map((h: any) => h.rooms || 0), 0);
                     const vehicle = draft.transport[0]?.type || '';
-                    // Default assumption for pax if not in draft
-                    const adults = '2';
-                    const kids = '0';
+
+                    // Calculate total days/nights from hotels
+                    const totalNights = draft.hotels.reduce((sum: number, h: any) => sum + (h.nights || 0), 0);
+                    const totalDays = totalNights > 0 ? totalNights + 1 : 0; // Days = Nights + 1
+
+                    const durationStr = `${totalDays} Days / ${totalNights} Nights`;
+                    const templateId = `${totalDays}d-blank`; // e.g., "5d-blank"
+
+                    // Find matching template (or fallback to generic blank if specific day count missing)
+                    const matchedTemplate = ITINERARY_TEMPLATES.find(t => t.id === templateId);
+
+                    if (matchedTemplate) {
+                        // Simulate "Import Template" logic
+                        let mappedDays: Day[] = matchedTemplate.days.map((d, idx) => ({
+                            dayNumber: idx + 1,
+                            title: d.title,
+                            description: d.description,
+                            meals: d.meals || '',
+                            stay: '',
+                            image: ''
+                        }));
+
+                        // Apply Sticky Context (Hotels)
+                        mappedDays = applyStickyContext(mappedDays, draft);
+
+                        setDays(mappedDays);
+                        setSelectedDuration(durationStr); // UI Update
+                        setSelectedTemplateId(templateId); // UI Update
+                        toast.success(`Auto-loaded ${durationStr} Template!`);
+                    }
 
                     setClientInfo(prev => ({
                         ...prev,
                         totalCost: draft.grandTotal ? draft.grandTotal.toLocaleString('en-IN') : '',
                         rooms: totalRooms > 0 ? `${totalRooms} Rooms` : '',
                         vehicleType: vehicle,
-                        adults: adults,
-                        kids: kids,
+                        duration: durationStr,
+
                         pkgTitle: `Custom Package (${draft.grandTotal ? '₹' + draft.grandTotal.toLocaleString('en-IN') : ''})`,
                     }));
 
@@ -212,7 +239,7 @@ export default function ItineraryMakerPage() {
                 console.error("Failed to parse sticky context", e);
             }
         }
-    }, []);
+    }, [ITINERARY_TEMPLATES]); // Add dep on templates
 
     // Helper: Apply Sticky Context to Days
     const applyStickyContext = (daysToProcess: Day[], context: any) => {
