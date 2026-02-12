@@ -185,12 +185,28 @@ export default function ItineraryMakerPage() {
                 const draft = JSON.parse(storedDraft);
                 setStickyContext(draft);
 
-                // Optional: Auto-populate if query param exists (indicating redirect)
-                // const urlParams = new URLSearchParams(window.location.search);
-                // if (urlParams.get('import') === 'true') {
-                //      // Could auto-trigger something here, but sticking to "Template Import" override for now
-                //      toast.info("Calculator data linked. It will be applied to any template you select.");
-                // }
+                // Auto-populate if query param exists (indicating redirect)
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('import') === 'true') {
+                    // Auto-fill Client Info from Calculator Draft
+                    const totalRooms = draft.hotels.reduce((acc: number, h: any) => acc + h.rooms, 0);
+                    const vehicle = draft.transport[0]?.type || '';
+                    // Default assumption for pax if not in draft
+                    const adults = '2';
+                    const kids = '0';
+
+                    setClientInfo(prev => ({
+                        ...prev,
+                        totalCost: draft.grandTotal ? draft.grandTotal.toLocaleString('en-IN') : '',
+                        rooms: totalRooms > 0 ? `${totalRooms} Rooms` : '',
+                        vehicleType: vehicle,
+                        adults: adults,
+                        kids: kids,
+                        pkgTitle: `Custom Package (${draft.grandTotal ? '₹' + draft.grandTotal.toLocaleString('en-IN') : ''})`,
+                    }));
+
+                    toast.success("Calculator data imported successfully!");
+                }
             } catch (e) {
                 console.error("Failed to parse sticky context", e);
             }
