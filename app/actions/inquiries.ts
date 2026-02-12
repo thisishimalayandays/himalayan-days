@@ -229,7 +229,9 @@ export async function updateFollowUpDate(id: string, date: Date | null) {
 export async function softDeleteInquiry(id: string) {
     try {
         const session = await auth();
-        if (session?.user?.role !== 'ADMIN') {
+        const role = session?.user?.role || (session?.user?.email === 'sales@himalayandays.in' ? 'SALES' : 'ADMIN');
+
+        if (role !== 'ADMIN') {
             return { success: false, error: 'Unauthorized: Only Admins can delete inquiries.' };
         }
 
@@ -248,7 +250,9 @@ export async function softDeleteInquiry(id: string) {
 export async function restoreInquiry(id: string) {
     try {
         const session = await auth();
-        if (session?.user?.role !== 'ADMIN') {
+        const role = session?.user?.role || (session?.user?.email === 'sales@himalayandays.in' ? 'SALES' : 'ADMIN');
+
+        if (role !== 'ADMIN') {
             return { success: false, error: 'Unauthorized: Only Admins can restore inquiries.' };
         }
 
@@ -267,7 +271,9 @@ export async function restoreInquiry(id: string) {
 export async function permanentDeleteInquiry(id: string) {
     try {
         const session = await auth();
-        if (session?.user?.role !== 'ADMIN') {
+        const role = session?.user?.role || (session?.user?.email === 'sales@himalayandays.in' ? 'SALES' : 'ADMIN');
+
+        if (role !== 'ADMIN') {
             return { success: false, error: 'Unauthorized: Only Admins can permanently delete inquiries.' };
         }
 

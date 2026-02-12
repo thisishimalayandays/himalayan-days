@@ -58,21 +58,45 @@ export function InquiriesManager({ initialInquiries, trashedInquiries, role = 'A
     const handleSoftDelete = async (id: string, e: React.MouseEvent) => {
         e.stopPropagation();
         if (!confirm('Are you sure you want to move this inquiry to trash?')) return;
-        await softDeleteInquiry(id);
-        router.refresh();
+        const result = await softDeleteInquiry(id);
+        if (result.success) {
+            router.refresh();
+        } else {
+            toast({
+                variant: "destructive",
+                title: "Deletion Failed",
+                description: result.error || "Could not delete inquiry"
+            });
+        }
     };
 
     const handleRestore = async (id: string, e: React.MouseEvent) => {
         e.stopPropagation();
-        await restoreInquiry(id);
-        router.refresh();
+        const result = await restoreInquiry(id);
+        if (result.success) {
+            router.refresh();
+        } else {
+            toast({
+                variant: "destructive",
+                title: "Restore Failed",
+                description: result.error || "Could not restore inquiry"
+            });
+        }
     };
 
     const handlePermanentDelete = async (id: string, e: React.MouseEvent) => {
         e.stopPropagation();
         if (!confirm('WARNING: This will permanently delete this inquiry. This action cannot be undone. Are you sure?')) return;
-        await permanentDeleteInquiry(id);
-        router.refresh();
+        const result = await permanentDeleteInquiry(id);
+        if (result.success) {
+            router.refresh();
+        } else {
+            toast({
+                variant: "destructive",
+                title: "Deletion Failed",
+                description: result.error || "Could not delete inquiry permanently"
+            });
+        }
     };
 
     const handleMarkAsRead = async (id: string, currentStatus: boolean) => {
