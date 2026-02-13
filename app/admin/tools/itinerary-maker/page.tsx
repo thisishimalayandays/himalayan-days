@@ -15,6 +15,7 @@ import { ITINERARY_TEMPLATES, ItineraryTemplate, BLOCKS } from './data/templates
 import { PACKAGE_CATEGORIES } from './data/package-titles';
 import { ItineraryHTMLPreview } from '@/components/pdf/itinerary-preview';
 import { saveItinerary, getItineraries, deleteItinerary } from "@/app/actions/itineraries";
+import { WhatsAppItineraryShare } from '@/components/admin/tools/whatsapp-itinerary-share';
 
 // Dynamically import PDFExportButton to isolate @react-pdf/renderer
 const PDFExportButton = dynamic(
@@ -168,6 +169,8 @@ export default function ItineraryMakerPage() {
     // Live Preview Data
     const previewData: ItineraryData = {
         ...clientInfo,
+        // Ensure title is stripped of star rating for preview/PDF
+        pkgTitle: clientInfo.pkgTitle.replace(/(\s*\(\d+★\))|(\d+★\s*)/, '').trim(),
         clientName: `${clientInfo.clientTitle} ${clientInfo.clientName}`,
         days,
         endDate // Add calculated end date
@@ -928,8 +931,8 @@ export default function ItineraryMakerPage() {
                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-orange-500 text-foreground mb-2"
                             onChange={(e) => {
                                 if (e.target.value) {
-                                    // Remove the "3★ " prefix if present before setting state
-                                    const cleanTitle = e.target.value.replace(/^\d+★\s*/, '');
+                                    // Remove the "3★ " prefix OR "(5★)" suffix
+                                    const cleanTitle = e.target.value.replace(/(\s*\(\d+★\))|(\d+★\s*)/, '').trim();
                                     setClientInfo(prev => ({ ...prev, pkgTitle: cleanTitle }));
                                 }
                             }}
@@ -1038,7 +1041,10 @@ export default function ItineraryMakerPage() {
                     </div>
 
                     {/* Explicit Download Button - Lazy Generation ensures performance */}
-                    <PDFExportButton data={previewData} onGenerate={validateForm} />
+                    <div className="flex gap-2">
+                        <WhatsAppItineraryShare data={previewData} />
+                        <PDFExportButton data={previewData} onGenerate={validateForm} />
+                    </div>
                 </div>
                 <div className="flex-1 w-full h-full bg-gray-200 p-2 md:p-8 overflow-hidden relative">
                     {/* HTML Preview Wrapper */}

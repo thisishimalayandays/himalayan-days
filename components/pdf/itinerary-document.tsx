@@ -311,7 +311,7 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
 
     return (
         <Document>
-            <Page size="A4" style={styles.page}>
+            <Page size="A4" style={{ ...styles.page, paddingBottom: 50 }}>
 
                 {/* Header */}
                 <View style={styles.header}>
@@ -469,7 +469,6 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
                     ))}
                 </View>
 
-                {/* Cost Section (Keep on same page if possible, or wrap) */}
                 {/* Cost Section */}
                 <View style={styles.priceSection} wrap={false}>
                     <View style={styles.priceLeft}>
@@ -487,7 +486,7 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
                             <Text style={{ fontSize: 8, color: COLORS.secondary, marginBottom: 8 }}>Use any UPI app to make the secure payment.</Text>
                             <Text style={{ fontSize: 10, fontWeight: 'bold', color: COLORS.accent }}>{data.upiId}</Text>
                         </View>
-                        {/* Dynamic QR Code: Using quickchart.io or similar reliable public API for simple text QR */}
+                        {/* Dynamic QR Code */}
                         <Image
                             src={`https://quickchart.io/qr?text=${encodeURIComponent(`upi://pay?pa=${data.upiId}&pn=Himalayan Days`)}&size=150`}
                             style={{ width: 80, height: 80 }}
@@ -495,10 +494,9 @@ export function ItineraryDocument({ data }: { data: ItineraryData }) {
                     </View>
                 )}
 
-                {/* Footer */}
+                {/* Footer with properly nested pagination */}
                 <View style={styles.footer} fixed>
                     <Text style={styles.footerText}>© 2026 Himalayan Days. All rights reserved.</Text>
-                    <Text style={styles.footerText}>Page <Text render={({ pageNumber, totalPages }) => `${pageNumber} of ${totalPages}`} /></Text>
                 </View>
 
             </Page>
