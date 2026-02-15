@@ -22,9 +22,17 @@ interface TransportFormProps {
     onSuccess?: () => void;
 }
 
+interface TransportFormData {
+    name: string;
+    type: string;
+    rate: string | number;
+    capacity: string | number;
+    image: string;
+}
+
 export function TransportForm({ initialData, onSuccess }: TransportFormProps) {
     const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState<any>({
+    const [formData, setFormData] = useState<TransportFormData>({
         name: initialData?.name || "",
         type: initialData?.type || "SUV",
         rate: initialData?.rate || "",
@@ -32,7 +40,7 @@ export function TransportForm({ initialData, onSuccess }: TransportFormProps) {
         image: initialData?.image || "",
     });
 
-    const handleChange = (field: string, value: any) => {
+    const handleChange = (field: keyof TransportFormData, value: any) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
     };
 
