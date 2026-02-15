@@ -21,7 +21,7 @@ async function main() {
     }
 
     console.log(`Hotel: ${hotel.name}`);
-    console.log(`Validity: ${hotel.rateValidUntil?.toISOString()}`);
+    // console.log(`Validity: ${hotel.rateValidUntil?.toISOString()}`);
 
     for (const room of hotel.rooms) {
         console.log(`\nRoom: ${room.name}`);

@@ -14,7 +14,7 @@ async function main() {
             address: 'Shivpora, Srinagar',
             type: 'Hotel',
             stars: 3, // Assuming 3 star based on "Residency" title, user didn't specify
-            rateValidUntil: new Date('2026-02-28'), // "Booking dates Valid till: 28 Feb 2026"
+            // rateValidUntil: new Date('2026-02-28'), // "Booking dates Valid till: 28 Feb 2026"
             rooms: {
                 create: [
                     {
@@ -78,7 +78,7 @@ async function main() {
             location: 'Gulmarg',
             type: 'Hotel',
             stars: 3, // Assuming 3 star
-            rateValidUntil: new Date('2026-02-28'),
+            // rateValidUntil: new Date('2026-02-28'),
             rooms: {
                 create: [
                     {
