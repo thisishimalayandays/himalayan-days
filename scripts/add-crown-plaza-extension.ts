@@ -17,11 +17,12 @@ async function main() {
     }
 
     // Update Hotel Validity to cover the new range
-    await prisma.hotel.update({
-        where: { id: hotel.id },
-        data: { rateValidUntil: new Date('2026-06-30') }
-    });
-    console.log('Updated Hotel Rate Validity to 30th June 2026.');
+    // Field 'rateValidUntil' does not exist in schema, skipping update.
+    // await prisma.hotel.update({
+    //    where: { id: hotel.id },
+    //    data: { rateValidUntil: new Date('2026-06-30') }
+    // });
+    console.log('Skipped Hotel Rate Validity update (field missing).');
 
     const validFrom = new Date('2026-03-20');
     const validTo = new Date('2026-06-30');
