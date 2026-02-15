@@ -177,9 +177,7 @@ export async function createBooking(data: {
         logActivity(
             'CREATED_BOOKING',
             'Booking',
-            null, // We don't have booking ID easily accessible since it was in tx... wait, we can't get it out easily without refactoring return.
-            // Actually, we can return it from tx if we change return type of tx.
-            // For now, let's just log details.
+            '-',
             `Created booking: ${data.title} for ${data.newCustomer?.name || 'Customer'}`
         );
 
@@ -205,6 +203,8 @@ export async function updateBooking(id: string, data: any) {
             } // Simplified for now
         });
         revalidatePath('/admin/bookings');
+        revalidatePath('/admin/bookings');
+        await logActivity('UPDATED_BOOKING', 'Booking', id, `Updated booking details`);
         return { success: true, booking };
     } catch (error) {
         console.error('Update Booking Error:', error);
@@ -266,7 +266,8 @@ export async function getBookingById(id: string) {
 export async function deleteBooking(id: string) {
     try {
         const session = await auth();
-        if (session?.user?.role !== 'ADMIN') {
+        // Allow SALES to delete (per user request)
+        if (session?.user?.role !== 'ADMIN' && session?.user?.role !== 'SALES') {
             return { success: false, error: 'Unauthorized: Only Admins can delete bookings.' };
         }
 
@@ -278,6 +279,7 @@ export async function deleteBooking(id: string) {
             }
         });
         revalidatePath('/admin/bookings');
+        await logActivity('DELETE_BOOKING', 'Booking', id, 'Soft deleted booking');
         return { success: true };
     } catch (error) {
         console.error("Delete Error", error);
@@ -295,6 +297,7 @@ export async function restoreBooking(id: string) {
             }
         });
         revalidatePath('/admin/bookings');
+        await logActivity('RESTORE_BOOKING', 'Booking', id, 'Restored booking');
         return { success: true };
     } catch (error) {
         return { success: false, error: 'Failed to restore booking' };

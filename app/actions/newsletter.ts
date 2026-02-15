@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
+import { logActivity } from './audit';
 
 const SubscriberSchema = z.object({
     email: z.string().email("Invalid email address"),
@@ -63,6 +64,7 @@ export async function unsubscribe(id: string) {
         await prisma.subscriber.delete({
             where: { id }
         });
+        await logActivity("DELETE_SUBSCRIBER", "Subscriber", id, "Unsubscribed user");
         revalidatePath('/admin/subscribers');
         return { success: true };
     } catch (error) {

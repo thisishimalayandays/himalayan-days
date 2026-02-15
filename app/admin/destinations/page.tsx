@@ -2,8 +2,17 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { deleteDestination } from "@/app/actions/destinations";
 import { Pencil, Trash, Plus } from "lucide-react";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 export default async function DestinationsPage() {
+    const session = await auth();
+    const role = session?.user?.role || (session?.user?.email === 'sales@himalayandays.in' ? 'SALES' : 'ADMIN');
+
+    if (role === 'SALES') {
+        redirect("/admin");
+    }
+
     const destinations = await prisma.destination.findMany({
         orderBy: { name: 'asc' }
     });

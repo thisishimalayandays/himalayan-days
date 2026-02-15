@@ -3,6 +3,7 @@
 import { saveApplication, updateJobStatus, deleteApplication } from "@/lib/careers-db"
 import { revalidatePath } from "next/cache"
 import { prisma } from "@/lib/prisma"
+import { logActivity } from "./audit"
 
 export type ApplicationState = {
     success: boolean
@@ -87,11 +88,13 @@ export async function updateJobStatusAction(slug: string, status: 'OPEN' | 'CLOS
     await updateJobStatus(slug, status)
     revalidatePath('/careers/sales-executive')
     revalidatePath('/admin/careers')
+    await logActivity("UPDATE_JOB_STATUS", "Job", slug, `Updated job status to ${status}`)
     revalidatePath('/careers') // Also revalidate index page
 }
 
 export async function deleteApplicationAction(id: string) {
     await deleteApplication(id)
+    await logActivity("DELETE_APPLICATION", "Application", id, "Deleted job application")
     revalidatePath('/admin/careers')
 }
 

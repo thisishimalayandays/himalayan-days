@@ -182,6 +182,7 @@ model Itinerary {
   updatedAt   DateTime @updatedAt
 }
 
+
 model AuditLog {
   id           String   @id @default(cuid())
   action       String
@@ -193,4 +194,75 @@ model AuditLog {
   userName     String?
   userRole     String?
   createdAt    DateTime @default(now())
+}
+
+model Hotel {
+  id        String   @id @default(cuid())
+  name      String
+  location  String
+  type      String   // Hotel, Houseboat
+  stars     Int      // 3, 4, 5
+  image     String?
+  address   String?
+  contact   String? // Existing generic contact field
+  email     String?
+  phone     String?
+  rooms     RoomType[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+}
+
+
+model RoomType {
+  id          String   @id @default(cuid())
+  hotelId     String
+  hotel       Hotel    @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  name        String   // Deluxe, Suite
+  baseRate    Float    @default(0) // Standard EP rate or base
+  priceEP     Float    @default(0) // European Plan (Room Only)
+  priceCP     Float    @default(0) // Continental Plan (Bed & Breakfast)
+  priceMAP    Float    @default(0) // Modified American Plan (Breakfast + Lunch/Dinner)
+  priceAP     Float    @default(0) // American Plan (All Meals)
+  extraBed    Float    @default(0) // Cost for extra bedding (fallback)
+  extraBedEP  Float    @default(0)
+  extraBedCP  Float    @default(0)
+  extraBedMAP Float    @default(0)
+  extraBedAP  Float    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  rates       RoomRate[]
+}
+
+model RoomRate {
+  id          String   @id @default(cuid())
+  roomTypeId  String
+  roomType    RoomType @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
+  validFrom   DateTime
+  validTo     DateTime
+  priceEP     Float    @default(0)
+  priceCP     Float    @default(0)
+  priceMAP    Float    @default(0)
+  priceAP     Float    @default(0)
+  extraBed    Float    @default(0)
+  extraBedEP  Float    @default(0)
+  extraBedCP  Float    @default(0)
+  extraBedMAP Float    @default(0)
+  extraBedAP  Float    @default(0)
+  bookingValidUntil DateTime? // Book By Date
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+
+}
+
+model Transport {
+  id        String   @id @default(cuid())
+  name      String   // Innova, Tempo Traveller
+  type      String   // SUV, Sedan, Mini Bus
+  rate      Float    @default(0) // Rate per day
+  capacity  Int      @default(4) // Number of seats
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

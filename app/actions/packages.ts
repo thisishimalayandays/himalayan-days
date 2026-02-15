@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { logActivity } from "./audit";
 
 const PackageSchema = z.object({
     title: z.string().min(1),
@@ -60,6 +61,7 @@ export async function createPackage(formData: FormData) {
         },
     });
 
+    await logActivity("CREATE_PACKAGE", "Package", "-", `Created package ${validatedData.title}`);
     revalidatePath("/admin/packages");
     revalidatePath("/packages");
     redirect("/admin/packages");
@@ -103,6 +105,7 @@ export async function updatePackage(id: string, formData: FormData) {
         },
     });
 
+    await logActivity("UPDATE_PACKAGE", "Package", id, `Updated package ${validatedData.title}`);
     revalidatePath("/admin/packages");
     revalidatePath("/packages");
     redirect("/admin/packages");
@@ -112,6 +115,7 @@ export async function deletePackage(id: string) {
     await prisma.package.delete({
         where: { id },
     });
+    await logActivity("DELETE_PACKAGE", "Package", id, "Deleted package");
     revalidatePath("/admin/packages");
     revalidatePath("/packages");
 }

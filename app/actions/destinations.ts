@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { logActivity } from "./audit";
 
 const DestinationSchema = z.object({
     name: z.string().min(1),
@@ -40,6 +41,7 @@ export async function createDestination(formData: FormData) {
         },
     });
 
+    await logActivity("CREATE_DESTINATION", "Destination", "-", `Created destination ${validatedData.name}`);
     revalidatePath("/admin/destinations");
     revalidatePath("/");
     redirect("/admin/destinations");
@@ -71,6 +73,7 @@ export async function updateDestination(id: string, formData: FormData) {
         },
     });
 
+    await logActivity("UPDATE_DESTINATION", "Destination", id, `Updated destination ${validatedData.name}`);
     revalidatePath("/admin/destinations");
     revalidatePath("/");
     redirect("/admin/destinations");
@@ -80,6 +83,7 @@ export async function deleteDestination(id: string) {
     await prisma.destination.delete({
         where: { id },
     });
+    await logActivity("DELETE_DESTINATION", "Destination", id, "Deleted destination");
     revalidatePath("/admin/destinations");
     revalidatePath("/");
 }

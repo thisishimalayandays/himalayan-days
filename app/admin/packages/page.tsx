@@ -2,8 +2,17 @@ import Link from "next/link";
 import { Plus, Edit, Trash } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { deletePackage } from "@/app/actions/packages";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 export default async function PackagesPage() {
+    const session = await auth();
+    const role = session?.user?.role || (session?.user?.email === 'sales@himalayandays.in' ? 'SALES' : 'ADMIN');
+
+    if (role === 'SALES') {
+        redirect("/admin");
+    }
+
     const packages = await prisma.package.findMany({
         orderBy: { createdAt: 'desc' }
     });

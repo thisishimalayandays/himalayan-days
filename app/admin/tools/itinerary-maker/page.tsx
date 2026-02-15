@@ -115,7 +115,7 @@ export default function ItineraryMakerPage() {
         clientName: '',
         travelDate: '',
         duration: '',
-        quoteId: `QT-${Math.floor(Math.random() * 10000)}`,
+        quoteId: '', // Fixed hydration error by moving random generation to useEffect
         pkgTitle: '',
         totalCost: '',
         adults: '',
@@ -143,6 +143,14 @@ export default function ItineraryMakerPage() {
     const filteredTemplates = useMemo(() => {
         return ITINERARY_TEMPLATES.filter(t => t.duration === selectedDuration);
     }, [selectedDuration]);
+
+    // Hydration Fix: Generate ID on client
+    useEffect(() => {
+        setClientInfo(prev => ({
+            ...prev,
+            quoteId: `QT-${Math.floor(Math.random() * 10000)}`
+        }));
+    }, []);
 
     // Helper: Calculate End Date
     const calculateEndDate = (startDate: string, durationStr: string) => {
@@ -235,6 +243,8 @@ export default function ItineraryMakerPage() {
                         duration: durationStr,
 
                         pkgTitle: `Custom Package (${draft.grandTotal ? '₹' + draft.grandTotal.toLocaleString('en-IN') : ''})`,
+                        clientName: draft.clientName || prev.clientName, // NEW
+                        travelDate: draft.startDate ? draft.startDate.split('T')[0] : prev.travelDate, // NEW
                     }));
 
                     toast.success("Calculator data imported successfully!");
@@ -250,7 +260,7 @@ export default function ItineraryMakerPage() {
         if (!context || !context.hotels) return daysToProcess;
 
         // 1. Flatten Calculator Hotels into a "Timeline of Stays" based on nights
-        const stayQueue: string[] = [];
+        const stayQueue: { name: string, plan: string }[] = [];
 
         context.hotels.forEach((h: any) => {
             if (h.name && h.nights > 0) {
@@ -278,7 +288,7 @@ export default function ItineraryMakerPage() {
 
                 // Add entry for each night
                 for (let i = 0; i < h.nights; i++) {
-                    stayQueue.push(stayName);
+                    stayQueue.push({ name: stayName, plan: h.plan || '' });
                 }
             }
         });
@@ -289,21 +299,29 @@ export default function ItineraryMakerPage() {
         // The last day typically doesn't have a night stay, so it naturally falls off if queue is empty.
 
         return daysToProcess.map((day, idx) => {
-            const newStay = stayQueue[idx] || day.stay || '';
+            const queueItem = stayQueue[idx];
+            const newStay = queueItem ? queueItem.name : (day.stay || '');
 
-            // "meals data will also be filled"
-            // If template has meals, keep them. If empty/missing and we have a calculator context,
-            // assume standard "Breakfast & Dinner" (MAP) could be a safe default if user desires automagical filling,
-            // but for now let's respect the template unless it's empty.
-            // User query: "meals data will also be filled... even though i import different template... meals remain unchanged"
-            // This might mean "Unchanged from the STICKY context" (if we had sticky meals) or "Unchanged from Template".
-            // Given the context "fills" data, I'll ensure it's not empty.
-            const newMeals = day.meals || 'Breakfast & Dinner';
+            // Plan Mapping
+            let newMeals = day.meals;
+            if (queueItem && queueItem.plan) {
+                switch (queueItem.plan) {
+                    case 'EP': newMeals = 'Room Only'; break;
+                    case 'CP': newMeals = 'Breakfast'; break;
+                    case 'MAP': newMeals = 'Breakfast & Dinner'; break;
+                    case 'AP': newMeals = 'Breakfast, Lunch & Dinner'; break;
+                    default: break; // Keep existing if unknown
+                }
+            }
+
+            if (!newMeals && context) {
+                newMeals = 'Breakfast & Dinner'; // Default fallback if no plan found
+            }
 
             return {
                 ...day,
                 stay: newStay,
-                meals: newMeals
+                meals: newMeals || day.meals || ''
             };
         });
     };
@@ -394,26 +412,25 @@ export default function ItineraryMakerPage() {
     const handleSaveItinerary = async () => {
         if (!validateForm()) return;
 
-        if (!itineraryName.trim()) {
-            toast.error("Please enter an Itinerary Name (e.g., 'Anil Kumar 6D').");
+        // Validation: Client Name required now instead of Itinerary Name
+        if (!clientName.trim()) {
+            toast.error("Please enter Client Name.");
             return;
         }
 
         const itineraryData = { clientInfo, days };
 
+        // Use client name as itinerary name (or formatted if needed)
+        const finalItineraryName = clientName.trim();
+
         // If we have an ID, UPDATE it. Otherwise CREATE new.
         let res;
         if (currentItineraryId) {
             // UPDATE EXISTING
-            // We need an update action. If not available, we can fallback or add it. 
-            // Assuming updateItinerary exists or reusing save with ID logic if possible. 
-            // For now, let's try to pass ID to saveItinerary if it supports upsert, OR call distinct update.
-            // Actually, the best UX is "Overwriting" 
-            // Let's assume we need to add updateItinerary to actions.
-            res = await saveItinerary(itineraryName, clientName, itineraryData, currentItineraryId);
+            res = await saveItinerary(finalItineraryName, clientName, itineraryData, currentItineraryId);
         } else {
             // CREATE NEW
-            res = await saveItinerary(itineraryName, clientName, itineraryData);
+            res = await saveItinerary(finalItineraryName, clientName, itineraryData);
         }
 
         if (res.success && res.itinerary) {
@@ -429,13 +446,15 @@ export default function ItineraryMakerPage() {
 
     const handleSaveAsNew = async () => {
         if (!validateForm()) return;
-        if (!itineraryName.trim()) {
-            toast.error("Please enter a NEW name.");
+        if (!clientName.trim()) {
+            toast.error("Please enter Client Name.");
             return;
         }
         // Force create by not passing ID
         const itineraryData = { clientInfo, days };
-        const res = await saveItinerary(itineraryName, clientName, itineraryData); // No ID = Create
+        const finalItineraryName = `${clientName.trim()} (Copy)`;
+
+        const res = await saveItinerary(finalItineraryName, clientName, itineraryData); // No ID = Create
 
         if (res.success && res.itinerary) {
             toast.success("Saved as NEW Itinerary!");
@@ -676,14 +695,7 @@ export default function ItineraryMakerPage() {
                                             onChange={(e) => setClientName(e.target.value)}
                                         />
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label>Itinerary Name</Label>
-                                        <Input
-                                            placeholder="e.g. 5 Days Kashmir"
-                                            value={itineraryName}
-                                            onChange={(e) => setItineraryName(e.target.value)}
-                                        />
-                                    </div>
+                                    {/* Itinerary Name Removed per user request */}
                                     <div className="flex flex-col gap-2">
                                         <Button onClick={handleSaveItinerary} className="w-full">
                                             {currentItineraryId ? "Update Existing" : "Save to Database"}

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Package, MapPin, Users, Calculator, FileText, LogOut, MessageSquare, Mail, CalendarDays, Briefcase, ShieldAlert } from "lucide-react";
+import { LayoutDashboard, Package, MapPin, Users, Calculator, FileText, LogOut, MessageSquare, Mail, CalendarDays, Briefcase, ShieldAlert, Car } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { ModeToggle } from "@/components/mode-toggle";
@@ -29,6 +29,8 @@ export function AdminSidebar({ pendingInquiries, pendingSubscribers = 0, pending
                 { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
                 { href: "/admin/packages", label: "Packages", icon: Package },
                 { href: "/admin/destinations", label: "Destinations", icon: MapPin },
+                { href: "/admin/hotels", label: "Hotels & Stays", icon: MapPin },
+                { href: "/admin/transport", label: "Transport", icon: Car },
                 {
                     href: "/admin/subscribers",
                     label: "Subscribers",
@@ -71,7 +73,7 @@ export function AdminSidebar({ pendingInquiries, pendingSubscribers = 0, pending
 
         // Sales Role - Whitelist allowed items
         if (role === 'SALES') {
-            const allowedLabels = ['Dashboard', 'Inquiries', 'Bookings', 'Customers', 'Calculator', 'Itinerary Maker'];
+            const allowedLabels = ['Dashboard', 'Inquiries', 'Bookings', 'Customers', 'Calculator', 'Itinerary Maker', 'Hotels & Stays', 'Transport', 'Subscribers'];
             const filteredItems = category.items.filter(item => allowedLabels.includes(item.label));
 
             if (filteredItems.length > 0) {
