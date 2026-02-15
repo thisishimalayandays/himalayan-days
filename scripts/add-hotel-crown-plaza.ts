@@ -14,7 +14,7 @@ async function main() {
             type: 'Hotel',
             stars: 3,
             // "B2B - Tariff Sheet (1 Jan 2026 - 20 Mar 2026)"
-            rateValidUntil: new Date('2026-03-20'),
+            // rateValidUntil: new Date('2026-03-20'),
             phone: '+91-8491047066',
             email: 'info@crownplazakashmir.co.in',
             rooms: {
