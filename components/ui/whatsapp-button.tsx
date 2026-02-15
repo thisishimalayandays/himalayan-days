@@ -71,7 +71,17 @@ export function WhatsAppButton() {
             // Format nice date for display
             const niceDate = new Date(formData.travelDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
-            await createInquiry({
+
+            // 2. Open WhatsApp
+            const phoneNumber = '919103901803';
+            const text = `Hi, I am ${formData.name}. I want to plan a trip for ${formData.duration} around ${niceDate}. My budget is ${formData.budget}.`;
+            const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+
+            // 3. Track Conversion (ONLY IF SUCCESS)
+            // Even if we open WhatsApp, we only want to count it as a "Lead" if the system accepted it.
+            // If it was spam/duplicate, the user still gets to chat (good UX), but we don't pay for the lead (good Ad Spend).
+            const result = await createInquiry({
                 name: formData.name,
                 phone: fullPhone,
                 message: `Started Quick Chat via WhatsApp Button (Budget: ${formData.budget}, Duration: ${formData.duration}, Travel: ${niceDate})`,
@@ -82,23 +92,21 @@ export function WhatsAppButton() {
                 captchaToken: token
             });
 
-            // 2. Open WhatsApp
-            const phoneNumber = '919103901803';
-            const text = `Hi, I am ${formData.name}. I want to plan a trip for ${formData.duration} around ${niceDate}. My budget is ${formData.budget}.`;
-            // ... conversion tracking ...
-            const budgetValue = formData.budget.includes('18k') ? 18000
-                : formData.budget.includes('25k') ? 25000
-                    : formData.budget.includes('40k') ? 40000
-                        : 18000;
+            if (result.success) {
+                const budgetValue = formData.budget.includes('18k') ? 18000
+                    : formData.budget.includes('25k') ? 25000
+                        : formData.budget.includes('40k') ? 40000
+                            : 18000;
 
-            analytics.event('Lead', {
-                content_name: 'WhatsApp Quick Chat',
-                value: budgetValue,
-                currency: 'INR'
-            });
+                analytics.event('Lead', {
+                    content_name: 'WhatsApp Quick Chat',
+                    value: budgetValue,
+                    currency: 'INR'
+                });
+            } else {
+                console.warn("Lead not tracked: Duplicate or Spam detected");
+            }
 
-            const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`;
-            window.open(url, '_blank');
 
             // 3. Close & Reset
             setIsOpen(false);

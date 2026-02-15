@@ -128,7 +128,8 @@ export function BookingForm({ packageTitle, packageId, isHighDemand }: { package
                 return;
             }
 
-            // Track Lead Event with Value
+
+            // Track Lead Event with Value (ONLY IF SUCCESS)
             const budgetValue = formData.budget.includes('18k') ? 18000
                 : formData.budget.includes('25k') ? 25000
                     : formData.budget.includes('40k') ? 40000
