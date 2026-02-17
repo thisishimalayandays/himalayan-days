@@ -32,6 +32,39 @@ export async function submitAiInquiry(formData: FormData) {
         return { success: false, message: "Invalid data provided" };
     }
 
+    // --- Recaptcha Verification ---
+    const captchaToken = formData.get('captchaToken') as string | null;
+
+    if (process.env.NODE_ENV !== 'development') {
+        if (!process.env.RECAPTCHA_SECRET_KEY) {
+            console.warn("⚠️ RECAPTCHA_SECRET_KEY is missing! Bypassing verification to allow lead submission.");
+        } else if (captchaToken) {
+            try {
+                const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        secret: process.env.RECAPTCHA_SECRET_KEY,
+                        response: captchaToken,
+                    }),
+                });
+                const data = await response.json();
+
+                if (!data.success || (data.score !== undefined && data.score < 0.3)) {
+                    console.error("AI Wizard Spam detected:", data);
+                    return { success: false, message: "Spam detected. Please try again later." };
+                }
+            } catch (error) {
+                console.error("Captcha verification failed:", error);
+                // Fail open
+            }
+        } else {
+            console.warn("No captcha token provided");
+            // potentially block if strict
+        }
+    }
+    // ------------------------------
+
     const { name, phone, travelers, duration, budget, season } = validated.data;
 
     try {

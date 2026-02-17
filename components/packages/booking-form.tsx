@@ -97,6 +97,20 @@ export function BookingForm({ packageTitle, packageId, isHighDemand }: { package
         const code = selectedCountry?.code || '+91';
         const fullPhone = `${code} ${formData.phone}`;
 
+        // Track Checkout Initiation (User clicked Check Availability)
+        const budgetValue = formData.budget.includes('18k') ? 18000
+            : formData.budget.includes('25k') ? 25000
+                : formData.budget.includes('40k') ? 40000
+                    : 18000;
+
+        analytics.event('InitiateCheckout', {
+            content_name: packageTitle || 'General Inquiry',
+            content_category: 'Booking',
+            value: budgetValue,
+            currency: 'INR',
+            num_items: 1
+        });
+
         // 1. Save to Database
         try {
             const token = await executeRecaptcha('booking_form_submit');

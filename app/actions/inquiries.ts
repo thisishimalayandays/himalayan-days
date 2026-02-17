@@ -34,24 +34,30 @@ export async function createInquiry(data: InquiryInput) {
             // Bypass for Development/Localhost to prevent "Spam Detected" during testing
             if (process.env.NODE_ENV === 'development') {
                 // Skipping verification in dev
+            } else if (!process.env.RECAPTCHA_SECRET_KEY) {
+                console.warn("⚠️ RECAPTCHA_SECRET_KEY is missing! Bypassing verification to allow lead submission.");
             } else {
                 try {
                     const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         body: new URLSearchParams({
-                            secret: process.env.RECAPTCHA_SECRET_KEY!,
+                            secret: process.env.RECAPTCHA_SECRET_KEY,
                             response: validated.captchaToken,
                         }),
                     });
                     const data = await response.json();
-                    if (!data.success || (data.score !== undefined && data.score < 0.5)) {
+
+                    // Lowered threshold to 0.3 to prevent blocking legitimate mobile/VPN users
+                    if (!data.success || (data.score !== undefined && data.score < 0.3)) {
                         console.error("Spam detected:", data);
                         return { success: false, error: "Spam detected. Please try again later." };
                     }
                 } catch (error) {
                     console.error("Captcha verification failed:", error);
-                    return { success: false, error: "Security check failed." };
+                    // Decide whether to block or allow on error. 
+                    // Fail open for now to avoid losing business leads due to technical glitches?
+                    // return { success: false, error: "Security check failed." };
                 }
             }
         }
