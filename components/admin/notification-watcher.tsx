@@ -47,7 +47,7 @@ export function NotificationWatcher() {
             } catch (error) {
                 console.error("Polling error:", error)
             }
-        }, 30000) // Poll every 30 seconds
+        }, 300000) // Poll every 5 minutes (300,000ms) to SAVE DB COSTS
 
         return () => clearInterval(intervalId)
     }, [toast, router])
