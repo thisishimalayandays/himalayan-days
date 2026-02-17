@@ -42,3 +42,7 @@ next-env.d.ts
 
 /lib/generated/prisma
 public/Herosectionvideo.mp4
+
+# Backups
+backup-full.json
+backup.json

@@ -114,18 +114,26 @@ export async function createInquiry(data: InquiryInput) {
         }).catch(err => console.error('Background email failed:', err));
 
         // Send Telegram Notification (Fire and forget)
-        const telegramMessage = `
-<b>🔔 New Lead Received!</b>
+        let telegramMessage = `<b>🔔 New Lead Received!</b>\n\n`;
+        telegramMessage += `<b>Name:</b> ${escapeHtml(validated.name)}\n`;
+        telegramMessage += `<b>Phone:</b> ${escapeHtml(validated.phone)}\n`;
+        telegramMessage += `<b>Type:</b> ${escapeHtml(validated.type)}\n`;
 
-<b>Name:</b> ${escapeHtml(validated.name)}
-<b>Phone:</b> ${escapeHtml(validated.phone)}
-<b>Type:</b> ${escapeHtml(validated.type)}
-<b>Budget:</b> ${escapeHtml(validated.budget || 'N/A')}
-<b>Travelers:</b> ${validated.travelers || 'N/A'}
-<b>Date:</b> ${validated.startDate ? escapeHtml(new Date(validated.startDate).toLocaleDateString()) : 'N/A'}
-<b>Message:</b> ${escapeHtml(validated.message || 'No message')}
-${packageTitle ? `<b>Package:</b> ${escapeHtml(packageTitle)}` : ''}
-`;
+        if (validated.budget) {
+            telegramMessage += `<b>Budget:</b> ${escapeHtml(validated.budget)}\n`;
+        }
+        if (validated.travelers && validated.travelers > 0) {
+            telegramMessage += `<b>Travelers:</b> ${validated.travelers}\n`;
+        }
+        if (validated.startDate) {
+            telegramMessage += `<b>Date:</b> ${escapeHtml(new Date(validated.startDate).toLocaleDateString())}\n`;
+        }
+        if (packageTitle) {
+            telegramMessage += `<b>Package:</b> ${escapeHtml(packageTitle)}\n`;
+        }
+
+        telegramMessage += `<b>Message:</b> ${escapeHtml(validated.message || 'No message')}\n`;
+
         sendTelegramNotification(telegramMessage).catch(err => console.error('Background Telegram failed:', err));
 
         return { success: true, inquiryId: inquiry.id };
