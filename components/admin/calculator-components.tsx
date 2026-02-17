@@ -48,9 +48,10 @@ export interface HotelItem {
     rooms: number;
     nights: number;
     plan: 'EP' | 'CP' | 'MAP' | 'AP';
+    roomTypeName?: string;
+    isCustom?: boolean;
     extraBedCount?: number;
     extraBedRate?: number;
-    isCustom?: boolean;
 }
 
 export interface TransportItem {
@@ -202,7 +203,8 @@ function SortableHotelRow({
     updateRow,
     removeRow,
     availableHotels,
-    startDate
+    startDate,
+    hideRates
 }: {
     item: HotelItem;
     index: number;
@@ -210,6 +212,7 @@ function SortableHotelRow({
     removeRow: (id: string) => void;
     availableHotels: any[];
     startDate: Date;
+    hideRates?: boolean;
 }) {
     const {
         attributes,
@@ -300,7 +303,7 @@ function SortableHotelRow({
     }, [item.hotelId, item.roomTypeId, item.plan, startDate, roomTypes, item.isCustom]);
 
     return (
-        <div ref={setNodeRef} style={style} className={`grid grid-cols-2 md:grid-cols-[30px_120px_minmax(180px,_3fr)_minmax(160px,_2fr)_80px_90px_80px_70px_70px] gap-3 md:gap-4 items-start group bg-background p-4 md:py-6 md:px-0 border-b border-border/60 last:border-0 ${isDragging ? "shadow-lg ring-1 ring-blue-500/20 rounded-md opacity-80 z-50 bg-card" : ""}`}>
+        <div ref={setNodeRef} style={style} className={`grid ${hideRates ? "grid-cols-[30px_120px_minmax(180px,_3fr)_minmax(160px,_2fr)_80px_70px_70px]" : "grid-cols-2 md:grid-cols-[30px_120px_minmax(180px,_3fr)_minmax(160px,_2fr)_80px_90px_70px_70px]"} gap-3 md:gap-4 items-start group bg-background p-4 md:py-6 md:px-0 border-b border-border/60 last:border-0 ${isDragging ? "shadow-lg ring-1 ring-blue-500/20 rounded-md opacity-80 z-50 bg-card" : ""}`}>
             {/* Drag Handle */}
             <div className="flex justify-center cursor-move touch-none col-span-2 md:col-span-1 py-1 md:py-0 bg-muted/20 md:bg-transparent rounded md:rounded-none mb-1 md:mb-0" {...attributes} {...listeners}>
                 <GripVertical className="w-4 h-4 text-muted-foreground/50 hover:text-foreground transition-colors rotate-90 md:rotate-0" />
@@ -413,15 +416,24 @@ function SortableHotelRow({
             <div className="col-span-1 md:col-span-1">
                 {item.isCustom ? (
                     <Input
-                        value={item.roomTypeId || ""} // reusing roomTypeId field for custom room name
-                        onChange={(e) => updateRow(index, "roomTypeId", e.target.value)}
+                        value={item.roomTypeName || item.roomTypeId || ""} // use roomTypeName if available, else fallback
+                        onChange={(e) => {
+                            updateRow(index, "roomTypeId", e.target.value);
+                            updateRow(index, "roomTypeName", e.target.value);
+                        }}
                         className="h-9 text-xs"
                         placeholder="Room Type"
                     />
                 ) : (
                     <Select
                         value={item.roomTypeId}
-                        onValueChange={(val) => updateRow(index, "roomTypeId", val)}
+                        onValueChange={(val) => {
+                            const selectedRoom = roomTypes.find((r: any) => r.id === val);
+                            updateRow(index, "roomTypeId", val);
+                            if (selectedRoom) {
+                                updateRow(index, "roomTypeName", selectedRoom.name);
+                            }
+                        }}
                         disabled={!item.hotelId}
                     >
                         <SelectTrigger className="h-9 text-xs bg-background/50 dark:bg-background/20 border-input/60">
@@ -453,47 +465,41 @@ function SortableHotelRow({
                 </Select>
             </div>
 
-            <div className="col-span-1 md:col-span-1">
-                <div className="relative">
-                    <Input
-                        type="number"
-                        min="0"
-                        value={item.rate || ""}
-                        onChange={(e) => updateRow(index, "rate", parseFloat(e.target.value) || 0)}
-                        className={cn(
-                            "h-9 px-2 text-center transition-colors bg-background/50 dark:bg-background/20 border-input/60",
-                            // Dynamic Error Styling
-                            (selectedHotel?.rateValidUntil && getStartOfDay(selectedHotel.rateValidUntil) < getStartOfDay(startDate))
-                                ? "border-red-500 bg-red-50 text-red-900 focus-visible:ring-red-500"
-                                : ""
-                        )}
-                        placeholder="Rate"
-                        title={
-                            (selectedHotel?.rateValidUntil && getStartOfDay(selectedHotel.rateValidUntil) < getStartOfDay(startDate))
-                                ? `Rates Expired! Valid until: ${new Date(selectedHotel.rateValidUntil).toLocaleDateString()}`
-                                : "Rate per Night"
-                        }
-                    />
-                    {/* Visual Warning Icon */}
-                    {(selectedHotel?.rateValidUntil && getStartOfDay(selectedHotel.rateValidUntil) < getStartOfDay(startDate)) && (
-                        <div className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] px-1 rounded-full shadow-sm pointer-events-none">
-                            EXP
-                        </div>
-                    )}
-                </div>
-            </div>
 
-            <div className="col-span-1 md:col-span-1">
-                <Input
-                    type="number"
-                    min="0"
-                    value={item.extraBedCount || ""}
-                    onChange={(e) => updateRow(index, "extraBedCount", parseInt(e.target.value) || 0)}
-                    className="h-9 px-1 text-center bg-background/50 dark:bg-background/20 border-input/60"
-                    placeholder="Ex. Bed"
-                    title={`Extra Bed Rate: ₹${item.extraBedRate || 0}`}
-                />
-            </div>
+
+            {!hideRates && (
+                <div className="col-span-1 md:col-span-1">
+                    <div className="relative">
+                        <Input
+                            type="number"
+                            min="0"
+                            value={item.rate || ""}
+                            onChange={(e) => updateRow(index, "rate", parseFloat(e.target.value) || 0)}
+                            className={cn(
+                                "h-9 px-2 text-center transition-colors bg-background/50 dark:bg-background/20 border-input/60",
+                                // Dynamic Error Styling
+                                (selectedHotel?.rateValidUntil && getStartOfDay(selectedHotel.rateValidUntil) < getStartOfDay(startDate))
+                                    ? "border-red-500 bg-red-50 text-red-900 focus-visible:ring-red-500"
+                                    : ""
+                            )}
+                            placeholder="Rate"
+                            title={
+                                (selectedHotel?.rateValidUntil && getStartOfDay(selectedHotel.rateValidUntil) < getStartOfDay(startDate))
+                                    ? `Rates Expired! Valid until: ${new Date(selectedHotel.rateValidUntil).toLocaleDateString()}`
+                                    : "Rate per Night"
+                            }
+                        />
+                        {/* Visual Warning Icon */}
+                        {(selectedHotel?.rateValidUntil && getStartOfDay(selectedHotel.rateValidUntil) < getStartOfDay(startDate)) && (
+                            <div className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] px-1 rounded-full shadow-sm pointer-events-none">
+                                EXP
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+
+
 
             <div className="flex gap-1 col-span-1 md:col-span-1">
                 <Input
@@ -542,7 +548,8 @@ export function HotelCalculator({
     total,
     availableHotels,
     startDate,
-    setStartDate
+    setStartDate,
+    hideRates
 }: {
     items: HotelItem[];
     setItems: (items: HotelItem[]) => void;
@@ -550,6 +557,7 @@ export function HotelCalculator({
     availableHotels: any[];
     startDate: Date;
     setStartDate: (date: Date) => void;
+    hideRates?: boolean;
 }) {
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -590,22 +598,23 @@ export function HotelCalculator({
                         <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 p-2 rounded-lg text-lg">🏨</span>
                         Hotels & Stays
                     </CardTitle>
-                    <div className="flex items-center gap-4">
-                        <div className="text-sm font-medium px-3 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-full border border-blue-100 dark:border-blue-900/50">
-                            ₹{total.toLocaleString("en-IN")}
+                    {!hideRates && (
+                        <div className="flex items-center gap-4">
+                            <div className="text-sm font-medium px-3 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-full border border-blue-100 dark:border-blue-900/50">
+                                ₹{total.toLocaleString("en-IN")}
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
-                <div className="hidden md:grid grid-cols-[30px_120px_minmax(180px,_3fr)_minmax(160px,_2fr)_80px_90px_80px_70px_70px] gap-4 text-xs uppercase tracking-wider font-semibold text-muted-foreground mb-6 px-2">
+                <div className={`hidden md:grid ${hideRates ? "grid-cols-[30px_120px_minmax(180px,_3fr)_minmax(160px,_2fr)_80px_70px_70px]" : "grid-cols-[30px_120px_minmax(180px,_3fr)_minmax(160px,_2fr)_80px_90px_70px_70px]"} gap-4 text-xs uppercase tracking-wider font-semibold text-muted-foreground mb-6 px-2`}>
                     <div></div> {/* Drag Handle Spacer */}
                     <div>Location</div>
                     <div>Property</div>
                     <div>Room Type</div>
                     <div>Plan</div>
-                    <div>Rate (₹)</div>
-                    <div className="text-center">Extra Bed</div>
+                    {!hideRates && <div>Rate (₹)</div>}
                     <div className="text-center">Rooms</div>
                     <div className="text-center">Nights</div>
                 </div>
@@ -629,6 +638,7 @@ export function HotelCalculator({
                                     removeRow={removeRow}
                                     availableHotels={availableHotels}
                                     startDate={startDate}
+                                    hideRates={hideRates}
                                 />
                             ))}
                         </div>
@@ -652,12 +662,14 @@ export function TransportCalculator({
     items,
     setItems,
     total,
-    availableTransports = []
+    availableTransports = [],
+    hideRates
 }: {
     items: TransportItem[];
     setItems: (items: TransportItem[]) => void;
     total: number;
     availableTransports?: any[];
+    hideRates?: boolean;
 }) {
     const addRow = () => {
         setItems([...items, { id: Date.now().toString(), type: "", rate: 0, days: 1 }]);
@@ -681,22 +693,24 @@ export function TransportCalculator({
                         <span className="bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 p-2 rounded-lg text-lg">🚖</span>
                         Transport & Cabs
                     </CardTitle>
-                    <div className="text-sm font-medium px-3 py-1 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 rounded-full border border-orange-100 dark:border-orange-900/50">
-                        ₹{total.toLocaleString("en-IN")}
-                    </div>
+                    {!hideRates && (
+                        <div className="text-sm font-medium px-3 py-1 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 rounded-full border border-orange-100 dark:border-orange-900/50">
+                            ₹{total.toLocaleString("en-IN")}
+                        </div>
+                    )}
                 </div>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
                 <div className="grid grid-cols-12 gap-4 text-xs uppercase tracking-wider font-semibold text-muted-foreground mb-6 px-2">
-                    <div className="col-span-5 md:col-span-6 lg:col-span-7">Vehicle Type</div>
-                    <div className="col-span-4 md:col-span-3 lg:col-span-2">Rate/Day (₹)</div>
+                    <div className={`${hideRates ? "col-span-9" : "col-span-5 md:col-span-6 lg:col-span-7"}`}>Vehicle Type</div>
+                    {!hideRates && <div className="col-span-4 md:col-span-3 lg:col-span-2">Rate/Day (₹)</div>}
                     <div className="col-span-2 text-center">Days</div>
                     <div className="col-span-1"></div>
                 </div>
 
                 {items.map((item, index) => (
                     <div key={item.id} className="grid grid-cols-12 gap-4 items-center group py-4 border-b border-border/50 last:border-0 border-dashed">
-                        <div className="col-span-5 md:col-span-6 lg:col-span-7">
+                        <div className={`${hideRates ? "col-span-9" : "col-span-5 md:col-span-6 lg:col-span-7"}`}>
                             {item.isCustom ? (
                                 <div className="relative">
                                     <Input
@@ -755,12 +769,14 @@ export function TransportCalculator({
                                 </Select>
                             )}
                         </div>
-                        <div className="col-span-4 md:col-span-3 lg:col-span-2">
-                            <CurrencyInput
-                                value={item.rate}
-                                onChange={(val) => updateRow(index, "rate", val)}
-                            />
-                        </div>
+                        {!hideRates && (
+                            <div className="col-span-4 md:col-span-3 lg:col-span-2">
+                                <CurrencyInput
+                                    value={item.rate}
+                                    onChange={(val) => updateRow(index, "rate", val)}
+                                />
+                            </div>
+                        )}
                         <div className="col-span-2 md:col-span-2 lg:col-span-2">
                             <Input
                                 type="number"

@@ -111,6 +111,11 @@ export async function createBooking(data: {
     kids: number;
     initialPayment?: number;
     paymentMode?: string;
+    // New Fields
+    hotelInfo?: string;
+    mealPlan?: string;
+    transportInfo?: string;
+    notes?: string;
 }) {
     try {
         await prisma.$transaction(async (tx) => {
@@ -143,6 +148,11 @@ export async function createBooking(data: {
                     adults: data.adults,
                     kids: data.kids,
                     status: 'CONFIRMED',
+                    // New Fields
+                    hotelInfo: data.hotelInfo,
+                    mealPlan: data.mealPlan,
+                    transportInfo: data.transportInfo,
+                    notes: data.notes
                 }
             });
 
@@ -200,6 +210,10 @@ export async function updateBooking(id: string, data: any) {
                 adults: data.adults,
                 kids: data.kids,
                 duration: data.duration,
+                hotelInfo: data.hotelInfo,
+                mealPlan: data.mealPlan,
+                transportInfo: data.transportInfo,
+                notes: data.notes
             } // Simplified for now
         });
         revalidatePath('/admin/bookings');

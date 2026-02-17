@@ -188,6 +188,95 @@ export const BookingPDF = ({ booking }: BookingPDFProps) => {
 
                 {/* Bill Details */}
                 <Text style={styles.sectionTitle}>Invoice Details</Text>
+
+                {/* DYNAMIC HOTEL DETAILS SECTION */}
+                {(() => {
+                    let hotelItems: any[] = [];
+                    let hotelText = "";
+                    try {
+                        if (booking?.hotelInfo?.startsWith("[")) {
+                            hotelItems = JSON.parse(booking.hotelInfo);
+                        } else {
+                            hotelText = booking?.hotelInfo || "";
+                        }
+                    } catch (e) { hotelText = booking?.hotelInfo || ""; }
+
+                    if (hotelItems.length > 0) {
+                        return (
+                            <View style={styles.section}>
+                                <Text style={{ fontSize: 9, fontWeight: 'bold', marginBottom: 4, color: '#374151' }}>Accommodation Details</Text>
+                                <View style={[styles.table, { marginBottom: 10 }]}>
+                                    <View style={styles.tableHeader}>
+                                        <Text style={[styles.tableCell, { flex: 2 }]}>Hotel</Text>
+                                        <Text style={[styles.tableCell, { flex: 1.5 }]}>Room</Text>
+                                        <Text style={[styles.tableCell, { flex: 0.8, textAlign: 'center' }]}>Plan</Text>
+                                        <Text style={[styles.tableCell, { flex: 0.8, textAlign: 'center' }]}>Nights</Text>
+                                        <Text style={[styles.tableCell, { flex: 1, textAlign: 'center' }]}>Rooms</Text>
+                                    </View>
+                                    {hotelItems.map((item, i) => (
+                                        <View key={i} style={styles.tableRow}>
+                                            <Text style={[styles.tableCell, { flex: 2 }]}>{item.name} <Text style={{ fontSize: 7, color: '#9CA3AF' }}>({item.location})</Text></Text>
+                                            <Text style={[styles.tableCell, { flex: 1.5 }]}>{item.roomTypeName || item.roomTypeId || '-'}</Text>
+                                            <Text style={[styles.tableCell, { flex: 0.8, textAlign: 'center' }]}>{item.plan}</Text>
+                                            <Text style={[styles.tableCell, { flex: 0.8, textAlign: 'center' }]}>{item.nights}</Text>
+                                            <Text style={[styles.tableCell, { flex: 1, textAlign: 'center' }]}>{item.rooms}</Text>
+                                        </View>
+                                    ))}
+                                </View>
+                            </View>
+                        );
+                    } else if (hotelText) {
+                        return (
+                            <View style={styles.section}>
+                                <Text style={styles.label}>Accommodation</Text>
+                                <Text style={styles.value}>{hotelText}</Text>
+                            </View>
+                        );
+                    }
+                    return null;
+                })()}
+
+                {/* DYNAMIC TRANSPORT DETAILS SECTION */}
+                {(() => {
+                    let transportItems: any[] = [];
+                    let transportText = "";
+                    try {
+                        if (booking?.transportInfo?.startsWith("[")) {
+                            transportItems = JSON.parse(booking.transportInfo);
+                        } else {
+                            transportText = booking?.transportInfo || "";
+                        }
+                    } catch (e) { transportText = booking?.transportInfo || ""; }
+
+                    if (transportItems.length > 0) {
+                        return (
+                            <View style={styles.section}>
+                                <Text style={{ fontSize: 9, fontWeight: 'bold', marginBottom: 4, color: '#374151' }}>Transport Details</Text>
+                                <View style={[styles.table, { marginBottom: 10 }]}>
+                                    <View style={styles.tableHeader}>
+                                        <Text style={[styles.tableCell, { flex: 3 }]}>Vehicle</Text>
+                                        <Text style={[styles.tableCell, { flex: 1, textAlign: 'center' }]}>Days</Text>
+                                    </View>
+                                    {transportItems.map((item, i) => (
+                                        <View key={i} style={styles.tableRow}>
+                                            <Text style={[styles.tableCell, { flex: 3 }]}>{item.type}</Text>
+                                            <Text style={[styles.tableCell, { flex: 1, textAlign: 'center' }]}>{item.days}</Text>
+                                        </View>
+                                    ))}
+                                </View>
+                            </View>
+                        );
+                    } else if (transportText) {
+                        return (
+                            <View style={styles.section}>
+                                <Text style={styles.label}>Transport</Text>
+                                <Text style={styles.value}>{transportText}</Text>
+                            </View>
+                        );
+                    }
+                    return null;
+                })()}
+
                 <View style={styles.table}>
                     <View style={styles.tableHeader}>
                         <Text style={[styles.tableCell, { flex: 3 }]}>Description</Text>

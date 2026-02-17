@@ -114,6 +114,12 @@ model Booking {
   adults      Int       @default(2)
   kids        Int       @default(0)
   
+  // New Fields for Detailed Itinerary
+  hotelInfo     String?   @db.Text // Details about hotels/houseboats
+  mealPlan      String?   // e.g. MAP (Breakfast + Dinner)
+  transportInfo String?   // e.g. Innova Crysta for 6 days
+  notes         String?   @db.Text // Internal or Customer notes
+  
   totalAmount Float
   
   payments    Payment[]
