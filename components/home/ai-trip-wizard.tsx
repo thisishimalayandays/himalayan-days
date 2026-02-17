@@ -91,7 +91,15 @@ export function AiTripWizard({ isOpen, onClose }: AiTripWizardProps) {
 
             // ... handling result
             if (result.success) {
-                // ... success logic
+                // Track Lead
+                analytics.event('Lead', {
+                    content_name: 'AI Trip Wizard',
+                    content_category: 'AI Lead',
+                    value: preferences.budget.includes('Luxury') ? 40000 : 20000,
+                    currency: 'INR'
+                });
+
+                setStep('result');
             } else {
                 // ... error logic
                 toast.error(result.message || "Something went wrong. Please try again.");
