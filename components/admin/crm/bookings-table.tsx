@@ -43,16 +43,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { AddPaymentDialog } from "./add-payment-dialog";
 import dynamic from "next/dynamic";
-import { BookingPDF } from "./booking-pdf";
-import { PaymentReceiptPDF } from "./payment-receipt-pdf";
-
-const PDFDownloadLink = dynamic(
-    () => import("@react-pdf/renderer").then((mod) => mod.PDFDownloadLink),
-    {
-        ssr: false,
-        loading: () => null,
-    }
-);
+import { DownloadInvoiceBtn, DownloadReceiptBtn } from "./pdf-download-actions";
 
 import {
     AlertDialog,
@@ -116,16 +107,8 @@ function BookingActions({ booking, isTrash }: { booking: Booking, isTrash?: bool
 
                     {!isTrash ? (
                         <>
-                            <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="cursor-pointer">
-                                <PDFDownloadLink document={<BookingPDF booking={booking} />} fileName={`Invoice_${booking.customer?.name?.replace(/\s+/g, '_') || 'Invoice'}.pdf`} className="flex items-center w-full">
-                                    <Download className="mr-2 h-4 w-4" /> Download Invoice
-                                </PDFDownloadLink>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="cursor-pointer">
-                                <PDFDownloadLink document={<PaymentReceiptPDF booking={booking} />} fileName={`Receipt_${booking.customer?.name?.replace(/\s+/g, '_') || 'Receipt'}.pdf`} className="flex items-center w-full">
-                                    <FileText className="mr-2 h-4 w-4" /> Download Receipt
-                                </PDFDownloadLink>
-                            </DropdownMenuItem>
+                            <DownloadInvoiceBtn booking={booking} menuItem={true} />
+                            <DownloadReceiptBtn booking={booking} menuItem={true} />
                             <DropdownMenuItem onClick={() => router.push(`/admin/bookings/${booking.id}/payment`)}>
                                 <CreditCard className="mr-2 h-4 w-4" /> Add Payment
                             </DropdownMenuItem>
