@@ -124,7 +124,7 @@ export const BookingPDF = ({ booking }: BookingPDFProps) => {
     const total = booking?.totalAmount || 0;
     const balance = total - displayPaid;
 
-    const logoUrl = typeof window !== 'undefined' ? `${window.location.origin}/Himalayan Days Logo.png` : '';
+    const logoUrl = typeof window !== 'undefined' ? `${window.location.origin}/logo.png` : '';
 
     return (
         <Document>
@@ -133,7 +133,7 @@ export const BookingPDF = ({ booking }: BookingPDFProps) => {
                 <View style={styles.header}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         {/* Logo */}
-                        <Image src={logoUrl} style={{ width: 50, height: 50, marginRight: 10, objectFit: 'contain' }} />
+                        <Image src={logoUrl} style={{ width: 80, height: 80, marginRight: 10, objectFit: 'contain' }} />
                         {/* Brand Text */}
                         <View>
                             <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#111827' }}>Himalayan Days</Text>

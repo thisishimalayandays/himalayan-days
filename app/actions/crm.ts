@@ -352,6 +352,38 @@ export async function addPayment(data: { bookingId: string; amount: number; meth
     }
 }
 
+export async function updatePayment(id: string, data: { amount: number; method: string; date: Date; notes?: string }) {
+    try {
+        const payment = await prisma.payment.update({
+            where: { id },
+            data: {
+                amount: data.amount,
+                method: data.method,
+                date: data.date,
+                notes: data.notes
+            }
+        });
+        revalidatePath('/admin/bookings');
+        return { success: true, payment };
+    } catch (error) {
+        console.error('Update Payment Error:', error);
+        return { success: false, error: 'Failed to update payment' };
+    }
+}
+
+export async function deletePayment(id: string) {
+    try {
+        await prisma.payment.delete({
+            where: { id }
+        });
+        revalidatePath('/admin/bookings');
+        return { success: true };
+    } catch (error) {
+        console.error('Delete Payment Error:', error);
+        return { success: false, error: 'Failed to delete payment' };
+    }
+}
+
 // --- DASHBOARD STATS ---
 
 export async function getDashboardCRMStats() {

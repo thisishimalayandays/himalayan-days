@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, User, Wallet, CheckCircle, Clock, AlertCircle } from "lucide-react";
+import { Calendar, User, Wallet, CheckCircle, Clock, AlertCircle, Banknote } from "lucide-react";
 
 interface Booking {
     id: string;
@@ -132,6 +132,9 @@ function BookingActions({ booking, isTrash }: { booking: Booking, isTrash?: bool
                             <DropdownMenuItem onClick={() => router.push(`/admin/bookings/${booking.id}`)}>
                                 <Pencil className="mr-2 h-4 w-4" /> Edit
                             </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => router.push(`/admin/bookings/${booking.id}/expenses`)}>
+                                <Banknote className="w-4 h-4 mr-2" /> Manage Expenses
+                            </DropdownMenuItem>
                             <DropdownMenuItem onClick={handleDelete} className="text-red-600">
                                 <Trash className="mr-2 h-4 w-4" /> Move to Trash
                             </DropdownMenuItem>
@@ -163,6 +166,8 @@ function BookingActions({ booking, isTrash }: { booking: Booking, isTrash?: bool
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
+
+
         </>
     );
 }

@@ -129,6 +129,22 @@ model Booking {
 
   isDeleted   Boolean   @default(false)
   deletedAt   DateTime?
+
+  expenses    BookingExpense[]
+}
+
+model BookingExpense {
+  id          String   @id @default(cuid())
+  bookingId   String
+  booking     Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  title       String   // Beneficiary Name (e.g. Hotel Milan, Driver Ramesh)
+  category    String   // HOTEL, TRANSPORT, MISC
+  totalCost   Float?   // Total agreed amount (reference)
+  amount      Float    // Amount paid in this transaction
+  date        DateTime @default(now())
+  paymentMode String   // CASH, UPI, BANK_TRANSFER
+  notes       String?
+  createdAt   DateTime @default(now())
 }
 
 model Payment {
