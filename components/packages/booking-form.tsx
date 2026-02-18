@@ -330,10 +330,8 @@ export function BookingForm({ packageTitle, packageId, isHighDemand }: { package
 
                 <div className="space-y-3">
                     <Button type="submit" disabled={isSubmitting} className="w-full bg-primary hover:bg-orange-600 text-lg font-bold h-14 shadow-lg shadow-orange-500/20 flex flex-col items-center justify-center gap-0.5">
-                        <span>{isSubmitting ? 'Checking...' : 'Check Availability'}</span>
-                        <span className="text-[10px] font-medium opacity-90 flex items-center gap-1">
-                            (No Upfront Payment)
-                        </span>
+                        <span>{isSubmitting ? 'Checking...' : 'Request Callback'}</span>
+
                     </Button>
                     {/* Removed 'No payment required' to qualify intent */}
                 </div>

@@ -9,7 +9,9 @@ export function MobileBookingBar({ price }: { price: number }) {
     if (!displayPrice) return null;
 
     const handleBook = () => {
-        analytics.event('InitiateCheckout', {
+        analytics.event('ViewContent', {
+            content_name: 'Mobile Booking Bar Click',
+            content_category: 'Interaction',
             value: price,
             currency: 'INR'
         });
@@ -35,10 +37,8 @@ export function MobileBookingBar({ price }: { price: number }) {
                 onClick={handleBook}
                 className="bg-primary hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-lg shadow-lg shadow-orange-500/20 flex-1 flex flex-col items-center justify-center"
             >
-                <span className="text-base">Check Availability</span>
-                <span className="text-[10px] font-medium opacity-90 flex items-center gap-1 mt-0.5">
-                    (No Upfront Payment)
-                </span>
+                <span className="text-base">Request Callback</span>
+
             </button>
         </div>
     );
