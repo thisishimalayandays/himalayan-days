@@ -99,21 +99,13 @@ export async function createInquiry(data: InquiryInput) {
             data: inquiryData,
         });
 
-        // Send Email Notification (Fire and forget, don't block response)
+        // Send Notifications (Await them to ensure delivery in Serverless environment)
+        // We use Promise.allSettled to ensure one failure doesn't block the other or the response
         const packageTitle = validated.packageId ?
             (await prisma.package.findUnique({ where: { id: validated.packageId }, select: { title: true } }))?.title
             : undefined;
 
-        sendInquiryNotification({
-            name: validated.name,
-            email: validated.email || '',
-            phone: validated.phone,
-            type: validated.type,
-            message: validated.message,
-            packageName: packageTitle
-        }).catch(err => console.error('Background email failed:', err));
-
-        // Send Telegram Notification (Fire and forget)
+        // Build Telegram Message
         let telegramMessage = `<b>🔔 New Lead Received!</b>\n\n`;
         telegramMessage += `<b>Name:</b> ${escapeHtml(validated.name)}\n`;
         telegramMessage += `<b>Phone:</b> ${escapeHtml(validated.phone)}\n`;
@@ -122,19 +114,39 @@ export async function createInquiry(data: InquiryInput) {
         if (validated.budget) {
             telegramMessage += `<b>Budget:</b> ${escapeHtml(validated.budget)}\n`;
         }
+        // Only show Travelers if > 0
         if (validated.travelers && validated.travelers > 0) {
             telegramMessage += `<b>Travelers:</b> ${validated.travelers}\n`;
         }
         if (validated.startDate) {
-            telegramMessage += `<b>Date:</b> ${escapeHtml(new Date(validated.startDate).toLocaleDateString())}\n`;
+            const dateStr = new Date(validated.startDate).toLocaleDateString('en-GB', {
+                day: 'numeric', month: 'short', year: 'numeric'
+            });
+            telegramMessage += `<b>Date:</b> ${escapeHtml(dateStr)}\n`;
         }
         if (packageTitle) {
             telegramMessage += `<b>Package:</b> ${escapeHtml(packageTitle)}\n`;
         }
 
-        telegramMessage += `<b>Message:</b> ${escapeHtml(validated.message || 'No message')}\n`;
+        // Duration from message or field
+        if (validated.duration) {
+            telegramMessage += `<b>Duration:</b> ${escapeHtml(validated.duration)}\n`;
+        }
 
-        sendTelegramNotification(telegramMessage).catch(err => console.error('Background Telegram failed:', err));
+        telegramMessage += `\n<b>Message:</b>\n${escapeHtml(validated.message || 'No message')}`;
+
+        // Execute both notifications in parallel but AWAIT the results
+        await Promise.allSettled([
+            sendInquiryNotification({
+                name: validated.name,
+                email: validated.email || '',
+                phone: validated.phone,
+                type: validated.type,
+                message: finalMessage, // Use the combined message with duration
+                packageName: packageTitle
+            }),
+            sendTelegramNotification(telegramMessage)
+        ]);
 
         return { success: true, inquiryId: inquiry.id };
     } catch (error) {
