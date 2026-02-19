@@ -151,7 +151,14 @@ export default function CalculatorPage() {
             return;
         }
 
-        const quoteData = { hotels, transport, activities, commission };
+        const quoteData = {
+            hotels,
+            transport,
+            activities,
+            commission,
+            startDate: startDate ? startDate.toISOString() : null, // Save Travel Date
+            clientName
+        };
 
         // Use client name as quote name (or formatted if needed)
         const finalQuoteName = clientName.trim();
@@ -176,7 +183,14 @@ export default function CalculatorPage() {
             return;
         }
 
-        const quoteData = { hotels, transport, activities, commission };
+        const quoteData = {
+            hotels,
+            transport,
+            activities,
+            commission,
+            startDate: startDate ? startDate.toISOString() : null,
+            clientName
+        };
         const finalQuoteName = `${clientName.trim()} (Copy)`;
 
         // Force create by NOT passing ID
@@ -202,9 +216,14 @@ export default function CalculatorPage() {
                 setActivities(data.activities || []);
                 setCommission(data.commission || 0);
 
+                // Restore Travel Date
+                if (data.startDate) {
+                    setStartDate(new Date(data.startDate));
+                }
+
                 setCurrentQuoteId(quote.id); // Track ID
                 setQuoteName(quote.name);
-                setClientName(quote.clientName || "");
+                setClientName(quote.clientName || data.clientName || "");
 
                 toast.success("Quote loaded! changes will update this record.");
                 setIsLoadOpen(false);
