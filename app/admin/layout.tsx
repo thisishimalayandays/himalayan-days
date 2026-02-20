@@ -31,7 +31,7 @@ export default async function AdminLayout({
     });
 
     return (
-        <div className="flex h-[111.2vh] bg-muted/40 font-sans overflow-hidden">
+        <div className="flex h-[111.2vh] bg-muted/40 font-sans overflow-hidden" style={{ zoom: 0.9 }}>
             {/* NotificationWatcher removed to save DB costs. Sales uses Telegram now. */}
             {/* <NotificationWatcher /> */}
             {/* Desktop Sidebar */}

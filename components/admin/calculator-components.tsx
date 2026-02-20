@@ -622,44 +622,48 @@ export function HotelCalculator({
                     )}
                 </div>
             </CardHeader>
-            <CardContent className="p-6 space-y-6">
-                <div className={`hidden md:grid ${hideRates ? "grid-cols-[30px_120px_minmax(180px,_3fr)_minmax(160px,_2fr)_80px_70px_70px_70px]" : "grid-cols-[30px_120px_minmax(180px,_3fr)_minmax(160px,_2fr)_80px_90px_70px_70px_70px]"} gap-4 text-xs uppercase tracking-wider font-semibold text-muted-foreground mb-6 px-2`}>
-                    <div></div> {/* Drag Handle Spacer */}
-                    <div>Location</div>
-                    <div>Property</div>
-                    <div>Room Type</div>
-                    <div>Plan</div>
-                    {!hideRates && <div>Rate (₹)</div>}
-                    <div className="text-center">Rooms</div>
-                    <div className="text-center">Ex. Beds</div>
-                    <div className="text-center">Nights</div>
-                </div>
-
-                <DndContext
-                    sensors={sensors}
-                    collisionDetection={closestCenter}
-                    onDragEnd={handleDragEnd}
-                >
-                    <SortableContext
-                        items={items}
-                        strategy={verticalListSortingStrategy}
-                    >
-                        <div className="space-y-2">
-                            {items.map((item, index) => (
-                                <SortableHotelRow
-                                    key={item.id}
-                                    item={item}
-                                    index={index}
-                                    updateRow={updateRow}
-                                    removeRow={removeRow}
-                                    availableHotels={availableHotels}
-                                    startDate={startDate}
-                                    hideRates={hideRates}
-                                />
-                            ))}
+            <CardContent className="p-4 sm:p-6 space-y-6">
+                <div className="overflow-x-auto overflow-y-visible w-full pb-4 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
+                    <div className="md:min-w-[920px]">
+                        <div className={`hidden md:grid ${hideRates ? "grid-cols-[30px_120px_minmax(180px,_3fr)_minmax(160px,_2fr)_80px_70px_70px_70px]" : "grid-cols-[30px_120px_minmax(180px,_3fr)_minmax(160px,_2fr)_80px_90px_70px_70px_70px]"} gap-4 text-xs uppercase tracking-wider font-semibold text-muted-foreground mb-6 px-2`}>
+                            <div></div> {/* Drag Handle Spacer */}
+                            <div>Location</div>
+                            <div>Property</div>
+                            <div>Room Type</div>
+                            <div>Plan</div>
+                            {!hideRates && <div>Rate (₹)</div>}
+                            <div className="text-center">Rooms</div>
+                            <div className="text-center">Ex. Beds</div>
+                            <div className="text-center">Nights</div>
                         </div>
-                    </SortableContext>
-                </DndContext>
+
+                        <DndContext
+                            sensors={sensors}
+                            collisionDetection={closestCenter}
+                            onDragEnd={handleDragEnd}
+                        >
+                            <SortableContext
+                                items={items}
+                                strategy={verticalListSortingStrategy}
+                            >
+                                <div className="space-y-3 md:space-y-2">
+                                    {items.map((item, index) => (
+                                        <SortableHotelRow
+                                            key={item.id}
+                                            item={item}
+                                            index={index}
+                                            updateRow={updateRow}
+                                            removeRow={removeRow}
+                                            availableHotels={availableHotels}
+                                            startDate={startDate}
+                                            hideRates={hideRates}
+                                        />
+                                    ))}
+                                </div>
+                            </SortableContext>
+                        </DndContext>
+                    </div>
+                </div>
 
                 <Button
                     variant="ghost"
