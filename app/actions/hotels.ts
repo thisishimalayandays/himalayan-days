@@ -299,3 +299,66 @@ export async function deleteRoomRate(id: string) {
         return { success: false, error: "Failed to delete room rate" };
     }
 }
+
+// --- Seasonal Rate Actions ---
+
+export async function updateSeasonalRates(
+    hotelId: string,
+    validFrom: Date,
+    validTo: Date,
+    rates: {
+        roomTypeId: string;
+        priceEP: number;
+        priceCP: number;
+        priceMAP: number;
+        priceAP: number;
+        extraBed: number;
+        extraBedEP: number;
+        extraBedCP: number;
+        extraBedMAP: number;
+        extraBedAP: number;
+    }[],
+    bookingValidUntil?: Date
+) {
+    try {
+        await prisma.$transaction(async (tx) => {
+            for (const rate of rates) {
+                // Delete existing rates for this room type that match the dates exactly
+                await tx.roomRate.deleteMany({
+                    where: {
+                        roomTypeId: rate.roomTypeId,
+                        validFrom: validFrom,
+                        validTo: validTo,
+                    }
+                });
+
+                await tx.roomRate.create({
+                    data: {
+                        roomTypeId: rate.roomTypeId,
+                        validFrom,
+                        validTo,
+                        priceEP: rate.priceEP,
+                        priceCP: rate.priceCP,
+                        priceMAP: rate.priceMAP,
+                        priceAP: rate.priceAP,
+                        extraBed: rate.extraBed,
+                        extraBedEP: rate.extraBedEP,
+                        extraBedCP: rate.extraBedCP,
+                        extraBedMAP: rate.extraBedMAP,
+                        extraBedAP: rate.extraBedAP,
+                        // @ts-ignore
+                        bookingValidUntil: bookingValidUntil || null,
+                    }
+                });
+            }
+        });
+
+        revalidatePath(`/admin/hotels/${hotelId}`);
+        await logActivity("UPDATE_SEASONAL_RATES", "Hotel", hotelId, "Updated seasonal rates");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update seasonal rates:", error);
+        return { success: false, error: "Failed to update seasonal rates" };
+    }
+}
+

@@ -1,6 +1,8 @@
 import { getHotelById } from "@/app/actions/hotels";
 import { HotelForm } from "@/components/admin/hotel-form";
 import { RoomTypeManager } from "@/components/admin/room-type-manager";
+import { SeasonalRateManager } from "@/components/admin/seasonal-rate-manager";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -30,7 +32,18 @@ export default async function EditHotelPage({ params }: EditHotelPageProps) {
                     <HotelForm hotel={hotel} />
                 </div>
                 <div className="md:col-span-2">
-                    <RoomTypeManager hotelId={hotel.id} rooms={hotel.rooms} />
+                    <Tabs defaultValue="seasonal" className="w-full">
+                        <TabsList className="grid w-full grid-cols-2 mb-4">
+                            <TabsTrigger value="seasonal">Seasonal Rates (New)</TabsTrigger>
+                            <TabsTrigger value="rooms">Room Configuration</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="seasonal">
+                            <SeasonalRateManager hotelId={hotel.id} rooms={hotel.rooms} />
+                        </TabsContent>
+                        <TabsContent value="rooms">
+                            <RoomTypeManager hotelId={hotel.id} rooms={hotel.rooms} />
+                        </TabsContent>
+                    </Tabs>
                 </div>
             </div>
         </div>
