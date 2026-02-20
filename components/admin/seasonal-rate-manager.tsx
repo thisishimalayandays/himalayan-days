@@ -347,7 +347,7 @@ export function SeasonalRateManager({ hotelId, rooms }: SeasonalRateManagerProps
                 </div>
 
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+                    <DialogContent className="max-w-[95vw] lg:max-w-7xl max-h-[95vh] overflow-y-auto w-full">
                         <DialogHeader>
                             <DialogTitle>{editingSeason ? "Edit Season Rates" : "Create New Season"}</DialogTitle>
                             <DialogDescription>
@@ -355,71 +355,73 @@ export function SeasonalRateManager({ hotelId, rooms }: SeasonalRateManagerProps
                             </DialogDescription>
                         </DialogHeader>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-4">
-                            <div className="space-y-4 md:col-span-1">
-                                <div className="space-y-2">
-                                    <Label>Valid From</Label>
-                                    <Input
-                                        type="date"
-                                        value={formData.validFrom ? format(formData.validFrom, 'yyyy-MM-dd') : ''}
-                                        onChange={(e) => setFormData({ ...formData, validFrom: new Date(e.target.value) })}
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>Valid To</Label>
-                                    <Input
-                                        type="date"
-                                        value={formData.validTo ? format(formData.validTo, 'yyyy-MM-dd') : ''}
-                                        onChange={(e) => setFormData({ ...formData, validTo: new Date(e.target.value) })}
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>Book By (Optional)</Label>
-                                    <Input
-                                        type="date"
-                                        value={formData.bookingValidUntil ? format(formData.bookingValidUntil, 'yyyy-MM-dd') : ''}
-                                        onChange={(e) => setFormData({ ...formData, bookingValidUntil: e.target.value ? new Date(e.target.value) : undefined })}
-                                    />
-                                    <p className="text-xs text-muted-foreground">If set, these rates are only valid for bookings made before this date.</p>
+                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 py-6">
+                            <div className="space-y-6 lg:col-span-1 border-r lg:pr-6">
+                                <div className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label>Valid From</Label>
+                                        <Input
+                                            type="date"
+                                            value={formData.validFrom ? format(formData.validFrom, 'yyyy-MM-dd') : ''}
+                                            onChange={(e) => setFormData({ ...formData, validFrom: new Date(e.target.value) })}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Valid To</Label>
+                                        <Input
+                                            type="date"
+                                            value={formData.validTo ? format(formData.validTo, 'yyyy-MM-dd') : ''}
+                                            onChange={(e) => setFormData({ ...formData, validTo: new Date(e.target.value) })}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Book By (Optional)</Label>
+                                        <Input
+                                            type="date"
+                                            value={formData.bookingValidUntil ? format(formData.bookingValidUntil, 'yyyy-MM-dd') : ''}
+                                            onChange={(e) => setFormData({ ...formData, bookingValidUntil: e.target.value ? new Date(e.target.value) : undefined })}
+                                        />
+                                        <p className="text-xs text-muted-foreground">If set, these rates are only valid for bookings made before this date.</p>
+                                    </div>
                                 </div>
 
-                                <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg border border-blue-100 dark:border-blue-900 mt-4">
+                                <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg border border-blue-100 dark:border-blue-900">
                                     <h4 className="font-semibold text-blue-800 dark:text-blue-300 mb-2 text-sm flex items-center">
                                         <Copy className="w-3 h-3 mr-2" /> Bulk Apply
                                     </h4>
                                     <p className="text-xs text-blue-600 dark:text-blue-400 mb-3">Copy values to all rooms to save time.</p>
-                                    <div className="grid grid-cols-2 gap-2">
-                                        <Button size="sm" variant="outline" className="text-xs h-7" onClick={() => handleApplyToAll('extraBed', formData.rates[rooms[0]?.id]?.extraBed || '0')}>
+                                    <div className="flex flex-col gap-2">
+                                        <Button size="sm" variant="outline" className="text-xs w-full justify-start bg-white dark:bg-black" onClick={() => handleApplyToAll('extraBed', formData.rates[rooms[0]?.id]?.extraBed || '0')}>
                                             Apply Extra Bed
                                         </Button>
-                                        <Button size="sm" variant="outline" className="text-xs h-7" onClick={() => handleApplyToAll('priceMAP', formData.rates[rooms[0]?.id]?.priceMAP || '0')}>
+                                        <Button size="sm" variant="outline" className="text-xs w-full justify-start bg-white dark:bg-black" onClick={() => handleApplyToAll('priceMAP', formData.rates[rooms[0]?.id]?.priceMAP || '0')}>
                                             Apply MAP
                                         </Button>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="md:col-span-2 space-y-4">
-                                <div className="border rounded-lg overflow-hidden">
+                            <div className="lg:col-span-3 space-y-4">
+                                <div className="border rounded-lg overflow-hidden shadow-sm">
                                     <div className="overflow-x-auto">
                                         <table className="w-full text-sm text-left">
                                             <thead className="bg-muted text-muted-foreground font-medium">
                                                 <tr>
-                                                    <th className="p-3 min-w-[150px] sticky left-0 bg-muted z-10 shadow-sm">Room Type</th>
-                                                    <th className="p-3 text-center min-w-[80px]">EP</th>
-                                                    <th className="p-3 text-center min-w-[80px]">CP</th>
-                                                    <th className="p-3 text-center min-w-[80px]">MAP</th>
-                                                    <th className="p-3 text-center min-w-[80px]">AP</th>
-                                                    <th className="p-3 text-center min-w-[80px] border-l">Ex. Bed</th>
-                                                    <th className="p-3 text-center min-w-[80px]">Ex. MAP</th>
+                                                    <th className="p-3 min-w-[200px] sticky left-0 bg-muted z-10 shadow-[4px_0_8px_-4px_rgba(0,0,0,0.1)]">Room Type</th>
+                                                    <th className="p-3 text-center min-w-[100px]">EP</th>
+                                                    <th className="p-3 text-center min-w-[100px]">CP</th>
+                                                    <th className="p-3 text-center min-w-[100px]">MAP</th>
+                                                    <th className="p-3 text-center min-w-[100px]">AP</th>
+                                                    <th className="p-3 text-center min-w-[100px] border-l bg-muted/30">Ex. Bed</th>
+                                                    <th className="p-3 text-center min-w-[100px] bg-muted/30">Ex. MAP</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y">
                                                 {rooms.map(room => {
                                                     const rate = formData.rates[room.id] || {};
                                                     return (
-                                                        <tr key={room.id} className="hover:bg-muted/5">
-                                                            <td className="p-3 font-medium sticky left-0 bg-background shadow-sm border-r">
+                                                        <tr key={room.id} className="hover:bg-muted/5 group">
+                                                            <td className="p-3 font-medium sticky left-0 bg-background shadow-[4px_0_8px_-4px_rgba(0,0,0,0.1)] group-hover:bg-muted/5 border-r transition-colors">
                                                                 {room.name}
                                                                 <div className="text-[10px] text-muted-foreground font-normal">Base: ₹{room.priceMAP}</div>
                                                             </td>
@@ -455,17 +457,17 @@ export function SeasonalRateManager({ hotelId, rooms }: SeasonalRateManagerProps
                                                                     onChange={(e) => handleRateChange(room.id, 'priceAP', e.target.value)}
                                                                 />
                                                             </td>
-                                                            <td className="p-2 border-l">
+                                                            <td className="p-2 border-l bg-muted/5">
                                                                 <Input
-                                                                    className="h-9 px-2 text-center bg-muted/10"
+                                                                    className="h-9 px-2 text-center bg-white dark:bg-card border-muted-foreground/30"
                                                                     placeholder="₹0"
                                                                     value={rate.extraBed}
                                                                     onChange={(e) => handleRateChange(room.id, 'extraBed', e.target.value)}
                                                                 />
                                                             </td>
-                                                            <td className="p-2">
+                                                            <td className="p-2 bg-muted/5">
                                                                 <Input
-                                                                    className="h-9 px-2 text-center"
+                                                                    className="h-9 px-2 text-center bg-white dark:bg-card border-muted-foreground/30"
                                                                     placeholder="₹0"
                                                                     value={rate.extraBedMAP}
                                                                     onChange={(e) => handleRateChange(room.id, 'extraBedMAP', e.target.value)}
@@ -481,7 +483,7 @@ export function SeasonalRateManager({ hotelId, rooms }: SeasonalRateManagerProps
                             </div>
                         </div>
 
-                        <div className="flex justify-end gap-2 mt-4 pt-4 border-t">
+                        <div className="flex justify-end gap-2 mt-4 pt-4 border-t sticky bottom-0 bg-background z-20">
                             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
                             <Button onClick={handleSubmit} disabled={loading} className="min-w-[120px]">
                                 {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
