@@ -391,11 +391,14 @@ export function SeasonalRateManager({ hotelId, rooms }: SeasonalRateManagerProps
                                     </h4>
                                     <p className="text-xs text-blue-600 dark:text-blue-400 mb-3">Copy values to all rooms to save time.</p>
                                     <div className="flex flex-col gap-2">
-                                        <Button size="sm" variant="outline" className="text-xs w-full justify-start bg-white dark:bg-black" onClick={() => handleApplyToAll('extraBed', formData.rates[rooms[0]?.id]?.extraBed || '0')}>
-                                            Apply Extra Bed
+                                        <Button size="sm" variant="outline" className="text-xs w-full justify-start bg-white dark:bg-black" onClick={() => handleApplyToAll('extraBedMAP', formData.rates[rooms[0]?.id]?.extraBedMAP || '0')}>
+                                            Apply Ex. MAP
                                         </Button>
                                         <Button size="sm" variant="outline" className="text-xs w-full justify-start bg-white dark:bg-black" onClick={() => handleApplyToAll('priceMAP', formData.rates[rooms[0]?.id]?.priceMAP || '0')}>
                                             Apply MAP
+                                        </Button>
+                                        <Button size="sm" variant="outline" className="text-xs w-full justify-start bg-white dark:bg-black" onClick={() => handleApplyToAll('extraBedCP', formData.rates[rooms[0]?.id]?.extraBedCP || '0')}>
+                                            Apply Ex. CP
                                         </Button>
                                     </div>
                                 </div>
@@ -408,12 +411,12 @@ export function SeasonalRateManager({ hotelId, rooms }: SeasonalRateManagerProps
                                             <thead className="bg-muted text-muted-foreground font-medium">
                                                 <tr>
                                                     <th className="p-3 min-w-[200px] sticky left-0 bg-muted z-10 shadow-[4px_0_8px_-4px_rgba(0,0,0,0.1)]">Room Type</th>
-                                                    <th className="p-3 text-center min-w-[100px]">EP</th>
+                                                    <th className="p-3 text-center min-w-[100px]">AP</th>
                                                     <th className="p-3 text-center min-w-[100px]">CP</th>
                                                     <th className="p-3 text-center min-w-[100px]">MAP</th>
-                                                    <th className="p-3 text-center min-w-[100px]">AP</th>
-                                                    <th className="p-3 text-center min-w-[100px] border-l bg-muted/30">Ex. Bed</th>
+                                                    <th className="p-3 text-center min-w-[100px] border-l bg-muted/30">Ex. AP</th>
                                                     <th className="p-3 text-center min-w-[100px] bg-muted/30">Ex. MAP</th>
+                                                    <th className="p-3 text-center min-w-[100px] bg-muted/30">Ex. CP</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y">
@@ -429,8 +432,8 @@ export function SeasonalRateManager({ hotelId, rooms }: SeasonalRateManagerProps
                                                                 <Input
                                                                     className="h-9 px-2 text-center"
                                                                     placeholder="₹0"
-                                                                    value={rate.priceEP}
-                                                                    onChange={(e) => handleRateChange(room.id, 'priceEP', e.target.value)}
+                                                                    value={rate.priceAP}
+                                                                    onChange={(e) => handleRateChange(room.id, 'priceAP', e.target.value)}
                                                                 />
                                                             </td>
                                                             <td className="p-2">
@@ -449,20 +452,12 @@ export function SeasonalRateManager({ hotelId, rooms }: SeasonalRateManagerProps
                                                                     onChange={(e) => handleRateChange(room.id, 'priceMAP', e.target.value)}
                                                                 />
                                                             </td>
-                                                            <td className="p-2">
-                                                                <Input
-                                                                    className="h-9 px-2 text-center"
-                                                                    placeholder="₹0"
-                                                                    value={rate.priceAP}
-                                                                    onChange={(e) => handleRateChange(room.id, 'priceAP', e.target.value)}
-                                                                />
-                                                            </td>
                                                             <td className="p-2 border-l bg-muted/5">
                                                                 <Input
                                                                     className="h-9 px-2 text-center bg-white dark:bg-card border-muted-foreground/30"
                                                                     placeholder="₹0"
-                                                                    value={rate.extraBed}
-                                                                    onChange={(e) => handleRateChange(room.id, 'extraBed', e.target.value)}
+                                                                    value={rate.extraBedAP}
+                                                                    onChange={(e) => handleRateChange(room.id, 'extraBedAP', e.target.value)}
                                                                 />
                                                             </td>
                                                             <td className="p-2 bg-muted/5">
@@ -471,6 +466,14 @@ export function SeasonalRateManager({ hotelId, rooms }: SeasonalRateManagerProps
                                                                     placeholder="₹0"
                                                                     value={rate.extraBedMAP}
                                                                     onChange={(e) => handleRateChange(room.id, 'extraBedMAP', e.target.value)}
+                                                                />
+                                                            </td>
+                                                            <td className="p-2 bg-muted/5">
+                                                                <Input
+                                                                    className="h-9 px-2 text-center bg-white dark:bg-card border-muted-foreground/30"
+                                                                    placeholder="₹0"
+                                                                    value={rate.extraBedCP}
+                                                                    onChange={(e) => handleRateChange(room.id, 'extraBedCP', e.target.value)}
                                                                 />
                                                             </td>
                                                         </tr>
