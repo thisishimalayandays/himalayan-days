@@ -303,7 +303,7 @@ function SortableHotelRow({
     }, [item.hotelId, item.roomTypeId, item.plan, startDate, roomTypes, item.isCustom]);
 
     return (
-        <div ref={setNodeRef} style={style} className={`grid ${hideRates ? "grid-cols-[30px_120px_minmax(180px,_3fr)_minmax(160px,_2fr)_80px_70px_70px]" : "grid-cols-2 md:grid-cols-[30px_120px_minmax(180px,_3fr)_minmax(160px,_2fr)_80px_90px_70px_70px]"} gap-3 md:gap-4 items-start group bg-background p-4 md:py-6 md:px-0 border-b border-border/60 last:border-0 ${isDragging ? "shadow-lg ring-1 ring-blue-500/20 rounded-md opacity-80 z-50 bg-card" : ""}`}>
+        <div ref={setNodeRef} style={style} className={`grid ${hideRates ? "grid-cols-[30px_120px_minmax(180px,_3fr)_minmax(160px,_2fr)_80px_70px_70px_70px]" : "grid-cols-2 md:grid-cols-[30px_120px_minmax(180px,_3fr)_minmax(160px,_2fr)_80px_90px_70px_70px_70px]"} gap-3 md:gap-4 items-start group bg-background p-4 md:py-6 md:px-0 border-b border-border/60 last:border-0 ${isDragging ? "shadow-lg ring-1 ring-blue-500/20 rounded-md opacity-80 z-50 bg-card" : ""}`}>
             {/* Drag Handle */}
             <div className="flex justify-center cursor-move touch-none col-span-2 md:col-span-1 py-1 md:py-0 bg-muted/20 md:bg-transparent rounded md:rounded-none mb-1 md:mb-0" {...attributes} {...listeners}>
                 <GripVertical className="w-4 h-4 text-muted-foreground/50 hover:text-foreground transition-colors rotate-90 md:rotate-0" />
@@ -513,6 +513,21 @@ function SortableHotelRow({
                 />
             </div>
 
+            <div className="flex flex-col gap-1 col-span-1 md:col-span-1">
+                <Input
+                    type="number"
+                    min="0"
+                    value={item.extraBedCount || ""}
+                    onChange={(e) => updateRow(index, "extraBedCount", parseInt(e.target.value) || 0)}
+                    className="h-9 px-1 text-center bg-background/50 dark:bg-background/20 border-input/60"
+                    title={item.extraBedRate ? `Extra Bed Rate: ₹${item.extraBedRate}` : "Extra Beds"}
+                    placeholder="0"
+                />
+                {!hideRates && item.extraBedRate ? (
+                    <span className="text-[9px] text-center text-muted-foreground font-medium -mt-1 leading-tight">₹{item.extraBedRate}/bed</span>
+                ) : null}
+            </div>
+
             <div className="flex col-span-1 md:col-span-1">
                 <Input
                     type="number"
@@ -608,7 +623,7 @@ export function HotelCalculator({
                 </div>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
-                <div className={`hidden md:grid ${hideRates ? "grid-cols-[30px_120px_minmax(180px,_3fr)_minmax(160px,_2fr)_80px_70px_70px]" : "grid-cols-[30px_120px_minmax(180px,_3fr)_minmax(160px,_2fr)_80px_90px_70px_70px]"} gap-4 text-xs uppercase tracking-wider font-semibold text-muted-foreground mb-6 px-2`}>
+                <div className={`hidden md:grid ${hideRates ? "grid-cols-[30px_120px_minmax(180px,_3fr)_minmax(160px,_2fr)_80px_70px_70px_70px]" : "grid-cols-[30px_120px_minmax(180px,_3fr)_minmax(160px,_2fr)_80px_90px_70px_70px_70px]"} gap-4 text-xs uppercase tracking-wider font-semibold text-muted-foreground mb-6 px-2`}>
                     <div></div> {/* Drag Handle Spacer */}
                     <div>Location</div>
                     <div>Property</div>
@@ -616,6 +631,7 @@ export function HotelCalculator({
                     <div>Plan</div>
                     {!hideRates && <div>Rate (₹)</div>}
                     <div className="text-center">Rooms</div>
+                    <div className="text-center">Ex. Beds</div>
                     <div className="text-center">Nights</div>
                 </div>
 

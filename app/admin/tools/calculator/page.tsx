@@ -314,9 +314,11 @@ export default function CalculatorPage() {
             text += `🏨 *Hotels & Stays*\n`;
             hotels.forEach((h, i) => {
                 if (h.name || h.rate > 0) {
-                    const total = h.rate * h.rooms * h.nights;
-                    // Format: 1. Srinagar Hotel - Radisson ...
-                    text += `${i + 1}. ${h.location} ${h.type} - ${h.name || 'Property'} - ₹${h.rate.toLocaleString()} x ${h.rooms} R x ${h.nights} N = ₹${total.toLocaleString()}\n`;
+                    const base = h.rate * h.rooms;
+                    const extra = (h.extraBedCount || 0) * (h.extraBedRate || 0);
+                    const total = (base + extra) * h.nights;
+                    let extraStr = h.extraBedCount ? ` + (₹${(h.extraBedRate || 0).toLocaleString()} x ${h.extraBedCount} Ex. Bed)` : "";
+                    text += `${i + 1}. ${h.location} ${h.type} - ${h.name || 'Property'} - (₹${h.rate.toLocaleString()} x ${h.rooms} R${extraStr}) x ${h.nights} N = ₹${total.toLocaleString()}\n`;
                 }
             });
             text += `*Subtotal:* ₹${calculateHotelTotal().toLocaleString("en-IN")}\n\n`;
