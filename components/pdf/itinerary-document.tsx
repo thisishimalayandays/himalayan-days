@@ -318,6 +318,7 @@ export function ItineraryDocument({ data, language = 'en' }: { data: ItineraryDa
             .replace(/Hotel/gi, 'فندق')
             .replace(/Resort/gi, 'منتجع')
             .replace(/Camp/gi, 'مخيم')
+            .replace(/Camps/gi, 'مخيمات')
             .replace(/Premium/gi, 'متميز')
             .replace(/Luxury/gi, 'فاخر')
             .replace(/Deluxe/gi, 'ديلوكس')
@@ -325,7 +326,26 @@ export function ItineraryDocument({ data, language = 'en' }: { data: ItineraryDa
             .replace(/Srinagar/gi, 'سريناجار')
             .replace(/Gulmarg/gi, 'جولمارج')
             .replace(/Pahalgam/gi, 'باهالجام')
-            .replace(/Sonmarg/gi, 'سونمارج');
+            .replace(/Sonmarg/gi, 'سونمارج')
+            .replace(/Leh/gi, 'لاه');
+    };
+
+    const tVehicle = (vehicle: string) => {
+        if (!isAr || !vehicle) return vehicle;
+        return vehicle
+            .replace(/Private Cab/gi, 'سيارة خاصة')
+            .replace(/Sedan/gi, 'سيدان')
+            .replace(/Etios/gi, 'إيتيوس')
+            .replace(/Thrive/gi, 'ثرايف')
+            .replace(/Dzire/gi, 'ديزاير')
+            .replace(/Swift/gi, 'سويفت')
+            .replace(/SUV/gi, 'دفع رباعي')
+            .replace(/Innova/gi, 'إينوفا')
+            .replace(/Crysta/gi, 'كريستا')
+            .replace(/Tempo Traveller/gi, 'حافلة صغيرة')
+            .replace(/Bus/gi, 'حافلة')
+            .replace(/Room/gi, 'غرفة')
+            .replace(/Rooms/gi, 'غرف');
     };
 
     // Formatting helper
@@ -354,19 +374,19 @@ export function ItineraryDocument({ data, language = 'en' }: { data: ItineraryDa
 
     return (
         <Document>
-            <Page size="A4" style={{ ...styles.page, paddingBottom: 50 }}>
+            <Page size="A4" style={{ ...styles.page, paddingBottom: 50, direction: isAr ? 'rtl' : 'ltr' } as any}>
 
                 {/* Header */}
-                <View style={styles.header}>
-                    <View style={styles.headerLeft}>
+                <View style={[styles.header, { flexDirection: isAr ? 'row-reverse' : 'row' }]}>
+                    <View style={[styles.headerLeft, { flexDirection: isAr ? 'row-reverse' : 'row' }]}>
                         {/* Logo */}
-                        <Image src={LOGO_URL} style={styles.logo} />
+                        <Image src={LOGO_URL} style={[styles.logo, { marginRight: isAr ? 0 : 15, marginLeft: isAr ? 15 : 0 }]} />
                         <View style={styles.brandTextContainer}>
-                            <Text style={{ ...styles.brandTitle, fontFamily: isAr ? 'Amiri' : 'Helvetica' }}>HIMALAYAN DAYS</Text>
+                            <Text style={{ ...styles.brandTitle, fontFamily: isAr ? 'Amiri' : 'Helvetica', textAlign: isAr ? 'right' : 'left' }}>HIMALAYAN DAYS</Text>
                             <Text style={{ ...styles.brandSubtitle, ...arFont }}>{t('KASHMIR TOUR & TRAVEL EXPERTS', 'خبراء السياحة والسفر في كشمير')}</Text>
                         </View>
                     </View>
-                    <View style={styles.headerRight}>
+                    <View style={[styles.headerRight, { alignItems: isAr ? 'flex-start' : 'flex-end' }]}>
                         <Text style={styles.contactText}>+91-9103901803</Text>
                         <Text style={styles.contactText}>thisishimalayandays@gmail.com</Text>
                         <Text style={styles.contactText}>www.himalayandays.in</Text>
@@ -403,8 +423,8 @@ export function ItineraryDocument({ data, language = 'en' }: { data: ItineraryDa
 
                         <Text style={[styles.label, arFont]}>{t('Vehicle / Rooms', 'المركبة / الغرف')}</Text>
                         <Text style={[styles.value, arFont]}>
-                            {data.vehicleType || t("Private Cab", "سيارة خاصة")}
-                            {data.rooms ? ` • ${data.rooms}` : ""}
+                            {tVehicle(data.vehicleType) || t("Private Cab", "سيارة خاصة")}
+                            {data.rooms ? ` • ${tVehicle(data.rooms)}` : ""}
                         </Text>
                     </View>
                 </View>
