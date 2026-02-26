@@ -79,12 +79,13 @@ const PDFExportButton = React.memo(({ data, onGenerate, language = 'en' }: { dat
         <PDFDownloadLink
             document={<ItineraryDocument data={pdfData} language={language} />}
             fileName={`${data.clientName || 'Guest'} _ ${data.duration.replace(/\//g, '-')} _ Itinerary${language === 'ar' ? '_AR' : ''}.pdf`}
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors h-9 px-3 bg-green-600 hover:bg-green-700 text-white no-underline"
         >
             {({ blob, url, loading, error }) => (
-                <Button size="sm" variant="secondary" className="bg-green-600 hover:bg-green-700 text-white" disabled={loading}>
+                <>
                     <Download className="w-4 h-4 mr-2" />
                     {loading ? 'Generating...' : (language === 'ar' ? 'Download (AR) Ready' : 'Download (EN) Ready')}
-                </Button>
+                </>
             )}
         </PDFDownloadLink>
     );

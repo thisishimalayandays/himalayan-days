@@ -293,6 +293,34 @@ export function ItineraryDocument({ data, language = 'en' }: { data: ItineraryDa
 
     const t = (en: string, ar: string) => isAr ? ar : en;
 
+    const tMeals = (meals: string) => {
+        if (!isAr || !meals) return meals;
+        return meals
+            .replace(/Breakfast/gi, 'الإفطار')
+            .replace(/Lunch/gi, 'الغداء')
+            .replace(/Dinner/gi, 'العشاء')
+            .replace(/Room Only/gi, 'غرفة فقط')
+            .replace(/ & /g, ' و')
+            .replace(/, /g, '، ');
+    };
+
+    const tStay = (stay: string) => {
+        if (!isAr || !stay) return stay;
+        return stay
+            .replace(/Houseboat/gi, 'منزل عائم')
+            .replace(/Hotel/gi, 'فندق')
+            .replace(/Resort/gi, 'منتجع')
+            .replace(/Camp/gi, 'مخيم')
+            .replace(/Premium/gi, 'متميز')
+            .replace(/Luxury/gi, 'فاخر')
+            .replace(/Deluxe/gi, 'ديلوكس')
+            .replace(/Standard/gi, 'قياسي')
+            .replace(/Srinagar/gi, 'سريناجار')
+            .replace(/Gulmarg/gi, 'جولمارج')
+            .replace(/Pahalgam/gi, 'باهالجام')
+            .replace(/Sonmarg/gi, 'سونمارج');
+    };
+
     // Formatting helper
     const formatDate = (dateStr: string) => {
         if (!dateStr) return 'TBD';
@@ -413,12 +441,12 @@ export function ItineraryDocument({ data, language = 'en' }: { data: ItineraryDa
                                         <View style={[styles.metaContainer, { flexDirection: isAr ? 'row-reverse' : 'row' }]}>
                                             {day.stay && (
                                                 <View style={[styles.metaItem, { marginRight: isAr ? 0 : 8, marginLeft: isAr ? 8 : 0 }]}>
-                                                    <Text style={[styles.metaText, arFont]}>{t('Stay:', 'الإقامة:')} {day.stay}</Text>
+                                                    <Text style={[styles.metaText, arFont]}>{t('Stay:', 'الإقامة:')} {tStay(day.stay)}</Text>
                                                 </View>
                                             )}
                                             {day.meals && (
                                                 <View style={[styles.metaItem, { marginRight: isAr ? 0 : 8, marginLeft: isAr ? 8 : 0 }]}>
-                                                    <Text style={[styles.metaText, arFont]}>{t('Meals:', 'الوجبات:')} {day.meals}</Text>
+                                                    <Text style={[styles.metaText, arFont]}>{t('Meals:', 'الوجبات:')} {tMeals(day.meals)}</Text>
                                                 </View>
                                             )}
                                         </View>
