@@ -7,8 +7,8 @@ import { ItineraryData } from '@/app/admin/tools/itinerary-maker/page';
 Font.register({
     family: 'Amiri',
     fonts: [
-        { src: 'https://fonts.gstatic.com/s/amiri/v25/J7a1npd8CGxZHp6rlWYA4Q.ttf', fontWeight: 'normal' },
-        { src: 'https://fonts.gstatic.com/s/amiri/v25/J7a1npd8CGxZHp6rlWYA4Q.ttf', fontWeight: 'bold' } // Fallback same URL to avoid PDF crash on bold
+        { src: '/fonts/Amiri-Regular.ttf', fontWeight: 'normal' },
+        { src: '/fonts/Amiri-Bold.ttf', fontWeight: 'bold' }
     ]
 });
 
