@@ -1,11 +1,39 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import Script from 'next/script';
+import { useEffect } from 'react';
 import { Facebook, Instagram, Twitter, Mail, MapPin, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NewsletterForm } from './newsletter-form';
 
 export function Footer() {
+    useEffect(() => {
+        // Auto-translate to Arabic for users in Yemen
+        const checkLocationAndTranslate = async () => {
+            try {
+                // Check if user has already set a preference
+                const hasTranslationCookie = document.cookie.includes('googtrans=');
+                if (hasTranslationCookie) return;
+
+                // Call a free IP geolocation API
+                const res = await fetch('https://ipapi.co/json/');
+                const data = await res.json();
+
+                if (data.country_code === 'YE') { // Yemen
+                    // Set Google Translate cookie for Arabic
+                    // Format is /auto/[lang_code] or /en/[lang_code]
+                    document.cookie = "googtrans=/en/ar; path=/;";
+                    // Reload to apply translation
+                    window.location.reload();
+                }
+            } catch (error) {
+                console.error("Geolocation check failed:", error);
+            }
+        };
+
+        checkLocationAndTranslate();
+    }, []);
+
     return (
         <>
             <Script
@@ -17,6 +45,7 @@ export function Footer() {
                     function googleTranslateElementInit() {
                         new window.google.translate.TranslateElement({
                             pageLanguage: 'en',
+                            includedLanguages: 'ar',
                             layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE
                         }, 'google_translate_element');
                     }
