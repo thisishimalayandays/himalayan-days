@@ -3,12 +3,14 @@ import React from 'react';
 import { Page, Text, View, Document, StyleSheet, Image, Font } from '@react-pdf/renderer';
 import { ItineraryData } from '@/app/admin/tools/itinerary-maker/page';
 
-// Register Arabic font
+// Register Arabic font — must use absolute URL since @react-pdf renders client-side and
+// cannot resolve relative paths like `/fonts/...`
+const FONT_BASE = typeof window !== 'undefined' ? window.location.origin : '';
 Font.register({
     family: 'Amiri',
     fonts: [
-        { src: '/fonts/Amiri-Regular.ttf', fontWeight: 'normal' },
-        { src: '/fonts/Amiri-Bold.ttf', fontWeight: 'bold' }
+        { src: `${FONT_BASE}/fonts/Amiri-Regular.ttf`, fontWeight: 'normal' },
+        { src: `${FONT_BASE}/fonts/Amiri-Bold.ttf`, fontWeight: 'bold' }
     ]
 });
 
