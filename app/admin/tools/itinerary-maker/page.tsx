@@ -1053,9 +1053,10 @@ export default function ItineraryMakerPage() {
                     </div>
 
                     {/* Explicit Download Button - Lazy Generation ensures performance */}
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-wrap justify-end">
                         <WhatsAppItineraryShare data={previewData} />
-                        <PDFExportButton data={previewData} onGenerate={validateForm} />
+                        <PDFExportButton data={previewData} language="en" onGenerate={validateForm} />
+                        <PDFExportButton data={previewData} language="ar" onGenerate={validateForm} />
                     </div>
                 </div>
                 <div className="flex-1 w-full h-full bg-gray-200 p-2 md:p-8 overflow-hidden relative">

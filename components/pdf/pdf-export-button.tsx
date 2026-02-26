@@ -8,7 +8,7 @@ import { ItineraryData } from '@/app/admin/tools/itinerary-maker/page';
 
 import React from 'react';
 
-const PDFExportButton = React.memo(({ data, onGenerate }: { data: ItineraryData; onGenerate?: () => boolean }) => {
+const PDFExportButton = React.memo(({ data, onGenerate, language = 'en' }: { data: ItineraryData; onGenerate?: () => boolean, language?: 'en' | 'ar' }) => {
     const [isGenerating, setIsGenerating] = React.useState(false);
     const [pdfData, setPdfData] = React.useState<ItineraryData | null>(null);
 
@@ -70,20 +70,20 @@ const PDFExportButton = React.memo(({ data, onGenerate }: { data: ItineraryData;
                     prepareData();
                 }}
             >
-                <Download className="w-4 h-4 mr-2" /> Generate PDF
+                <Download className="w-4 h-4 mr-2" /> {language === 'ar' ? 'Generate PDF (AR)' : 'Generate PDF (EN)'}
             </Button>
         );
     }
 
     return (
         <PDFDownloadLink
-            document={<ItineraryDocument data={pdfData} />}
-            fileName={`${data.clientName || 'Guest'} _ ${data.duration.replace(/\//g, '-')} _ Itinerary.pdf`}
+            document={<ItineraryDocument data={pdfData} language={language} />}
+            fileName={`${data.clientName || 'Guest'} _ ${data.duration.replace(/\//g, '-')} _ Itinerary${language === 'ar' ? '_AR' : ''}.pdf`}
         >
             {({ blob, url, loading, error }) => (
                 <Button size="sm" variant="secondary" className="bg-green-600 hover:bg-green-700 text-white" disabled={loading}>
                     <Download className="w-4 h-4 mr-2" />
-                    {loading ? 'Generating...' : 'Download Ready'}
+                    {loading ? 'Generating...' : (language === 'ar' ? 'Download (AR) Ready' : 'Download (EN) Ready')}
                 </Button>
             )}
         </PDFDownloadLink>
