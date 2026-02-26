@@ -9,8 +9,10 @@ const FONT_BASE = typeof window !== 'undefined' ? window.location.origin : '';
 Font.register({
     family: 'Amiri',
     fonts: [
-        { src: `${FONT_BASE}/fonts/Amiri-Regular.ttf`, fontWeight: 'normal' },
-        { src: `${FONT_BASE}/fonts/Amiri-Bold.ttf`, fontWeight: 'bold' }
+        { src: `${FONT_BASE}/fonts/Amiri-Regular.ttf`, fontWeight: 'normal', fontStyle: 'normal' },
+        { src: `${FONT_BASE}/fonts/Amiri-Bold.ttf`, fontWeight: 'bold', fontStyle: 'normal' },
+        { src: `${FONT_BASE}/fonts/Amiri-Italic.ttf`, fontWeight: 'normal', fontStyle: 'italic' },
+        { src: `${FONT_BASE}/fonts/Amiri-Bold.ttf`, fontWeight: 'bold', fontStyle: 'italic' } // Bold-italic fallback to bold
     ]
 });
 
@@ -293,8 +295,8 @@ const styles = StyleSheet.create({
 
 export function ItineraryDocument({ data, language = 'en' }: { data: ItineraryData; language?: 'en' | 'ar' }) {
     const isAr = language === 'ar';
-    const arFont = { fontFamily: isAr ? 'Amiri' : 'Helvetica', textAlign: isAr ? 'right' as const : 'left' as const };
-    const arFontCenter = { fontFamily: isAr ? 'Amiri' : 'Helvetica', textAlign: 'center' as const };
+    const arFont = { fontFamily: isAr ? 'Amiri' : 'Helvetica', textAlign: isAr ? 'right' as const : 'left' as const, fontStyle: 'normal' as const };
+    const arFontCenter = { fontFamily: isAr ? 'Amiri' : 'Helvetica', textAlign: 'center' as const, fontStyle: 'normal' as const };
 
     const t = (en: string, ar: string) => isAr ? ar : en;
 
