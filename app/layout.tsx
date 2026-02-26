@@ -80,7 +80,9 @@ export default function RootLayout({
             <Analytics />
             <SpeedInsights />
             <FacebookPixel />
-            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || "G-GE51ZR3PFR"} />
+            {process.env.NEXT_PUBLIC_GA_ID && (
+              <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+            )}
           </DynamicThemeProvider>
         </ReCaptchaWrapper>
       </body>

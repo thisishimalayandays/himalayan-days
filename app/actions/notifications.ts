@@ -6,7 +6,7 @@ export async function checkNewInquiries(sinceTimestamp: number) {
     try {
         const sinceDate = new Date(sinceTimestamp)
 
-        // Count Inquiries created after the timestamp
+        // Count new inquiries created after the given timestamp
         const count = await prisma.inquiry.count({
             where: {
                 createdAt: {
