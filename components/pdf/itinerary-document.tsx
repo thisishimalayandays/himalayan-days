@@ -6,7 +6,10 @@ import { ItineraryData } from '@/app/admin/tools/itinerary-maker/page';
 // Register Arabic font
 Font.register({
     family: 'Amiri',
-    src: 'https://fonts.gstatic.com/s/amiri/v25/J7a1npd8CGxZHp6rlWYA4Q.ttf'
+    fonts: [
+        { src: 'https://fonts.gstatic.com/s/amiri/v25/J7a1npd8CGxZHp6rlWYA4Q.ttf', fontWeight: 'normal' },
+        { src: 'https://fonts.gstatic.com/s/amiri/v25/J7a1npd8CGxZHp6rlWYA4Q.ttf', fontWeight: 'bold' } // Fallback same URL to avoid PDF crash on bold
+    ]
 });
 
 const LOGO_URL = typeof window !== 'undefined' ? `${window.location.origin}/logo.png` : "/logo.png";

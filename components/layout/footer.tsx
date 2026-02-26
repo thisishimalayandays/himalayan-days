@@ -149,9 +149,9 @@ export function Footer() {
                 <div className="border-t border-gray-900 pt-8 flex flex-col items-center md:flex-row md:justify-between text-sm text-gray-600 container mx-auto px-4">
                     <p>&copy; {new Date().getFullYear()} Himalayan Days. All rights reserved.</p>
 
-                    {/* Google Translate Dropdown Container */}
-                    <div className="mt-4 md:mt-0 relative z-50">
-                        <div id="google_translate_element" className="bg-white/10 p-1 rounded-md overflow-hidden"></div>
+                    {/* Google Translate Dropdown Container (Hidden but active for auto-translation) */}
+                    <div className="hidden">
+                        <div id="google_translate_element"></div>
                         <style dangerouslySetInnerHTML={{
                             __html: `
                             /* Hide Google Translate Top Bar */
@@ -160,15 +160,6 @@ export function Footer() {
                             }
                             body {
                                 top: 0px !important;
-                            }
-                            /* Style the dropdown slightly */
-                            .goog-te-combo {
-                                outline: none;
-                                border: 1px solid #4ade80;
-                                border-radius: 4px;
-                                padding: 4px;
-                                font-size: 14px;
-                                color: #1e293b;
                             }
                         `
                         }} />
