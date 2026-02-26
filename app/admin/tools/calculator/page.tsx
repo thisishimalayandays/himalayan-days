@@ -583,7 +583,7 @@ export default function CalculatorPage() {
                     <HotelCalculator
                         items={hotels}
                         setItems={setHotels}
-                        total={netTotal}
+                        total={calculateHotelTotal()}
                         availableHotels={availableHotels}
                         startDate={startDate}
                         setStartDate={setStartDate}
@@ -592,7 +592,7 @@ export default function CalculatorPage() {
                     <TransportCalculator
                         items={transport}
                         setItems={setTransport}
-                        total={0} // Todo: Transport Total
+                        total={calculateTransportTotal()}
                         availableTransports={availableTransports}
                     />
 
