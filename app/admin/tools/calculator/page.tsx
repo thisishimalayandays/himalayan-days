@@ -72,6 +72,7 @@ export default function CalculatorPage() {
     // --- AI Prompt State ---
     const [promptTone, setPromptTone] = useState("Balanced");
     const [promptType, setPromptType] = useState("General");
+    const [promptLanguage, setPromptLanguage] = useState("English");
     const [tripHighlights, setTripHighlights] = useState("");
     const [routeLegs, setRouteLegs] = useState<{ id: string; from: string; to: string }[]>([]);
 
@@ -260,7 +261,7 @@ export default function CalculatorPage() {
         const days = totalNights + 1;
         const durationStr = `${days} Days / ${totalNights} Nights`;
 
-        let prompt = `Create a detailed ${promptTone} ${promptType} itinerary for Kashmir.\n`;
+        let prompt = `Create a detailed ${promptTone} ${promptType} itinerary for Kashmir in ${promptLanguage}.\n`;
         prompt += `Duration: ${durationStr}\n`;
         // Assumption: 2 Adults based on 1 room double occupancy logic if not specified, 
         // but Calculator doesn't have Pax fields yet. We can assume generic or ask user to fill.
@@ -697,6 +698,17 @@ export default function CalculatorPage() {
                                         <option value="Family">Family</option>
                                         <option value="Group">Group</option>
                                         <option value="Solo">Solo</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-1">
+                                    <Label className="text-xs">Language</Label>
+                                    <select
+                                        className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors"
+                                        value={promptLanguage}
+                                        onChange={(e) => setPromptLanguage(e.target.value)}
+                                    >
+                                        <option value="English">English</option>
+                                        <option value="Arabic">Arabic</option>
                                     </select>
                                 </div>
 
