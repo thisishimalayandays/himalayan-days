@@ -2,15 +2,17 @@
 
 import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
-import { PDFDownloadLink } from '@react-pdf/renderer';
+import { pdf } from '@react-pdf/renderer';
 import { ItineraryDocument } from './itinerary-document';
 import { ItineraryData } from '@/app/admin/tools/itinerary-maker/page';
-
 import React from 'react';
 
-const PDFExportButton = React.memo(({ data, onGenerate, language = 'en' }: { data: ItineraryData; onGenerate?: () => boolean, language?: 'en' | 'ar' }) => {
-    const [isGenerating, setIsGenerating] = React.useState(false);
-    const [pdfData, setPdfData] = React.useState<ItineraryData | null>(null);
+const PDFExportButton = React.memo(({ data, onGenerate, language = 'en' }: {
+    data: ItineraryData;
+    onGenerate?: () => boolean;
+    language?: 'en' | 'ar';
+}) => {
+    const [state, setState] = React.useState<'idle' | 'preparing' | 'downloading'>('idle');
 
     // Helper: Convert URL to Base64
     const urlToBase64 = async (url: string): Promise<string | null> => {
@@ -23,71 +25,85 @@ const PDFExportButton = React.memo(({ data, onGenerate, language = 'en' }: { dat
                 reader.readAsDataURL(blob);
             });
         } catch (error) {
-            console.error("Failed to load image for PDF:", url, error);
+            console.error('Failed to load image for PDF:', url, error);
             return null;
         }
     };
 
-    const prepareData = async () => {
-        const newData = JSON.parse(JSON.stringify(data)); // Deep clone
+    const handleClick = async () => {
+        if (onGenerate) {
+            const isValid = onGenerate();
+            if (!isValid) return;
+        }
 
-        // Process days
-        await Promise.all(newData.days.map(async (day: any) => {
-            if (day.image) {
-                // Ensure absolute URL if relative
-                const imgUrl = day.image.startsWith('/')
-                    ? `${window.location.origin}${day.image}`
-                    : day.image;
+        setState('preparing');
 
-                const base64 = await urlToBase64(imgUrl);
-                if (base64) {
-                    day.image = base64;
-                }
-            }
-        }));
+        try {
+            const newData = JSON.parse(JSON.stringify(data)); // Deep clone
 
-        setPdfData(newData);
-        setIsGenerating(true);
+            // Convert day images to base64 so the PDF renderer can embed them
+            await Promise.all(
+                newData.days.map(async (day: any) => {
+                    if (day.image) {
+                        const imgUrl = day.image.startsWith('/')
+                            ? `${window.location.origin}${day.image}`
+                            : day.image;
+                        const base64 = await urlToBase64(imgUrl);
+                        if (base64) day.image = base64;
+                    }
+                })
+            );
+
+            setState('downloading');
+
+            // Generate the PDF blob programmatically — most reliable cross-browser method
+            const blob = await pdf(
+                <ItineraryDocument data={newData} language={language} />
+            ).toBlob();
+
+            // Trigger browser download
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${data.clientName || 'Guest'}_Itinerary${language === 'ar' ? '_AR' : '_EN'}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error('PDF generation failed:', err);
+            alert(`PDF generation failed: ${err instanceof Error ? err.message : String(err)}`);
+        } finally {
+            setState('idle');
+        }
     };
 
-    // Reset generation when data changes so user gets fresh PDF
+    // Reset when itinerary data changes
     React.useEffect(() => {
-        setIsGenerating(false);
-        setPdfData(null);
+        setState('idle');
     }, [data]);
 
-    if (!isGenerating || !pdfData) {
-        return (
-            <Button
-                size="sm"
-                variant="default"
-                className="bg-orange-600 hover:bg-orange-700 text-white"
-                onClick={() => {
-                    if (onGenerate) {
-                        const isValid = onGenerate();
-                        if (!isValid) return;
-                    }
-                    prepareData();
-                }}
-            >
-                <Download className="w-4 h-4 mr-2" /> {language === 'ar' ? 'Generate PDF (AR)' : 'Generate PDF (EN)'}
-            </Button>
-        );
-    }
+    const isAr = language === 'ar';
+    const label = {
+        idle: isAr ? 'Download PDF (AR)' : 'Download PDF (EN)',
+        preparing: 'Preparing…',
+        downloading: 'Generating…',
+    }[state];
 
     return (
-        <PDFDownloadLink
-            document={<ItineraryDocument data={pdfData} language={language} />}
-            fileName={`${data.clientName || 'Guest'} _ ${data.duration.replace(/\//g, '-')} _ Itinerary${language === 'ar' ? '_AR' : ''}.pdf`}
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors h-9 px-3 bg-green-600 hover:bg-green-700 text-white no-underline"
+        <Button
+            size="sm"
+            variant="default"
+            className={state === 'idle'
+                ? (isAr ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-orange-600 hover:bg-orange-700 text-white')
+                : 'bg-gray-500 text-white'
+            }
+            disabled={state !== 'idle'}
+            onClick={handleClick}
         >
-            {({ blob, url, loading, error }) => (
-                <>
-                    <Download className="w-4 h-4 mr-2" />
-                    {loading ? 'Generating...' : (language === 'ar' ? 'Download (AR) Ready' : 'Download (EN) Ready')}
-                </>
-            )}
-        </PDFDownloadLink>
+            <Download className="w-4 h-4 mr-2" />
+            {label}
+        </Button>
     );
 });
 
