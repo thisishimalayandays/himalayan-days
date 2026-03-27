@@ -20,6 +20,7 @@ import { SpringPackageHero } from '@/components/packages/spring-package-hero';
 import { SpringItinerary } from '@/components/packages/spring-itinerary';
 import { SpringFeatureStrip } from '@/components/packages/spring-features';
 import { SpringInclusionsExclusions } from '@/components/packages/spring-inclusions';
+import { SpringTestimonials } from '@/components/packages/spring-testimonials';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const resolvedParams = await params;
@@ -144,7 +145,7 @@ export default async function PackagePage({ params }: { params: Promise<{ slug: 
                                 />
                             </section>
 
-                            <Testimonials />
+                            <SpringTestimonials />
                         </div>
 
                         {/* RIGHT: Booking Sidebar */}

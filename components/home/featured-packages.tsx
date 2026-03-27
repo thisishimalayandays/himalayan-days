@@ -36,26 +36,27 @@ const sections = [
 ];
 
 export function FeaturedPackages({ packages }: { packages: any[] }) {
+    // Seasonal score: positively uprank Spring/Summer, downrank Winter
+    const getSeasonScore = (pkg: any) => {
+        const text = (pkg.title + ' ' + pkg.category + ' ' + (pkg.overview || '')).toLowerCase();
+        
+        // High priority for current active season (Spring/Summer)
+        if (['spring', 'summer', 'tulip', 'bloom', 'garden', 'shikara', 'dal lake', 'meadow', 'symphony'].some(k => text.includes(k))) return 2;
+        
+        // Low priority for off-season (Winter)
+        if (['winter', 'snow', 'ski', 'gondola', 'frozen', 'snowfall', 'december', 'january', 'february'].some(k => text.includes(k))) return -1;
+        
+        // Default priority
+        return 1;
+    };
+
     return (
         <div id="packages" className="py-20 space-y-24 bg-gray-50/30">
             {sections.map((section) => {
                 let filteredPackages = packages.filter(section.filter);
 
-                // Sort 'Popular' section to prioritize Spring packages
-                if (section.id === 'popular') {
-                    filteredPackages.sort((a, b) => {
-                        const isSpringA = ['spring', 'tulip', 'garden', 'valley', 'bloom', 'kashmir', 'shikara', 'dal', 'mughal'].some(k =>
-                            a.title.toLowerCase().includes(k) || a.category.toLowerCase().includes(k)
-                        );
-                        const isSpringB = ['spring', 'tulip', 'garden', 'valley', 'bloom', 'kashmir', 'shikara', 'dal', 'mughal'].some(k =>
-                            b.title.toLowerCase().includes(k) || b.category.toLowerCase().includes(k)
-                        );
-
-                        if (isSpringA && !isSpringB) return -1;
-                        if (!isSpringA && isSpringB) return 1;
-                        return 0;
-                    });
-                }
+                // Sort ALL sections to prioritize Spring/Summer over Winter packages
+                filteredPackages.sort((a, b) => getSeasonScore(b) - getSeasonScore(a));
 
                 filteredPackages = filteredPackages.slice(0, section.limit);
 
