@@ -22,7 +22,7 @@ const sections = [
     {
         id: "adventure",
         title: "Adventure & Thrills",
-        subtitle: "Skiing, Trekking, and more for the adrenaline seekers",
+        subtitle: "Trekking, Cycling, Camping and more for the adrenaline seekers",
         filter: (pkg: any) => pkg.category === 'Adventure',
         limit: 12
     },
@@ -41,18 +41,18 @@ export function FeaturedPackages({ packages }: { packages: any[] }) {
             {sections.map((section) => {
                 let filteredPackages = packages.filter(section.filter);
 
-                // Sort 'Popular' section to prioritize Winter packages
+                // Sort 'Popular' section to prioritize Spring packages
                 if (section.id === 'popular') {
                     filteredPackages.sort((a, b) => {
-                        const isWinterA = ['winter', 'snow', 'ski', 'gulmarg', 'frozen', 'gurez'].some(k =>
+                        const isSpringA = ['spring', 'tulip', 'garden', 'valley', 'bloom', 'kashmir', 'shikara', 'dal', 'mughal'].some(k =>
                             a.title.toLowerCase().includes(k) || a.category.toLowerCase().includes(k)
                         );
-                        const isWinterB = ['winter', 'snow', 'ski', 'gulmarg', 'frozen', 'gurez'].some(k =>
+                        const isSpringB = ['spring', 'tulip', 'garden', 'valley', 'bloom', 'kashmir', 'shikara', 'dal', 'mughal'].some(k =>
                             b.title.toLowerCase().includes(k) || b.category.toLowerCase().includes(k)
                         );
 
-                        if (isWinterA && !isWinterB) return -1;
-                        if (!isWinterA && isWinterB) return 1;
+                        if (isSpringA && !isSpringB) return -1;
+                        if (!isSpringA && isSpringB) return 1;
                         return 0;
                     });
                 }
