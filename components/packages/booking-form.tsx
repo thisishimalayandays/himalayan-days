@@ -201,6 +201,13 @@ export function BookingForm({ packageTitle, packageId, isHighDemand }: { package
                         </p>
                     </div>
                 </div>
+
+                {isHighDemand && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-2.5 flex items-center justify-center gap-2 shadow-sm">
+                        <span className="text-red-600 font-bold text-xs uppercase tracking-wider animate-pulse">🔥 High Demand - Fast Filling</span>
+                    </div>
+                )}
+
                 <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-700">Full Name</label>
                     <input
@@ -263,27 +270,20 @@ export function BookingForm({ packageTitle, packageId, isHighDemand }: { package
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                            <label className="text-sm font-medium text-gray-700">Travel Date</label>
-                            {isHighDemand && (
-                                <span className="text-[10px] font-bold text-red-600 animate-pulse flex items-center gap-1">
-                                    🔥 Only 3 slots left
-                                </span>
-                            )}
-                        </div>
+                <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                        <label className="text-sm font-medium text-gray-700 block">Travel Date</label>
                         <input
                             required
                             type="date"
                             min={today}
                             value={formData.date}
                             onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                            className={`w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${isHighDemand ? 'border-red-200 focus:border-red-500 focus:ring-red-500/20' : ''}`}
+                            className={`w-full px-3 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm ${isHighDemand ? 'bg-red-50/30' : ''}`}
                         />
                     </div>
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700">Guests</label>
+                    <div className="space-y-1.5">
+                        <label className="text-sm font-medium text-gray-700 block">Guests</label>
                         <input
                             required
                             type="number"
@@ -294,7 +294,7 @@ export function BookingForm({ packageTitle, packageId, isHighDemand }: { package
                                 setFormData({ ...formData, guests: e.target.value });
                                 if (errors.guests) setErrors({ ...errors, guests: '' });
                             }}
-                            className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                            className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm"
                         />
                     </div>
                 </div>
