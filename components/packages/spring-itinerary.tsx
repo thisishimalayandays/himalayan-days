@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Star, Utensils, Car, Hotel, Mountain, Sunrise, Sunset, Leaf } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Star, Utensils, Car, Hotel, Mountain, Sunrise, Sunset, Leaf } from 'lucide-react';
 
 interface Day {
     day: number;
@@ -30,14 +29,11 @@ const dayAmenities = [
 ];
 
 export function SpringItinerary({ days }: { days: Day[] }) {
-    const [expandedDay, setExpandedDay] = useState<number | null>(0);
-
     return (
-        <div className="space-y-4">
+        <div className="space-y-6">
             {days.map((day, index) => {
                 const theme = dayThemes[index % dayThemes.length];
                 const DayIcon = dayIcons[index % dayIcons.length];
-                const isOpen = expandedDay === index;
 
                 return (
                     <motion.div
@@ -45,12 +41,10 @@ export function SpringItinerary({ days }: { days: Day[] }) {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.07 }}
-                        className={`rounded-2xl border overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 ${theme.border}`}
+                        className={`rounded-2xl border bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 ${theme.border}`}
                     >
-                        <button
-                            onClick={() => setExpandedDay(isOpen ? null : index)}
-                            className={`w-full text-left flex items-center gap-4 p-5 ${theme.bg} transition-all`}
-                        >
+                        {/* Header */}
+                        <div className={`w-full text-left flex items-center gap-4 p-5 ${theme.bg} border-b ${theme.border}`}>
                             {/* Day number bubble */}
                             <div className={`bg-gradient-to-br ${theme.color} text-white rounded-xl w-14 h-14 flex flex-col items-center justify-center shrink-0 shadow-md`}>
                                 <span className="text-[10px] font-semibold uppercase opacity-80">Day</span>
@@ -64,37 +58,24 @@ export function SpringItinerary({ days }: { days: Day[] }) {
                                         {index === 0 ? 'Arrival Day' : index === days.length - 1 ? 'Departure' : 'Exploration'}
                                     </span>
                                 </div>
-                                <h3 className="text-base md:text-lg font-bold text-gray-900 truncate">{day.title}</h3>
+                                <h3 className="text-base md:text-lg font-bold text-gray-900">{day.title}</h3>
                             </div>
+                        </div>
 
-                            <ChevronDown className={`w-5 h-5 text-gray-400 shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
-                        </button>
+                        {/* Body (Always open) */}
+                        <div className="p-5 space-y-4">
+                            <p className="text-gray-600 leading-relaxed text-sm md:text-base">{day.desc}</p>
 
-                        <AnimatePresence>
-                            {isOpen && (
-                                <motion.div
-                                    initial={{ height: 0, opacity: 0 }}
-                                    animate={{ height: 'auto', opacity: 1 }}
-                                    exit={{ height: 0, opacity: 0 }}
-                                    transition={{ duration: 0.3 }}
-                                    className="bg-white"
-                                >
-                                    <div className="p-5 pt-4 space-y-4">
-                                        <p className="text-gray-600 leading-relaxed text-sm md:text-base">{day.desc}</p>
-
-                                        {dayAmenities[index] && (
-                                            <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-100">
-                                                {dayAmenities[index].filter(Boolean).map((amenity, i) => (
-                                                    <span key={i} className={`text-xs px-3 py-1.5 rounded-full font-medium ${theme.bg} ${theme.text} border ${theme.border}`}>
-                                                        {amenity}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                </motion.div>
+                            {dayAmenities[index] && (
+                                <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-100">
+                                    {dayAmenities[index].filter(Boolean).map((amenity, i) => (
+                                        <span key={i} className={`text-xs px-3 py-1.5 rounded-full font-medium ${theme.bg} ${theme.text} border ${theme.border}`}>
+                                            {amenity}
+                                        </span>
+                                    ))}
+                                </div>
                             )}
-                        </AnimatePresence>
+                        </div>
                     </motion.div>
                 );
             })}
