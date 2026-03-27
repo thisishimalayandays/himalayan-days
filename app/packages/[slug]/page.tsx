@@ -21,6 +21,11 @@ import { SpringItinerary } from '@/components/packages/spring-itinerary';
 import { SpringFeatureStrip } from '@/components/packages/spring-features';
 import { SpringInclusionsExclusions } from '@/components/packages/spring-inclusions';
 import { SpringTestimonials } from '@/components/packages/spring-testimonials';
+import dynamic from 'next/dynamic';
+
+const SpringVideos = dynamic(() => import('@/components/packages/spring-videos').then(mod => mod.SpringVideos), {
+    loading: () => <div className="w-full aspect-video bg-gray-50 animate-pulse rounded-[2rem] max-w-sm mx-auto my-8"></div>
+});
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const resolvedParams = await params;
@@ -113,6 +118,9 @@ export default async function PackagePage({ params }: { params: Promise<{ slug: 
                             <section>
                                 <SpringFeatureStrip features={pkg.features} />
                             </section>
+
+                            {/* Videos Component */}
+                            <SpringVideos />
 
                             {/* Gallery */}
                             <section>
